@@ -39,13 +39,14 @@ public class PlaceTrackedImages : MonoBehaviour {
             }
         }
 
-        foreach (ARTrackedImage trackedImage in eventArgs.updated) { // Check if created images should be tracked
+        foreach (ARTrackedImage trackedImage in eventArgs.updated) { // Set prefabs as active or inactive dependent on whether they are visible in scene
             _instantiatedPrefabs[trackedImage.referenceImage.name]
             .SetActive(trackedImage.trackingState == TrackingState.Tracking);
         }
 
         foreach (ARTrackedImage trackedImage in eventArgs.removed) { // Remove tracked image
             Destroy(_instantiatedPrefabs[trackedImage.referenceImage.name]);
+            _instantiatedPrefabs.Remove(trackedImage.referenceImage.name);
         }
     }
 }
