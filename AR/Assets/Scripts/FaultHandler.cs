@@ -4,18 +4,35 @@ using UnityEngine;
 
 public class FaultHandler : MonoBehaviour {
     private Client client;
+    private JSONHandler jsonHandler;
+    private InteractionHandler interactionHandler;
 
     void Awake() {
-        client = FindObjectOfType<Client>(); // Find client in scene
-    }
-
-    // Update is called once per frame
-    void Update() {
+        //client = GetComponent<Client>();
         
     }
 
-    // Function called when receiving information from other player
-    public void ReceiveMessage(/* Some data in here */) {
-        
+    private void Start() {
+        jsonHandler = GetComponent<JSONHandler>();
+        interactionHandler = GetComponent<InteractionHandler>();
+        StartCoroutine(SendFault());
+    }
+
+    IEnumerator SendFault() {
+        yield return new WaitForSeconds(5);
+
+        ReceiveMessage(1);
+    }
+
+    // Function called by Client when receiving information from other player
+    public void ReceiveMessage(int id) {
+        Fault fault = jsonHandler.GetFault(id);
+
+        if (fault != null)
+            interactionHandler.AddFault(fault);
+    }
+
+    public void SendMessage(Fault fault) {
+        // TODO Send message
     }
 }

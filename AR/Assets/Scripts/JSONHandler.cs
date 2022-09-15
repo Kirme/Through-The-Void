@@ -5,18 +5,29 @@ using UnityEngine;
 public class JSONHandler : MonoBehaviour
 {
     public TextAsset jsonFile;
+    private Faults faultsInJson;
 
     private void Start() {
         GetData();
     }
 
-    void GetData()
+    private void GetData()
     {
-        Faults faultsInJson = JsonUtility.FromJson<Faults>(jsonFile.text);
+        faultsInJson = JsonUtility.FromJson<Faults>(jsonFile.text); // Get faults from JSON
 
+        // Debug
         foreach (Fault fault in faultsInJson.faults) {
             Debug.Log(fault.id + " " + fault.faultLocation + " " + fault.fixLocation);
         }
+    }
+
+    public Fault GetFault(int id) {
+        foreach (Fault fault in faultsInJson.faults) {
+            if (fault.id == id)
+                return fault;
+        }
+
+        return null;
     }
 }
 

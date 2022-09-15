@@ -4,7 +4,7 @@
     {
       "id": "0",
       "faultLocation": "Engine",
-      "fixLocation" : "Engine"
+      "fixLocation" : "Core"
     },
     {
       "id": "1",
