@@ -11,12 +11,15 @@ public class PlayerControler : MonoBehaviour
     public SteamVR_Action_Single squeezeAction;
     public GameObject rightController, leftController;
 
-    public float maxSpeed = 25f, acceleration = 2.5f, maxTurnSpeed = 10.0f;
+    public float maxSpeed = 25f, acceleration = 2.5f, maxTurnSpeed = 10.0f, turnAcceleration = 5.0f;
+    // Use these to change max speed dynamically, for example if a fault causes rotation speed to decrease.
+    private float maxSpeedModifier = 1.0f, maxTurnSpeedModifier = 1.0f;
 
     public float xRotDeadzone = 10.0f, zRotDeadzone = 10.0f, yRotDeadzone = 10.0f;
     public float maxSteeringRot = 60.0f;
     
     private float speed = 0f;
+    private Vector3 rotationSpeed = new Vector3(0,0,0);
 
 
     private Quaternion defaultControllerRot = Quaternion.identity;
@@ -31,15 +34,19 @@ public class PlayerControler : MonoBehaviour
     void Update()
     {
 
+        float xRot = 0;
+        float yRot = 0;
+        float zRot = 0;
+
         // If left trigger pressed, disable controls
         if(GetLeftSqueeze() < 0.8){
             //Debug.Log(GetRightControllerRotation());
 
             Quaternion relativeRotation = Quaternion.Inverse(GetRightControllerRotation()) * defaultControllerRot;
 
-            float xRot = relativeRotation.eulerAngles.x;
-            float zRot = relativeRotation.eulerAngles.z;
-            float yRot = relativeRotation.eulerAngles.y;
+            xRot = relativeRotation.eulerAngles.x;
+            yRot = relativeRotation.eulerAngles.y;
+            zRot = relativeRotation.eulerAngles.z;
 
 
             // Handle movement around the x-axis
@@ -54,9 +61,9 @@ public class PlayerControler : MonoBehaviour
                 } else if(xRot < -xRotDeadzone){
                     xRot = (xRot + xRotDeadzone)/(maxSteeringRot - xRotDeadzone);
                 }
-                Debug.Log(xRot);
 
-                transform.Rotate(-maxTurnSpeed * xRot * Time.deltaTime, 0f, 0f, Space.Self);
+            } else {
+                xRot = 0;
             }
 
             // Handle movement around the y-axis
@@ -72,7 +79,8 @@ public class PlayerControler : MonoBehaviour
                     yRot = (yRot + yRotDeadzone)/(maxSteeringRot - yRotDeadzone);
                 }
 
-                transform.Rotate(0f, 0f, maxTurnSpeed * yRot * Time.deltaTime, Space.Self);
+            } else {
+                yRot = 0;
             }
 
             // Handle movement around the z-axis
@@ -88,19 +96,23 @@ public class PlayerControler : MonoBehaviour
                     zRot = (zRot + zRotDeadzone)/(maxSteeringRot - zRotDeadzone);
                 }
 
-                transform.Rotate(0f, -maxTurnSpeed * zRot * Time.deltaTime, 0f, Space.Self);
+            }else {
+                zRot = 0;
             }
 
 
         } else {
             //Reset Default Rotation of controllers (in order to allow individual default rotations of controllers for players.)
             defaultControllerRot = GetRightControllerRotation();
-            Debug.Log("default: " + defaultControllerRot);
         }
 
-        
+        rotationSpeed.x = Mathf.Lerp(rotationSpeed.x, -maxTurnSpeed * xRot * Time.deltaTime, turnAcceleration * Time.deltaTime);
+        rotationSpeed.y = Mathf.Lerp(rotationSpeed.y, -maxTurnSpeed * yRot * Time.deltaTime, turnAcceleration * Time.deltaTime);
+        rotationSpeed.z = Mathf.Lerp(rotationSpeed.z, -maxTurnSpeed * zRot * Time.deltaTime, turnAcceleration * Time.deltaTime);
+
         speed = Mathf.Lerp(speed, maxSpeed * GetRightSqueeze(), acceleration * Time.deltaTime);
 
+        transform.Rotate(rotationSpeed.x, rotationSpeed.y, rotationSpeed.z, Space.Self);
         transform.position += transform.forward * speed * Time.deltaTime;
     }
 
