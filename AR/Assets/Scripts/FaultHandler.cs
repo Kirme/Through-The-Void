@@ -15,7 +15,7 @@ public class FaultHandler : MonoBehaviour {
     }
 
     // Function called when receiving information from other player
-    public void ReceiveMessage(/* Some data in here */) {
-
+    public void ReceiveMessage(/* Some data in here */ ) {
+        
     }
 }
