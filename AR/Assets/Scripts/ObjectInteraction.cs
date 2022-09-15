@@ -9,12 +9,20 @@ public class ObjectInteraction : MonoBehaviour {
 
     [SerializeField] Camera _mainCamera;
 
+    [SerializeField] Color selectedColor = Color.yellow;
+    private Color defaultColor = Color.white;
+    private Color partColor;
+
     // Class that defines ship parts to avoid string references
     static class ShipParts {
         public const string Core = "Core";
         public const string Engine = "Engine";
         public const string LWing = "LWing";
         public const string RWing = "RWing";
+    }
+
+    private void Start() {
+        partColor = defaultColor;
     }
 
     void Update() {
@@ -26,14 +34,19 @@ public class ObjectInteraction : MonoBehaviour {
 
         Touch touch = Input.GetTouch(0); // Only care about first finger
 
+        if (touch.phase == TouchPhase.Began)
+            partColor = selectedColor;
+        else if (touch.phase == TouchPhase.Ended)
+            partColor = defaultColor;
+
         Ray ray = _mainCamera.ScreenPointToRay(touch.position);
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit)) { // Check if ray hits object
             switch (hit.collider.transform.name) { // Switch case for different parts of ship
-                case ShipParts.Core:
-                    
-                    break;
                 default:
+                    // Change color of part
+                    Transform part = hit.collider.transform.parent;
+                    part.GetComponent<Renderer>().material.color = partColor;
                     break;
             }
         }
