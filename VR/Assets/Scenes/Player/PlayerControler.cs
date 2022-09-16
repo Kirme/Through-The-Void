@@ -9,17 +9,22 @@ public class PlayerControler : MonoBehaviour
     private SteamVR_Input_Sources rightHand = SteamVR_Input_Sources.RightHand;
     private SteamVR_Input_Sources leftHand = SteamVR_Input_Sources.LeftHand;
     public SteamVR_Action_Single squeezeAction;
-    public GameObject rightController, leftController;
+    public SteamVR_Action_Boolean grabAction;
+    public SteamVR_Action_Pose poseAction;
+    public GameObject rightController, leftController, joystick;
 
-    public float maxSpeed = 25f, acceleration = 2.5f, maxTurnSpeed = 10.0f, turnAcceleration = 5.0f;
+    public float maxSpeed = 25f, acceleration = 2.5f, maxTurnSpeed = 12.5f, turnAcceleration = 2.5f;
+    
     // Use these to change max speed dynamically, for example if a fault causes rotation speed to decrease.
     private float maxSpeedModifier = 1.0f, maxTurnSpeedModifier = 1.0f;
 
     public float xRotDeadzone = 10.0f, zRotDeadzone = 10.0f, yRotDeadzone = 10.0f;
-    public float maxSteeringRot = 60.0f;
+    public float maxSteeringRot = 70.0f;
     
     private float speed = 0f;
     private Vector3 rotationSpeed = new Vector3(0,0,0);
+    
+    private bool grabbingRight = false;
 
 
     private Quaternion defaultControllerRot = Quaternion.identity;
@@ -27,7 +32,10 @@ public class PlayerControler : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+
+        grabAction[rightHand].onChange += OnGrabChanged;
+        poseAction[rightHand].onTrackingChanged += OnTrackPadChanged;
+
     }
 
     // Update is called once per frame
@@ -38,8 +46,8 @@ public class PlayerControler : MonoBehaviour
         float yRot = 0;
         float zRot = 0;
 
-        // If left trigger pressed, disable controls
-        if(GetLeftSqueeze() < 0.8){
+        // Only rotate if grabbing
+        if(grabbingRight){
             //Debug.Log(GetRightControllerRotation());
 
             Quaternion relativeRotation = Quaternion.Inverse(GetRightControllerRotation()) * defaultControllerRot;
@@ -47,10 +55,11 @@ public class PlayerControler : MonoBehaviour
             xRot = relativeRotation.eulerAngles.x;
             yRot = relativeRotation.eulerAngles.y;
             zRot = relativeRotation.eulerAngles.z;
+            joystick.transform.localRotation = Quaternion.Euler(-xRot, -zRot, yRot);
 
 
             // Handle movement around the x-axis
-            if(xRot > 180){
+            if (xRot > 180){
                 xRot -= 360;
             }
 
@@ -101,19 +110,46 @@ public class PlayerControler : MonoBehaviour
             }
 
 
-        } else {
-            //Reset Default Rotation of controllers (in order to allow individual default rotations of controllers for players.)
-            defaultControllerRot = GetRightControllerRotation();
+        } else
+        {
+            joystick.transform.localRotation = Quaternion.identity;
         }
 
         rotationSpeed.x = Mathf.Lerp(rotationSpeed.x, -maxTurnSpeed * xRot * Time.deltaTime, turnAcceleration * Time.deltaTime);
         rotationSpeed.y = Mathf.Lerp(rotationSpeed.y, -maxTurnSpeed * yRot * Time.deltaTime, turnAcceleration * Time.deltaTime);
-        rotationSpeed.z = Mathf.Lerp(rotationSpeed.z, -maxTurnSpeed * zRot * Time.deltaTime, turnAcceleration * Time.deltaTime);
+        rotationSpeed.z = Mathf.Lerp(rotationSpeed.z, maxTurnSpeed/5 * zRot * Time.deltaTime, turnAcceleration * Time.deltaTime);
 
-        speed = Mathf.Lerp(speed, maxSpeed * GetRightSqueeze(), acceleration * Time.deltaTime);
+        speed = Mathf.Lerp(speed, maxSpeed * GetRightSqueeze() * maxSpeedModifier, acceleration * Time.deltaTime * maxSpeedModifier);
 
-        transform.Rotate(rotationSpeed.x, rotationSpeed.y, rotationSpeed.z, Space.Self);
+        transform.Rotate(rotationSpeed.x * maxTurnSpeedModifier, rotationSpeed.y * maxTurnSpeedModifier, rotationSpeed.z * maxTurnSpeedModifier, Space.Self);
         transform.position += transform.forward * speed * Time.deltaTime;
+    }
+
+    public void FaultsChanged()
+    {
+
+    }
+
+    public void OnGrabChanged(SteamVR_Action_Boolean fromAction, SteamVR_Input_Sources fromSource, bool newState)
+    {
+        if (newState)
+        {
+            //Reset Default Rotation of controllers (in order to allow individual default rotations of controllers for players.)
+            defaultControllerRot = GetRightControllerRotation();
+        }
+
+        grabbingRight = newState;
+    }
+
+    public void OnTrackPadChanged(SteamVR_Action_Pose changedAction, SteamVR_Input_Sources changedSource, ETrackingResult trackingChanged)
+    {
+
+    }
+
+
+    public bool GetRightGrab()
+    {
+        return grabAction.GetStateDown(rightHand);
     }
 
     public float GetRightSqueeze()
