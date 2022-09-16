@@ -33,8 +33,10 @@ public class PlaceTrackedImages : MonoBehaviour {
                 if (string.Compare(curPrefab.name, imageName, System.StringComparison.OrdinalIgnoreCase) == 0
                     && !_instantiatedPrefabs.ContainsKey(imageName)) { // If we should place an object on this image, and haven't already
                     // Instantiate prefab
-                    GameObject newPrefab = Instantiate(curPrefab, trackedImage.transform);
-                    _instantiatedPrefabs[imageName] = newPrefab;
+                    curPrefab.transform.SetParent(trackedImage.transform);
+                    curPrefab.SetActive(true);
+                    _instantiatedPrefabs[imageName] = curPrefab;
+                    
                 }
             }
         }
