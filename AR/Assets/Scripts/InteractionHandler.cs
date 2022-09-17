@@ -75,6 +75,8 @@ public class InteractionHandler : MonoBehaviour {
         // Change color of part
         Transform part = GetPart(hit); 
         SetPartColor(part, partColor);
+        audioManager sn = GameObject.FindGameObjectWithTag("AudioManager").GetComponent<audioManager>();
+        sn.Play("Touch");
 
         if (HasMovedToNewPart(touch, part)) { // We moved between two different parts
             SetPartColor(previousPart, defaultColor); // Reset color of previously selected part
@@ -131,12 +133,15 @@ public class InteractionHandler : MonoBehaviour {
     public void AddFault(Fault fault) {
         faultsToFix.Add(fault.faultLocation, fault.fixLocation);
         fixesToFaults.Add(fault.fixLocation, fault.faultLocation);
-
         SetPartColor(fault.faultLocation, brokenColor);
+        audioManager sn = GameObject.FindGameObjectWithTag("AudioManager").GetComponent<audioManager>();
+        sn.Play("Broken");
     }
 
     private void RemoveFault(string fault, string fix) {
         faultsToFix.Remove(fault);
         fixesToFaults.Remove(fix);
+        audioManager sn = GameObject.FindGameObjectWithTag("AudioManager").GetComponent<audioManager>();
+        sn.Play("Heal");
     }
 }
