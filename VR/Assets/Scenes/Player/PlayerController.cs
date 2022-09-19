@@ -1,9 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using Valve.VR;
 
-public class PlayerControler : MonoBehaviour
+public class PlayerController : MonoBehaviour
 {
 
     private SteamVR_Input_Sources rightHand = SteamVR_Input_Sources.RightHand;
@@ -11,7 +12,7 @@ public class PlayerControler : MonoBehaviour
     public SteamVR_Action_Single squeezeAction;
     public SteamVR_Action_Boolean grabAction;
     public SteamVR_Action_Pose poseAction;
-    public GameObject rightController, leftController, joystick;
+    public GameObject rightController, leftController, joystick, warningLight;
 
     public float maxSpeed = 25f, acceleration = 2.5f, maxTurnSpeed = 12.5f, turnAcceleration = 2.5f;
     
@@ -29,10 +30,23 @@ public class PlayerControler : MonoBehaviour
 
     private Quaternion defaultControllerRot = Quaternion.identity;
 
+    public void Break(Fault fault)
+    {
+        maxTurnSpeedModifier -= fault.maxTurnSpeed;
+        warningLight.SetActive(true);
+    }
+
+    public void Repair(Fault fault)
+    {
+        maxTurnSpeedModifier += fault.maxTurnSpeed;
+        warningLight.SetActive(false);
+
+    }
+
     // Start is called before the first frame update
     void Start()
     {
-
+        warningLight.SetActive(false);
         grabAction[rightHand].onChange += OnGrabChanged;
         poseAction[rightHand].onTrackingChanged += OnTrackPadChanged;
 
