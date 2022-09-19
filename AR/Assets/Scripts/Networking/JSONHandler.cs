@@ -21,9 +21,20 @@ public class JSONHandler : MonoBehaviour
         }
     }
 
-    public Fault GetFault(int id) {
+    public Dictionary<string, Fault> GetFaultDictionary() {
+        Dictionary<string, Fault> dict = new Dictionary<string, Fault>();
+
         foreach (Fault fault in faultsInJson.faults) {
-            if (fault.id == id)
+            if (!dict.ContainsKey(fault.id))
+                dict.Add(fault.id, fault);
+        }
+
+        return dict;
+    }
+
+    public Fault GetFault(string id) {
+        foreach (Fault fault in faultsInJson.faults) {
+            if (string.Compare(fault.id, id) == 0)
                 return fault;
         }
 
@@ -33,7 +44,7 @@ public class JSONHandler : MonoBehaviour
 
 [System.Serializable]
 public class Fault {
-    public int id;
+    public string id;
     public string faultLocation;
     public string fixLocation;
 }

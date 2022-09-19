@@ -5,8 +5,6 @@ using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
 
 public class InteractionHandler : MonoBehaviour {
-    List<ARRaycastHit> _hits = new List<ARRaycastHit>();
-
     [SerializeField] Camera _mainCamera;
     [SerializeField] GameObject _ship;
 
@@ -19,10 +17,15 @@ public class InteractionHandler : MonoBehaviour {
 
     private Transform previousPart;
 
-    private Dictionary<string, string> fixesToFaults = new Dictionary<string, string>();
-    private Dictionary<string, string> faultsToFix = new Dictionary<string, string>();
+    private Dictionary<string, Fault> fixesToFaults = new Dictionary<string, Fault>();
+    private Dictionary<string, Fault> faultsToFix = new Dictionary<string, Fault>();
 
     private bool updateFaultColors = false;
+
+    // Time tracking
+    private float timeHeld = 0f;
+    private float timeToHold = 1.0f;
+
     private void Start() {
         partColor = defaultColor;
         faultHandler = GetComponent<FaultHandler>();
@@ -36,8 +39,8 @@ public class InteractionHandler : MonoBehaviour {
     }
 
     private void UpdateFaultColors() {
-        foreach (string name in faultsToFix.Keys) {
-            SetPartColor(name, brokenColor);
+        foreach (string fault in faultsToFix.Keys) {
+            SetPartColor(fault, brokenColor);
         }
 
         updateFaultColors = false;
@@ -57,21 +60,35 @@ public class InteractionHandler : MonoBehaviour {
                 case 0: // Part is broken
                     break;
                 case 1: // Part can fix other broken part
+                    if (previousPart == GetPart(hit)) {
+                        timeHeld += Time.deltaTime;
+
+                        if (timeHeld > timeToHold) {
+                            FixPart(partName);
+                        }
+                    } else {
+                        timeHeld = 0f;
+                    }
+
                     UpdateColorOnTouch(hit, touch);
-                    FixPart(partName);
                     break;
                 default:
                     UpdateColorOnTouch(hit, touch);
                     break;
             }
+        } else {
+            SetPartColor(previousPart, defaultColor);
+            previousPart = null;
         }
     }
 
     private void FixPart(string partName) {
         if (fixesToFaults.ContainsKey(partName)) {
-            SetPartColor(fixesToFaults[partName], defaultColor);
-            RemoveFault(fixesToFaults[partName], partName);
-            faultHandler.SendMessage(partName);
+            Fault fault = fixesToFaults[partName];
+
+            SetPartColor(fault.faultLocation, defaultColor);
+            RemoveFault(fault.faultLocation, partName);
+            faultHandler.SendMessage(fault.id);
         }
     }
 
@@ -138,12 +155,12 @@ public class InteractionHandler : MonoBehaviour {
 
     public void AddFault(Fault fault) {
         if (!faultsToFix.ContainsKey(fault.faultLocation)) {
-            faultsToFix.Add(fault.faultLocation, fault.fixLocation);
+            faultsToFix.Add(fault.faultLocation, fault);
             updateFaultColors = true;
         }
             
         if (!fixesToFaults.ContainsKey(fault.fixLocation)) {
-            fixesToFaults.Add(fault.fixLocation, fault.faultLocation);
+            fixesToFaults.Add(fault.fixLocation, fault);
             updateFaultColors = true;
         }
     }
