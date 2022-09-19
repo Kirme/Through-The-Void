@@ -50,6 +50,8 @@ public class PlayerController : MonoBehaviour
         grabAction[rightHand].onChange += OnGrabChanged;
         poseAction[rightHand].onTrackingChanged += OnTrackPadChanged;
 
+        audioManager sn = GameObject.FindGameObjectWithTag("AudioManager").GetComponent<audioManager>();
+        sn.Play("NASA");
     }
 
     // Update is called once per frame
