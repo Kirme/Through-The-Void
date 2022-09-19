@@ -21,7 +21,7 @@ using UnityEngine;
 // The Main class:
 public class Client : MonoBehaviour {
     // Networking data:
-	private int port = 8052;
+	private int port = 8053;
 	private TcpClient socketConnection; 	
 	private Thread clientReceiveThread;
 	private FaultHandler faultHandler;

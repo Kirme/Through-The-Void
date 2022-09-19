@@ -7,6 +7,7 @@ using UnityEngine.XR.ARSubsystems;
 public class InteractionHandler : MonoBehaviour {
     [SerializeField] Camera _mainCamera;
     [SerializeField] GameObject _ship;
+    [SerializeField] AudioManager _audioManager;
 
     [SerializeField] Color selectedColor = Color.cyan;
     [SerializeField] Color brokenColor = Color.red;
@@ -168,5 +169,7 @@ public class InteractionHandler : MonoBehaviour {
     private void RemoveFault(string fault, string fix) {
         faultsToFix.Remove(fault);
         fixesToFaults.Remove(fix);
+
+        _audioManager.Play("Heal");
     }
 }
