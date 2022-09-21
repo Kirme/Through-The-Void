@@ -62,11 +62,13 @@ public class PlayerInteractController : MonoBehaviour
         {
             if (pressed)
             {
+                GetComponent<SphereCollider>().enabled = false;
                 interactable.GetComponent<InteractableScript>().Interact(gameObject);
                 //transform.Find("Model").gameObject.GetComponent<Renderer>().enabled = false;
             }
             else
             {
+                GetComponent<SphereCollider>().enabled = true;
                 interactable.GetComponent<InteractableScript>().EndInteract();
                 //transform.Find("Model").gameObject.GetComponent<Renderer>().enabled = true;
                 CancelInteract(interactable.GetComponent<Collider>());

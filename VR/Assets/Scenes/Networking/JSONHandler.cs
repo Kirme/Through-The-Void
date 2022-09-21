@@ -6,11 +6,13 @@ public class JSONHandler : MonoBehaviour
 {
 
     public TextAsset jsonFile;
-    private Faults faultsInJson;
+    public Faults faultsInJson;
 
-    private void Start() {
+    private void Awake()
+    {
         GetData();
     }
+   
 
     private void GetData()
     {
@@ -30,15 +32,25 @@ public class JSONHandler : MonoBehaviour
 
         return null;
     }
+
+    public int CountFaults()
+    {
+        return faultsInJson.faults.Length;
+    }
 }
 
 [System.Serializable]
 public class Fault {
     public string id;
-    public float maxSpeed = 1.0f;
-    public float maxTurnSpeed = 0.5f;
+    //public float maxSpeed = 1.0f;
+    //public float maxTurnSpeed = 0.5f;
     public string faultLocation;
     public string fixLocation;
+    public float maxSpeedModifier;
+    public float accelerationModifier;
+    public float maxTurnSpeedModifier;
+    public float turnAccelerationModifier;
+
 }
 
 [System.Serializable]

@@ -2,45 +2,68 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Events;
 using Valve.VR;
 
 public class PlayerController : MonoBehaviour
 {
 
+
+
     private SteamVR_Input_Sources rightHand = SteamVR_Input_Sources.RightHand;
     private SteamVR_Input_Sources leftHand = SteamVR_Input_Sources.LeftHand;
+
     public SteamVR_Action_Single squeezeAction;
     public SteamVR_Action_Boolean grabAction;
     public SteamVR_Action_Pose poseAction;
     public GameObject rightController, leftController, joystick, warningLight;
 
     public float maxSpeed = 25f, acceleration = 2.5f, maxTurnSpeed = 12.5f, turnAcceleration = 2.5f;
-    
+
+
+    audioManager sn;
+
     // Use these to change max speed dynamically, for example if a fault causes rotation speed to decrease.
     private float maxSpeedModifier = 1.0f, maxTurnSpeedModifier = 1.0f;
 
     public float xRotDeadzone = 10.0f, zRotDeadzone = 10.0f, yRotDeadzone = 10.0f;
     public float maxSteeringRot = 70.0f;
     
-    private float speed = 0f;
+    private float speed = 0f, inputSpeed = 0f;
     private Vector3 rotationSpeed = new Vector3(0,0,0);
     
     private bool grabbingRight = false;
+
 
 
     private Quaternion defaultControllerRot = Quaternion.identity;
 
     public void Break(Fault fault)
     {
-        maxTurnSpeedModifier -= fault.maxTurnSpeed;
+        maxSpeedModifier *= fault.maxSpeedModifier;
+        acceleration *= fault.accelerationModifier;
+        maxTurnSpeedModifier *= fault.maxTurnSpeedModifier;
+        turnAcceleration *= fault.turnAccelerationModifier;
+
+
         warningLight.SetActive(true);
+
+        // 
     }
 
-    public void Repair(Fault fault)
+    public void Fix(Fault fault, int remainingFaults)
     {
-        maxTurnSpeedModifier += fault.maxTurnSpeed;
-        warningLight.SetActive(false);
+        maxSpeedModifier /= fault.maxSpeedModifier;
+        acceleration /= fault.accelerationModifier;
+        maxTurnSpeedModifier /= fault.maxTurnSpeedModifier;
+        turnAcceleration /= fault.turnAccelerationModifier;
 
+        if(remainingFaults  == 0)
+        {
+            warningLight.SetActive(false);
+        }
+
+        
     }
 
     // Start is called before the first frame update
@@ -50,7 +73,7 @@ public class PlayerController : MonoBehaviour
         grabAction[rightHand].onChange += OnGrabChanged;
         poseAction[rightHand].onTrackingChanged += OnTrackPadChanged;
 
-        audioManager sn = GameObject.FindGameObjectWithTag("AudioManager").GetComponent<audioManager>();
+        sn = GameObject.FindGameObjectWithTag("AudioManager").GetComponent<audioManager>();
         sn.Play("NASA");
     }
 
@@ -131,19 +154,36 @@ public class PlayerController : MonoBehaviour
             joystick.transform.localRotation = Quaternion.identity;
         }
 
-        rotationSpeed.x = Mathf.Lerp(rotationSpeed.x, -maxTurnSpeed * xRot * Time.deltaTime, turnAcceleration * Time.deltaTime);
-        rotationSpeed.y = Mathf.Lerp(rotationSpeed.y, -maxTurnSpeed * yRot * Time.deltaTime, turnAcceleration * Time.deltaTime);
-        rotationSpeed.z = Mathf.Lerp(rotationSpeed.z, maxTurnSpeed/5 * zRot * Time.deltaTime, turnAcceleration * Time.deltaTime);
+        rotationSpeed.x = Mathf.Lerp(rotationSpeed.x, -maxTurnSpeed * xRot * Time.deltaTime * maxTurnSpeedModifier, turnAcceleration * Time.deltaTime * maxTurnSpeedModifier);
+        rotationSpeed.y = Mathf.Lerp(rotationSpeed.y, -maxTurnSpeed * zRot * Time.deltaTime * maxTurnSpeedModifier, turnAcceleration * Time.deltaTime * maxTurnSpeedModifier);
+        rotationSpeed.z = Mathf.Lerp(rotationSpeed.z, maxTurnSpeed/2 * yRot * Time.deltaTime * maxTurnSpeedModifier, turnAcceleration * Time.deltaTime * maxTurnSpeedModifier);
 
-        speed = Mathf.Lerp(speed, maxSpeed * GetRightSqueeze() * maxSpeedModifier, acceleration * Time.deltaTime * maxSpeedModifier);
+        speed = Mathf.Lerp(speed, maxSpeed * inputSpeed * maxSpeedModifier, acceleration * Time.deltaTime * maxSpeedModifier);
 
         transform.Rotate(rotationSpeed.x * maxTurnSpeedModifier, rotationSpeed.y * maxTurnSpeedModifier, rotationSpeed.z * maxTurnSpeedModifier, Space.Self);
         transform.position += transform.forward * speed * Time.deltaTime;
     }
 
-    public void FaultsChanged()
+
+
+    public void SetSpeed(float speed)
     {
 
+        const float speedDeadzone = 0.05f;
+
+        if(Mathf.Abs(speed) < speedDeadzone)
+        {
+            speed = 0;
+        } else
+        {
+            speed = (speed - speedDeadzone) / (1f - speedDeadzone);
+        }
+
+        if(speed < 0)
+        {
+            speed /= 10;
+        }
+        inputSpeed = speed;
     }
 
     public void OnGrabChanged(SteamVR_Action_Boolean fromAction, SteamVR_Input_Sources fromSource, bool newState)

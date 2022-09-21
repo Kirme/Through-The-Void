@@ -14,20 +14,13 @@ using UnityEngine;
 // Step 1: Handle incoming data
 public class server_handler
 {
+
+	public FaultHandler faultHandler; 
+
     public void handle_msg(string msg)
     {
-        if (msg == "Engine fixed")
-        {
-            // TODO: <Insert what functionality we want triggered in VR here>
-            // ex: AR.breakEngine()
-            Debug.Log("client sent: " + msg);
-        }
-        else if (msg == "Lights fixed")
-        {
-            // TODO: <Insert what functionality we want triggered in VR here>
-            // ex: AR.breakLights()
-            Debug.Log("client sent: " + msg);
-        }
+		faultHandler.QueueFix(msg);
+		
         Debug.Log("client sent: " + msg);
     }
 
@@ -50,7 +43,7 @@ public class SocketServer : MonoBehaviour {
 	private TcpListener tcpListener; 
 	private Thread serverRecieveThread;  	
 	private TcpClient client;
-	private int port = 8052;
+	private int port = 8053;
 	private server_handler sh; 	
 	
 
@@ -60,7 +53,8 @@ public class SocketServer : MonoBehaviour {
 		sh = new server_handler(); 		
 		serverRecieveThread = new Thread (new ThreadStart(ListenOnClient)); 		
 		serverRecieveThread.IsBackground = true; 		
-		serverRecieveThread.Start(); 	
+		serverRecieveThread.Start();
+		sh.faultHandler = gameObject.GetComponent<FaultHandler>();
 	}
 
 	private void ListenOnClient () {
@@ -116,9 +110,23 @@ public class SocketServer : MonoBehaviour {
 	}
 
 	void  OnApplicationQuit()
-    {	
-		SendData("Disconnect");
-		client.Close();
+    {
+		if (CheckConnection())
+		{
+			SendData("Disconnect");
+			client.Close();
+		}
     } 
+
+	public bool CheckConnection()
+	{
+		if (client == null){
+			return false;
+		}
+		else
+		{
+			return true;
+		}
+	}
 }
 
