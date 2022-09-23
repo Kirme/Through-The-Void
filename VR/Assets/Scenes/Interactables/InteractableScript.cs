@@ -10,14 +10,16 @@ public class InteractableScript : MonoBehaviour
     public UnityEvent onInteracted;
     public UnityEvent<float> onValueChange;
 
+
     protected Quaternion initialRotation = Quaternion.identity, initialControllerRotation;
 
 
-    public virtual void Interact(GameObject controller)
+    public virtual bool Interact(GameObject controller)
     {
         initialRotation = transform.localRotation;
         initialControllerRotation = controller.transform.rotation;
         onInteracted.Invoke();
+        return true;
     }
 
     public virtual void EndInteract()
@@ -27,9 +29,6 @@ public class InteractableScript : MonoBehaviour
 
     public virtual void UpdateInteractable(GameObject controller)
     {
-        Quaternion relativeRotation = Quaternion.Inverse(controller.transform.rotation) * initialControllerRotation;
 
-        transform.localRotation = Quaternion.Euler(0f, relativeRotation.eulerAngles.z, 0f) * initialRotation;
-        onValueChange.Invoke(relativeRotation.eulerAngles.z/360f);
     }
 }

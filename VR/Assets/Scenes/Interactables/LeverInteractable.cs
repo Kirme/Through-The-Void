@@ -11,11 +11,12 @@ public class LeverInteractable : InteractableScript
     private float initialVal = 0.0f, val = 0.0f;
 
 
-    public override void Interact(GameObject controller)
+    public override bool Interact(GameObject controller)
     {
         base.Interact(controller);
         initialControllerPosition = controller.transform.localPosition;
         initialVal = val;
+        return false;
     }
 
     public override void UpdateInteractable(GameObject controller)
