@@ -10,13 +10,8 @@ public class SpawnableManager : MonoBehaviour
     [SerializeField] GameObject spawnablePrefab;
 
     [SerializeField] Camera arCam;
-    GameObject spawnedObject;
 
     private bool notPlaced = true;
-
-    void Start() {
-        spawnedObject = null;
-    }
 
     void Update() {
         if (notPlaced && Input.touchCount > 0) {
@@ -26,11 +21,16 @@ public class SpawnableManager : MonoBehaviour
 
     private void PlaceShip() {
         if (_RaycastManager.Raycast(Input.GetTouch(0).position, _Hits)) {
-            if (Input.GetTouch(0).phase == TouchPhase.Began && spawnedObject == null) {
+            if (Input.GetTouch(0).phase == TouchPhase.Began) {
                 spawnablePrefab.transform.position = _Hits[0].pose.position;
                 spawnablePrefab.SetActive(true);
                 notPlaced = false;
             }
         }
+    }
+
+    public void ResetShip() {
+        spawnablePrefab.SetActive(false);
+        notPlaced = true;
     }
 }

@@ -31,6 +31,15 @@ public class Client : MonoBehaviour {
 		faultHandler = GetComponent<FaultHandler>();
 	}
 
+	public void Reconnect() {
+		clientReceiveThread.Abort();
+		socketConnection.Close();
+
+		ConnectToHost();
+
+		// Reset somehow
+	}
+
 	private void ConnectToHost () {
 		// We start a backround thread to listen for incoming requests from the host:
 		clientReceiveThread = new Thread (new ThreadStart(ListenForData)); 			
