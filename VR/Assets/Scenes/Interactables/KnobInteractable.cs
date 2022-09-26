@@ -25,7 +25,7 @@ public class KnobInteractable : InteractableScript
 
     public override void UpdateInteractable(GameObject controller)
     {
-        Quaternion relativeRotation = Quaternion.Inverse(controller.transform.rotation) * initialControllerRotation;
+        Quaternion relativeRotation = Quaternion.Inverse(controller.transform.localRotation) * initialControllerRotation;
 
         val = relativeRotation.eulerAngles.z / 360f + initialVal;
         //if (turnInfinitely)

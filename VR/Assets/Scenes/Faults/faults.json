@@ -5,6 +5,8 @@
       "id": "0",
       "faultLocation": "Engine",
       "fixLocation" : "Core",
+      "display_name": "Engine Malfunction",
+      "ar_description": "Turn Knob AS1140 to 50%",
       "maxSpeedModifier" : 0.3,
       "accelerationModifier" : 1.0, 
       "maxTurnSpeedModifier" : 1.0,

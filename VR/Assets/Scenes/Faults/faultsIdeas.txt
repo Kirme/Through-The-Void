@@ -1,0 +1,15 @@
+
+    {
+      "id": "0",
+      "faultLocation": "Engine",
+      "fixLocation" : "Core",
+      "ARDescription": "Turn Knob AS1140 to 50%",
+      "WhatDo": {
+        "where": "VR",
+        "type": "interact",
+        "args": ["KnobA", 0.5, 2.0]
+      },
+      "shipEffects": {
+        "maxSpeedModifier" : 0.3
+    }
+    },

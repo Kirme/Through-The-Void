@@ -8,8 +8,6 @@ using Valve.VR;
 public class PlayerController : MonoBehaviour
 {
 
-
-
     private SteamVR_Input_Sources rightHand = SteamVR_Input_Sources.RightHand;
     private SteamVR_Input_Sources leftHand = SteamVR_Input_Sources.LeftHand;
 
@@ -73,6 +71,8 @@ public class PlayerController : MonoBehaviour
         grabAction[rightHand].onChange += OnGrabChanged;
         poseAction[rightHand].onTrackingChanged += OnTrackPadChanged;
 
+        joystick.GetComponent<JoystickInteractable>().SetPlayer(this);
+
         sn = GameObject.FindGameObjectWithTag("AudioManager").GetComponent<audioManager>();
         sn.Play("NASA");
     }
@@ -80,86 +80,29 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
-        float xRot = 0;
-        float yRot = 0;
-        float zRot = 0;
-
         // Only rotate if grabbing
-        if(grabbingRight){
-            //Debug.Log(GetRightControllerRotation());
 
-            Quaternion relativeRotation = Quaternion.Inverse(GetRightControllerRotation()) * defaultControllerRot;
+        Vector3 joystickRotation = Vector3.zero;
 
-            xRot = relativeRotation.eulerAngles.x;
-            yRot = relativeRotation.eulerAngles.y;
-            zRot = relativeRotation.eulerAngles.z;
-            joystick.transform.localRotation = Quaternion.Euler(-xRot, -zRot, yRot);
-
-
-            // Handle movement around the x-axis
-            if (xRot > 180){
-                xRot -= 360;
-            }
-
-            xRot = Mathf.Clamp(xRot, -maxSteeringRot, maxSteeringRot);
-            if(Mathf.Abs(xRot) > xRotDeadzone){
-                if(xRot > xRotDeadzone){
-                    xRot = (xRot - xRotDeadzone)/(maxSteeringRot - xRotDeadzone);
-                } else if(xRot < -xRotDeadzone){
-                    xRot = (xRot + xRotDeadzone)/(maxSteeringRot - xRotDeadzone);
-                }
-
-            } else {
-                xRot = 0;
-            }
-
-            // Handle movement around the y-axis
-            if(yRot > 180){
-                yRot -= 360;
-            }
-
-            yRot = Mathf.Clamp(yRot, -maxSteeringRot, maxSteeringRot);
-            if(Mathf.Abs(yRot) > yRotDeadzone){
-                if(yRot > yRotDeadzone){
-                    yRot = (yRot - yRotDeadzone)/(maxSteeringRot - yRotDeadzone);
-                } else if(yRot < -yRotDeadzone){
-                    yRot = (yRot + yRotDeadzone)/(maxSteeringRot - yRotDeadzone);
-                }
-
-            } else {
-                yRot = 0;
-            }
-
-            // Handle movement around the z-axis
-            if(zRot > 180){
-                zRot -= 360;
-            }
-
-            zRot = Mathf.Clamp(zRot, -maxSteeringRot, maxSteeringRot);
-            if(Mathf.Abs(zRot) > zRotDeadzone){
-                if(zRot > zRotDeadzone){
-                    zRot = (zRot - zRotDeadzone)/(maxSteeringRot - zRotDeadzone);
-                } else if(zRot < -zRotDeadzone){
-                    zRot = (zRot + zRotDeadzone)/(maxSteeringRot - zRotDeadzone);
-                }
-
-            }else {
-                zRot = 0;
-            }
-
-
-        } else
+        bool grabbing = false;
+        JoystickInteractable joystickInteractable = joystick.GetComponent<JoystickInteractable>();
+        if (joystickInteractable != null)
         {
-            joystick.transform.localRotation = Quaternion.identity;
+            grabbing = joystickInteractable.interacting;
+
+            if (grabbing)
+            {
+                joystickRotation = joystickInteractable.attitude;
+            } 
+
         }
 
-        rotationSpeed.x = Mathf.Lerp(rotationSpeed.x, -maxTurnSpeed * xRot * Time.deltaTime * maxTurnSpeedModifier, turnAcceleration * Time.deltaTime * maxTurnSpeedModifier);
-        rotationSpeed.y = Mathf.Lerp(rotationSpeed.y, -maxTurnSpeed * zRot * Time.deltaTime * maxTurnSpeedModifier, turnAcceleration * Time.deltaTime * maxTurnSpeedModifier);
-        rotationSpeed.z = Mathf.Lerp(rotationSpeed.z, maxTurnSpeed/2 * yRot * Time.deltaTime * maxTurnSpeedModifier, turnAcceleration * Time.deltaTime * maxTurnSpeedModifier);
+        rotationSpeed.x = Mathf.Lerp(rotationSpeed.x, -maxTurnSpeed * joystickRotation.x * Time.deltaTime * maxTurnSpeedModifier, turnAcceleration * Time.deltaTime * maxTurnSpeedModifier);
+        rotationSpeed.y = Mathf.Lerp(rotationSpeed.y, -maxTurnSpeed * joystickRotation.z * Time.deltaTime * maxTurnSpeedModifier, turnAcceleration * Time.deltaTime * maxTurnSpeedModifier);
+        rotationSpeed.z = Mathf.Lerp(rotationSpeed.z, maxTurnSpeed / 2 * joystickRotation.y * Time.deltaTime * maxTurnSpeedModifier, turnAcceleration * Time.deltaTime * maxTurnSpeedModifier);
 
         speed = Mathf.Lerp(speed, maxSpeed * inputSpeed * maxSpeedModifier, acceleration * Time.deltaTime * maxSpeedModifier);
-
+        
         transform.Rotate(rotationSpeed.x * maxTurnSpeedModifier, rotationSpeed.y * maxTurnSpeedModifier, rotationSpeed.z * maxTurnSpeedModifier, Space.Self);
         transform.position += transform.forward * speed * Time.deltaTime;
     }

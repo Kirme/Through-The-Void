@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using Valve.VR;
+using static UnityEngine.GraphicsBuffer;
 
 public class PlayerInteractController : MonoBehaviour
 {
@@ -26,7 +27,7 @@ public class PlayerInteractController : MonoBehaviour
         if(other.gameObject.GetComponent<InteractableScript>() != null)
         {
             interactable = other.gameObject;
-            other.gameObject.GetComponent<Light>().enabled = true;
+            interactable.GetComponent<InteractableScript>().Hover();
         }
     }
 
@@ -42,7 +43,7 @@ public class PlayerInteractController : MonoBehaviour
 
     private void CancelInteract(Collider other)
     {
-        other.gameObject.GetComponent<Light>().enabled = false;
+        other.gameObject.GetComponent<InteractableScript>().ExitHover();
         interactable = null;
     }
 
@@ -58,23 +59,33 @@ public class PlayerInteractController : MonoBehaviour
 
     public void OnGrabChanged(SteamVR_Action_Boolean fromAction, SteamVR_Input_Sources fromSource, bool pressed)
     {
+        GetComponent<SphereCollider>().enabled = !pressed;
         if (interactable != null)
         {
             if (pressed)
             {
-                GetComponent<SphereCollider>().enabled = false;
+                ChangeVisibility(false);
                 interactable.GetComponent<InteractableScript>().Interact(gameObject);
                 //transform.Find("Model").gameObject.GetComponent<Renderer>().enabled = false;
             }
             else
             {
-                GetComponent<SphereCollider>().enabled = true;
+                ChangeVisibility(true);
                 interactable.GetComponent<InteractableScript>().EndInteract();
                 //transform.Find("Model").gameObject.GetComponent<Renderer>().enabled = true;
                 CancelInteract(interactable.GetComponent<Collider>());
                 
             }
             grabbing = pressed;
+        }
+    }
+
+    private void ChangeVisibility(bool visible)
+    {
+        foreach (Component c in transform.Find("Model").GetComponentsInChildren(typeof(Renderer)))
+        {
+            Renderer r = (Renderer)c;
+            r.enabled = visible;
         }
     }
 
