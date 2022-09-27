@@ -4,12 +4,17 @@ using UnityEngine;
 
 public class SettingsHandler : MonoBehaviour
 {
-    [SerializeField] SpawnableManager spawnableManager;
+    [SerializeField] GameObject handler;
     [SerializeField] GameObject settings;
+
+    private SpawnableManager spawnableManager;
+    private Client client;
+
     private bool settingsEnabled = false;
 
     void Start() {
-        
+        spawnableManager = handler.GetComponent<SpawnableManager>();
+        client = handler.GetComponent<Client>();
     }
 
     public void EnableSettings() {
@@ -19,5 +24,9 @@ public class SettingsHandler : MonoBehaviour
 
     public void ResetShip() {
         spawnableManager.ResetShip();
+    }
+
+    public void Reconnect() {
+        client.Reconnect();
     }
 }
