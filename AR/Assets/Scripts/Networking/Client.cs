@@ -32,12 +32,15 @@ public class Client : MonoBehaviour {
 	}
 
 	public void Reconnect() {
-		clientReceiveThread.Abort();
-		socketConnection.Close();
-
+		Disconnect();
 		ConnectToHost();
+	}
 
-		// Reset somehow
+	public void Disconnect() {
+		clientReceiveThread.Abort();
+
+		if (socketConnection != null)
+			socketConnection.Close();
 	}
 
 	private void ConnectToHost () {
@@ -87,9 +90,7 @@ public class Client : MonoBehaviour {
 
 	// OnApplicationQuit
 	// When we are done playing we abort the thread and close down the network socket:
-	void OnApplicationQuit()
-    {
-		clientReceiveThread.Abort();
-		socketConnection.Close();
+	void OnApplicationQuit() {
+		Disconnect();
     } 
 }

@@ -3,14 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
+using UnityEngine.UI;
 
 public class InteractionHandler : MonoBehaviour {
     [SerializeField] Camera _mainCamera;
     [SerializeField] GameObject _ship;
-    [SerializeField] AudioManager _audioManager;
+    [SerializeField] Slider _timeSlider;
+    private AudioManager _audioManager;
 
     [SerializeField] Color selectedColor = Color.cyan;
     [SerializeField] Color brokenColor = Color.red;
+
     private Color defaultColor = Color.white;
     private Color partColor;
 
@@ -25,18 +28,24 @@ public class InteractionHandler : MonoBehaviour {
 
     // Time tracking
     private float timeHeld = 0f;
-    private float timeToHold = 1.0f;
+    private float timeToHold = 3.0f;
 
     private void Start() {
         partColor = defaultColor;
         faultHandler = GetComponent<FaultHandler>();
+        _audioManager = FindObjectOfType<AudioManager>();
     }
 
-    void Update() {
+    private void Update() {
         RegisterTouch();
+        UpdateSlider();
 
         if (updateFaultColors)
             UpdateFaultColors();
+    }
+
+    private void OnDisable() {
+        Reset();
     }
 
     private void UpdateFaultColors() {
@@ -48,7 +57,10 @@ public class InteractionHandler : MonoBehaviour {
     }
 
     private void RegisterTouch() {
-        if (Input.touchCount <= 0) return; // Return if not touching screen
+        if (Input.touchCount <= 0) {
+            Reset();
+            return; // Return if not touching screen
+        }
 
         Touch touch = Input.GetTouch(0); // Only care about first finger
         partColor = HandlePhase(touch);
@@ -56,31 +68,49 @@ public class InteractionHandler : MonoBehaviour {
         Ray ray = _mainCamera.ScreenPointToRay(touch.position);
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit)) { // Check if ray hits object
-            string partName = GetPart(hit).name;
-            switch (GetPartStatus(partName)) {
-                case 0: // Part is broken
-                    break;
-                case 1: // Part can fix other broken part
-                    if (previousPart == GetPart(hit)) {
-                        timeHeld += Time.deltaTime;
+            Transform part = GetPart(hit);
+            int partStatus = GetPartStatus(part.name);
 
-                        if (timeHeld > timeToHold) {
-                            FixPart(partName);
-                        }
-                    } else {
-                        timeHeld = 0f;
+            switch (partStatus) {
+                case 0: // Part is broken
+                    timeHeld = 0f;
+                    break;
+                default:
+                    if (FixedPart(part)) {
+                        if (partStatus == 1) // Part can fix other part
+                            FixPart(part.name);
                     }
 
                     UpdateColorOnTouch(hit, touch);
                     break;
-                default:
-                    UpdateColorOnTouch(hit, touch);
-                    break;
             }
         } else {
+            Reset();
+        }
+    }
+
+    private void Reset() {
+        if (previousPart != null) {
             SetPartColor(previousPart, defaultColor);
             previousPart = null;
         }
+        
+        timeHeld = 0f;
+    }
+
+    private bool FixedPart(Transform part) {
+        if (previousPart == part) {
+            timeHeld += Time.deltaTime;
+
+            if (timeHeld > timeToHold) {
+                timeHeld = 0f;
+                return true;
+            }
+        } else {
+            timeHeld = 0f;
+        }
+
+        return false;
     }
 
     private void FixPart(string partName) {
@@ -171,5 +201,17 @@ public class InteractionHandler : MonoBehaviour {
         fixesToFaults.Remove(fix);
 
         _audioManager.Play("Heal");
+    }
+
+    private void UpdateSlider() {
+        float margin = 0.2f;
+
+        if (timeHeld < margin) {
+            _timeSlider.gameObject.SetActive(false);
+        } else if (!_timeSlider.IsActive()) {
+            _timeSlider.gameObject.SetActive(true);
+        } else {
+            _timeSlider.value = (timeHeld - margin) / (timeToHold - margin);
+        }
     }
 }

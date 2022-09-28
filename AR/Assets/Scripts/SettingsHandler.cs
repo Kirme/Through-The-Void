@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class SettingsHandler : MonoBehaviour
 {
@@ -9,12 +10,14 @@ public class SettingsHandler : MonoBehaviour
 
     private SpawnableManager spawnableManager;
     private Client client;
+    private Scene currentScene;
 
     private bool settingsEnabled = false;
 
     void Start() {
         spawnableManager = handler.GetComponent<SpawnableManager>();
         client = handler.GetComponent<Client>();
+        currentScene = SceneManager.GetActiveScene();
     }
 
     public void EnableSettings() {
@@ -28,5 +31,11 @@ public class SettingsHandler : MonoBehaviour
 
     public void Reconnect() {
         client.Reconnect();
+    }
+
+    public void QuitGame() {
+        client.Disconnect();
+        int index = currentScene.buildIndex - 1;
+        SceneManager.LoadScene(index);
     }
 }
