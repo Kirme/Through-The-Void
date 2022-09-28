@@ -42,6 +42,7 @@ ExportedObj/
 *.mdb
 *.opendb
 *.VC.db
+*.dwlt
 
 **/.vsconfig
 

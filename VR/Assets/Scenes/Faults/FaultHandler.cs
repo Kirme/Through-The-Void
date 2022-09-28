@@ -123,7 +123,7 @@ public class FaultHandler : MonoBehaviour {
 
         faults.Add(faultID, fault);
 
-        player.GetComponent<PlayerController>().Break(fault);
+        player.GetComponent<PlayerController>().Break(fault, faults.Count);
         client.SendData(faultID);
         frontTextComponent.text = CreateFrontText();
         Debug.Log("Broken:");

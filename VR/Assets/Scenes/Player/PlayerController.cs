@@ -14,7 +14,7 @@ public class PlayerController : MonoBehaviour
     public SteamVR_Action_Single squeezeAction;
     public SteamVR_Action_Boolean grabAction;
     public SteamVR_Action_Pose poseAction;
-    public GameObject rightController, leftController, joystick, warningLight;
+    public GameObject rightController, leftController, joystick, warningLight, faultDisplay;
 
     public float maxSpeed = 25f, acceleration = 2.5f, maxTurnSpeed = 12.5f, turnAcceleration = 2.5f;
 
@@ -29,14 +29,8 @@ public class PlayerController : MonoBehaviour
     
     private float speed = 0f, inputSpeed = 0f;
     private Vector3 rotationSpeed = new Vector3(0,0,0);
-    
-    private bool grabbingRight = false;
 
-
-
-    private Quaternion defaultControllerRot = Quaternion.identity;
-
-    public void Break(Fault fault)
+    public void Break(Fault fault, int numFaults)
     {
         maxSpeedModifier *= fault.maxSpeedModifier;
         acceleration *= fault.accelerationModifier;
@@ -45,8 +39,8 @@ public class PlayerController : MonoBehaviour
 
 
         warningLight.SetActive(true);
-
-        // 
+        warningLight.GetComponent<WarningLight>().speed = 2.5f + 0.5f * numFaults;
+        faultDisplay.GetComponent<FaultDisplay>().SetNumFaults(numFaults);
     }
 
     public void Fix(Fault fault, int remainingFaults)
@@ -59,16 +53,17 @@ public class PlayerController : MonoBehaviour
         if(remainingFaults  == 0)
         {
             warningLight.SetActive(false);
+        } else
+        {
+            warningLight.GetComponent<WarningLight>().speed = 2.5f + 0.5f * remainingFaults;
         }
-
-        
+        faultDisplay.GetComponent<FaultDisplay>().SetNumFaults(remainingFaults);
     }
 
     // Start is called before the first frame update
     void Start()
     {
         warningLight.SetActive(false);
-        grabAction[rightHand].onChange += OnGrabChanged;
         poseAction[rightHand].onTrackingChanged += OnTrackPadChanged;
 
         joystick.GetComponent<JoystickInteractable>().SetPlayer(this);
@@ -127,17 +122,6 @@ public class PlayerController : MonoBehaviour
             speed /= 10;
         }
         inputSpeed = speed;
-    }
-
-    public void OnGrabChanged(SteamVR_Action_Boolean fromAction, SteamVR_Input_Sources fromSource, bool newState)
-    {
-        if (newState)
-        {
-            //Reset Default Rotation of controllers (in order to allow individual default rotations of controllers for players.)
-            defaultControllerRot = GetRightControllerRotation();
-        }
-
-        grabbingRight = newState;
     }
 
     public void OnTrackPadChanged(SteamVR_Action_Pose changedAction, SteamVR_Input_Sources changedSource, ETrackingResult trackingChanged)

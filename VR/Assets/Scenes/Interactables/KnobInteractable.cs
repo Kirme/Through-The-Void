@@ -8,11 +8,12 @@ public class KnobInteractable : InteractableScript
     //public bool turnInfinitely = false; //Set to true if the knob shouldn't stop anytime and just turns forever
     public float initialTurnPosition = 0.0f;//, turnRange = 1.0f; // initial position and max range of turning the knob (if "turnInfinitely" not set
 
-    private float val = 0.0f, initialVal = 0.0f;
+    protected float val = 0.0f, initialVal = 0.0f;
 
-    public void Start()
+    public override void Start()
     {
         val = initialTurnPosition;
+        base.Start();
     }
 
     public override bool Interact(GameObject controller)
@@ -32,7 +33,6 @@ public class KnobInteractable : InteractableScript
         //{
             val = val % 1;
         //}
-        Debug.Log(val);
         transform.localRotation = Quaternion.Euler(0f, (val - initialVal) * 360, 0f) * initialRotation;
         onValueChange.Invoke(val);
     }
