@@ -114,7 +114,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ae7f6b2b16469c4a84bca00869b5d8b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  BufferZoneDiameter: 1
+  BufferZoneDiameter: 0.6
   RigidbodyToScale: {fileID: 0}
   ShowBufferGizmo: 1
   BufferZoneColor: {r: 1, g: 0, b: 1, a: 1}

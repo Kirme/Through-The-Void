@@ -44,6 +44,20 @@ public class AstroData : MonoBehaviour
 
     private List<GameObject> deleteList = new List<GameObject>();
 
+    //Egen
+    private Transform playerTransform;
+    private int distanceCap = 500;
+    //Leniency was required to some extent to prevent flickering, but might not longer be (or perhaps only needed to a very small degree)
+    private float distanceLeniency = 1f;
+    private float speed = 2f;
+    //As the update runs even when the application is not running and persists between sessions, creating new variables on update can presumably create a memory leak
+    //that will not fix itself until the entire asteroid field is recreated.
+    private float xRot;
+    private float yRot;
+    private float zRot;
+    private float distanceFactor;
+    private bool startUp = true;
+
     public void Update()
     {
         if(currentShowMesh != ShowMesh)
@@ -52,10 +66,62 @@ public class AstroData : MonoBehaviour
         }
         if(currentShowColliders != ShowColliders)
         {
-            ToggleColliders(ShowColliders);
+            ToggleColliders(ShowColliders); 
         }
 
+        //Egen
+        
+        if(playerTransform == null){
+            playerTransform = GameObject.Find("Player").transform;
+        }
+                            
+        //Disable movement if application is not playing
+        if(!Application.isPlaying){
+            startUp = true;
+        }
+        else{
+            //Done once on application start
+            if(startUp){
+                xRot = Random.Range(0, 360);
+                yRot = Random.Range(0, 360);
+                zRot = Random.Range(0, 360);
+                transform.Rotate(xRot, yRot, zRot, Space.Self);
+                startUp = false;
+            }
+            //Move the asteroid - TODO: How does this interact with movement from bumping into them?
+            transform.position += transform.forward * speed * Time.deltaTime;
+            //Check distance, if it's 5% over cap then move
+            distanceFactor = GetDistance(this.transform.position, playerTransform.position) / distanceCap;
+            if (distanceFactor >= distanceLeniency)
+            {
+                //Vector3 newpos = playerTransform.position - this.transform.position;
+                Vector3 newpos = this.transform.position +  ((playerTransform.position-this.transform.position) * 2 * (1/(distanceFactor)));
+                //Should always occur and move it a distance of 2x distance cap towards the player UNLESS the created asteroid field is enormous.
+                if(GetDistance(newpos, playerTransform.position) / distanceCap <= 1){
+                    this.transform.position = newpos;
+                }
+                //In which case, it will simply destroy it.
+                else{
+                    Destroy(gameObject);
+                }
+                //TODO: Due to fixes in the code, this way of doing it is presumably no longer neccessary (as it was originally done due to a bug), but I cannot test right now.
+                //This if/else clause and the content of the else clause can almost certainly just be removed (and then have the content of the if clause always occur).
+            }
+        }
     }
+        
+
+    
+
+    //Egen
+    private float GetDistance(Vector3 a, Vector3 b){
+        return Mathf.Sqrt(
+            Mathf.Pow((a.x - b.x), 2) + 
+            Mathf.Pow((a.y - b.y), 2) + 
+            Mathf.Pow((a.z - b.z), 2)
+        );
+    }
+
 
     public void CheckPlacement()
     {
