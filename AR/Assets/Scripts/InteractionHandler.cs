@@ -3,17 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
+using TMPro;
 
 public class InteractionHandler : MonoBehaviour {
     [SerializeField] Camera _mainCamera;
     [SerializeField] GameObject _ship;
     [SerializeField] AudioManager _audioManager;
-
     [SerializeField] Color selectedColor = Color.cyan;
     [SerializeField] Color brokenColor = Color.red;
     private Color defaultColor = Color.white;
     private Color partColor;
 
+    public textHandler _textHandler;
     private FaultHandler faultHandler;
 
     private Transform previousPart;
@@ -26,6 +27,7 @@ public class InteractionHandler : MonoBehaviour {
     // Time tracking
     private float timeHeld = 0f;
     private float timeToHold = 1.0f;
+
 
     private void Start() {
         partColor = defaultColor;
@@ -100,7 +102,16 @@ public class InteractionHandler : MonoBehaviour {
 
     private void UpdateColorOnTouch(RaycastHit hit, Touch touch) {
         // Change color of part
-        Transform part = GetPart(hit); 
+        Transform part = GetPart(hit);
+        if(previousPart != null && previousPart != part)
+        {
+            previousPart.transform.Find("Text").gameObject.SetActive(false);
+        }
+        if(previousPart != part)
+        {
+            part.transform.Find("Text").gameObject.SetActive(true);
+
+        }
         SetPartColor(part, partColor);
 
         if (HasMovedToNewPart(touch, part)) { // We moved between two different parts

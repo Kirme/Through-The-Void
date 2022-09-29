@@ -16,6 +16,7 @@ public class SpawnableManager : MonoBehaviour
 
     void Start() {
         spawnedObject = null;
+        spawnablePrefab.SetActive(false);
     }
 
     void Update() {

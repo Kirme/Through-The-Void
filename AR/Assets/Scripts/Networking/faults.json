@@ -1,20 +1,19 @@
 {
-  "faults":
-  [
+  "faults": [
     {
       "id": "0",
       "faultLocation": "Engine",
-      "fixLocation" : "Core"
+      "fixLocation": "Core"
     },
     {
       "id": "1",
       "faultLocation": "Core",
-      "fixLocation" : "WingL"
+      "fixLocation": "WingL"
     },
     {
       "id": "2",
       "faultLocation": "Thruster",
-      "fixLocation" : "WingR"
+      "fixLocation": "WingR"
     }
   ]
 }

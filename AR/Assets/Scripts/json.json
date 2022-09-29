@@ -1,0 +1,16 @@
+{
+  "json": [
+    {
+      "id": "0",
+      "faultLocation": "text",
+      "faultName": "Engine disfunction",
+      "fixLocation": "press button 1"
+    },
+    {
+      "id": "1",
+      "faultLocation": "text",
+      "faultName": "low power",
+      "fixLocation": "press button 2"
+    }
+  ]
+}

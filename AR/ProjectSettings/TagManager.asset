@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Ship
   - Spawnable
+  - Wing
   layers:
   - Default
   - TransparentFX
