@@ -31,6 +31,18 @@ public class Client : MonoBehaviour {
 		faultHandler = GetComponent<FaultHandler>();
 	}
 
+	public void Reconnect() {
+		Disconnect();
+		ConnectToHost();
+	}
+
+	public void Disconnect() {
+		clientReceiveThread.Abort();
+
+		if (socketConnection != null)
+			socketConnection.Close();
+	}
+
 	private void ConnectToHost () {
 		// We start a backround thread to listen for incoming requests from the host:
 		clientReceiveThread = new Thread (new ThreadStart(ListenForData)); 			
@@ -78,9 +90,7 @@ public class Client : MonoBehaviour {
 
 	// OnApplicationQuit
 	// When we are done playing we abort the thread and close down the network socket:
-	void OnApplicationQuit()
-    {
-		clientReceiveThread.Abort();
-		socketConnection.Close();
+	void OnApplicationQuit() {
+		Disconnect();
     } 
 }
