@@ -10,6 +10,7 @@ public class GameModeHandler : MonoBehaviour
 
     public UnityEvent OnTutorialMode;
     public UnityEvent OnRegularMode;
+    public GameObject player;
 
     public void Start()
     {
@@ -40,6 +41,14 @@ public class GameModeHandler : MonoBehaviour
             EnterRegularMode();
         }
 
+    }
+
+    public void Break(Fault fault, int numFautls)
+    {
+        if(numFautls >= 5)
+        {
+            ChangeGameMode(true);
+        }
     }
 
     public void EnterTutorialMode()

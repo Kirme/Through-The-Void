@@ -16,6 +16,11 @@ public class InteractableScript : MonoBehaviour
 
     protected Quaternion initialRotation = Quaternion.identity, initialControllerRotation;
 
+    public virtual void Reset()
+    {
+
+    }
+
     public virtual void Start()
     {
         GetComponent<Light>().range = idleLightRange;

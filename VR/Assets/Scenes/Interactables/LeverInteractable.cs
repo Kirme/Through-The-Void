@@ -10,6 +10,13 @@ public class LeverInteractable : InteractableScript
     private Vector3 initialControllerPosition = Vector3.zero;
     private float initialVal = 0.0f, val = 0.0f;
 
+    public override void Reset()
+    {
+        val = 0.0f;
+        transform.localRotation = Quaternion.identity;
+        onValueChange.Invoke(val);
+        base.Reset();
+    }
 
     public override bool Interact(GameObject controller)
     {

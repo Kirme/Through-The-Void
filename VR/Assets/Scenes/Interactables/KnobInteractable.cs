@@ -6,12 +6,20 @@ public class KnobInteractable : InteractableScript
 {
     //Currently only turning with no stop works, turniung with a stop is complicated :(
     //public bool turnInfinitely = false; //Set to true if the knob shouldn't stop anytime and just turns forever
-    public float initialTurnPosition = 0.0f;//, turnRange = 1.0f; // initial position and max range of turning the knob (if "turnInfinitely" not set
+    public float initialTurnPosition = 0.0f;//, turnRange = 1.0f; // initial position and max range of turning the knob (if "turnInfinitely" not set)
 
     protected float val = 0.0f, initialVal = 0.0f;
 
+    public override void Reset()
+    {
+        val = initialTurnPosition;
+        transform.localRotation = Quaternion.identity;
+        base.Reset();
+    }
+
     public override void Start()
     {
+        initialVal = 0.0f;
         val = initialTurnPosition;
         base.Start();
     }
@@ -28,7 +36,7 @@ public class KnobInteractable : InteractableScript
     {
         Quaternion relativeRotation = Quaternion.Inverse(controller.transform.localRotation) * initialControllerRotation;
 
-        val = relativeRotation.eulerAngles.z / 360f + initialVal;
+        val = ((relativeRotation.eulerAngles.z * 2f)%360f) / 360f + initialVal;
         //if (turnInfinitely)
         //{
             val = val % 1;

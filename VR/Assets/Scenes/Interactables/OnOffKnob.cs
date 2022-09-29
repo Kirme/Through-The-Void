@@ -7,14 +7,20 @@ public class OnOffKnob : KnobInteractable
 {
     public bool snap = true;
     public UnityEvent<bool> valueSwitched;
-    public bool on = false;
+    public bool startOn = false;
+    private bool on = false;
+
+    public override void Reset()
+    {
+        on = startOn;
+        base.Reset();
+        transform.localRotation = Quaternion.identity;
+    }
 
     public override void Start()
     {
-        if (on)
-        {
-            initialTurnPosition = 0.5f;
-        }
+        initialVal = 0.0f;
+        on = startOn;
         base.Start();
     }
     public override void EndInteract()
@@ -22,13 +28,13 @@ public class OnOffKnob : KnobInteractable
         if (val < 0.25  || val > 0.75)
         {
             val = 0.0f;
-            on = false;
-            valueSwitched.Invoke(false);
+            on = startOn;
+            valueSwitched.Invoke(startOn);
         } else
         {
             val = 0.5f;
-            on = true;
-            valueSwitched.Invoke(true);
+            on = !startOn;
+            valueSwitched.Invoke(!startOn);
         }
         if (snap)
         {

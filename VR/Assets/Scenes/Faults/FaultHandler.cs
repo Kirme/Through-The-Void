@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
 public class FaultHandler : MonoBehaviour {
@@ -10,12 +11,11 @@ public class FaultHandler : MonoBehaviour {
     private TextMesh frontTextComponent;
     public GameObject sideText;
     private TextMesh sideTextComponent;
-    
-
 
     private Dictionary<string, Fault> faults = new Dictionary<string, Fault>();
     public GameObject player;
     private List<string> queuedFixes = new List<string>();
+    public UnityEvent<Fault, int> onBreak;
 
     void Awake() {
         client = GetComponent<SocketServer>();
@@ -123,6 +123,7 @@ public class FaultHandler : MonoBehaviour {
 
         faults.Add(faultID, fault);
 
+        onBreak.Invoke(fault, faults.Count);
         player.GetComponent<PlayerController>().Break(fault, faults.Count);
         client.SendData(faultID);
         frontTextComponent.text = CreateFrontText();

@@ -13,6 +13,14 @@ public class InteractHandler : MonoBehaviour
         }
     }
 
+    public void ResetAll()
+    {
+        foreach (GameObject gameObject in GameObject.FindGameObjectsWithTag("Interactable"))
+        {
+            gameObject.GetComponent<InteractableScript>().Reset();
+        }
+    }
+
     private void InteractEnded(InteractableScript interactable)
     {
         Debug.Log("Ended: " + interactable.interactableName);
