@@ -27,10 +27,12 @@ public class SettingsHandler : MonoBehaviour
 
     public void ResetShip() {
         spawnableManager.ResetShip();
+        EnableSettings();
     }
 
     public void Reconnect() {
         client.Reconnect();
+        EnableSettings();
     }
 
     public void QuitGame() {

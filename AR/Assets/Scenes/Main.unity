@@ -1318,7 +1318,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &874011161
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2029,6 +2029,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _RaycastManager: {fileID: 388525035}
+  _ARPlaneManager: {fileID: 388525034}
   spawnablePrefab: {fileID: 2094348212}
   arCam: {fileID: 22732920}
 --- !u!1 &1966890029

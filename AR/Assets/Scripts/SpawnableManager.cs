@@ -6,10 +6,12 @@ using UnityEngine.XR.ARFoundation;
 public class SpawnableManager : MonoBehaviour
 {
     [SerializeField] ARRaycastManager _RaycastManager;
+    [SerializeField] ARPlaneManager _ARPlaneManager;
     List<ARRaycastHit> _Hits = new List<ARRaycastHit>();
     [SerializeField] GameObject spawnablePrefab;
 
     [SerializeField] Camera arCam;
+
 
     private bool notPlaced = true;
 
@@ -17,6 +19,13 @@ public class SpawnableManager : MonoBehaviour
         if (notPlaced && Input.touchCount > 0) {
             PlaceShip();
         }
+
+        TogglePlane();
+    }
+
+    private void TogglePlane() {
+        if (_ARPlaneManager.enabled != notPlaced)
+            _ARPlaneManager.enabled = notPlaced;
     }
 
     private void PlaceShip() {
