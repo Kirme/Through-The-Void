@@ -73,6 +73,7 @@ public class InteractionHandler : MonoBehaviour {
 
             switch (partStatus) {
                 case 0: // Part is broken
+                    UpdateInformation(GetPart(hit));
                     timeHeld = 0f;
                     break;
                 default:
@@ -81,6 +82,7 @@ public class InteractionHandler : MonoBehaviour {
                             FixPart(part.name);
                     }
 
+                    UpdateInformation(GetPart(hit));
                     UpdateColorOnTouch(hit, touch);
                     break;
             }
@@ -90,11 +92,7 @@ public class InteractionHandler : MonoBehaviour {
     }
 
     private void Reset() {
-        if (previousPart != null) {
-            SetPartColor(previousPart, defaultColor);
-            previousPart = null;
-        }
-        
+        SetPartColor(previousPart, defaultColor);
         timeHeld = 0f;
     }
 
@@ -140,6 +138,15 @@ public class InteractionHandler : MonoBehaviour {
         previousPart = part; // Update previous part
     }
 
+    private void UpdateInformation(Transform part) {
+        if (previousPart != null && previousPart != part) {
+            previousPart.Find("Text").gameObject.SetActive(false);
+        }
+        if (previousPart != part || !part.Find("Text").gameObject.activeInHierarchy) {
+            part.Find("Text").gameObject.SetActive(true);
+        }
+    }
+
     /*
      Returns:
         0 - if part is broken
@@ -171,6 +178,9 @@ public class InteractionHandler : MonoBehaviour {
 
     // Set the color of a specific ship part
     private void SetPartColor(Transform part, Color color) {
+        if (part == null)
+            return;
+
         part.GetComponent<Renderer>().material.color = color;
     }
 

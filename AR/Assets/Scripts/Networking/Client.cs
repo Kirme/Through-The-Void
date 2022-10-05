@@ -52,7 +52,7 @@ public class Client : MonoBehaviour {
 
 	private void ListenForData() { 				
 			// Set to IPv4 address for LAN:
-			socketConnection = new TcpClient("193.10.39.215", port);  			
+			socketConnection = new TcpClient("192.168.2.158", port);  			
 			Byte[] bytes = new Byte[256];             
 			
 			while (true) { 							
