@@ -2280,7 +2280,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _mainCamera: {fileID: 22732920}
-  _ship: {fileID: 0}
+  _ship: {fileID: 2073700}
   _timeSlider: {fileID: 1743484897}
   selectedColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   brokenColor: {r: 1, g: 0, b: 0, a: 1}
