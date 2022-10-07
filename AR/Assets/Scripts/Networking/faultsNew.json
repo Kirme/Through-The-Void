@@ -1,0 +1,93 @@
+{
+  "faults":
+  [
+    {
+      "id": "0",
+      "severity": 0,
+      "faultLocation": "Engine",
+      "numVariations": 2,
+      "fixLocation": "Engine",
+      "fixLocations": [ "Core_Panel6", "Core_Panel3" ],
+      "fixActions": [ "pressA", "pressB" ],
+
+      "arDescription": "Go to panel A5",
+      "otherARDescriptions": {
+        "Core_PanelA5": [ "If oxygen balbal go to panel3 otherwise go to panel R6", "If oxygen balbal go to panel6 otherwise go to panel 3" ],
+        "Core_Panel3": [ "If pressure > 50% pressA otherwise blabla", "If pressure < 50% pressA otherwise blabla" ]
+      },
+      "metrics": {
+        "pressure": [
+          [ 0.0, 0.4 ],
+          [ 0.6, 1.0 ]
+        ],
+        "oxygen": [
+          [ 0.0, 0.4 ],
+          [ 0.6, 1.0 ]
+        ]
+      },
+
+      "effects": [
+        [ "EngineBurning", "EngineSmoking" ],
+        [ "machineSounds", "" ],
+        [ "lightsOut", "LightsSuperBright" ],
+        [ "showWarningTriangle", "" ]
+      ],
+
+      "displayName": "Engine Malfunction",
+      "negatives": {
+        "maxSpeedModifier": 0.3,
+        "accelerationModifier": 1.0,
+        "maxTurnSpeedModifier": 1.0,
+        "turnAccelerationModifier": 1.0,
+        "invertedYControls": 0.0,
+        "hazyGlass": 0.0,
+        "fullSpeed": 1.0,
+        "alwaysTurning": 0.0
+      }
+    },
+    {
+      "id": "1",
+      "severity": 3,
+      "faultLocation": "Core",
+      "numVariations": 2,
+      "fixLocation": "Engine",
+      "fixLocations": [ "Engine_Panel6", "Engine_Panel3" ],
+      "fixActions": [ "pressA", "pressB" ],
+
+      "arDescription": "Go to panel C3",
+      "otherARDescriptions": {
+        "Core_PanelA5": [ "If pressure < 50% go to panel3 otherwise go to panel 6", "If oxygen < 50 % go to panel 6 otherwise go to panel 3" ],
+        "Core_Panel3": [ "If oxygen > 50% press A otherwise press B", "If oxygen < 50% press A otherwise press B" ]
+      },
+      "metrics": {
+        "pressure": [
+          [ 0.6, 1.0 ],
+          [ 0.0, 0.4 ]
+        ],
+        "oxygen": [
+          [ 0.6, 1.0 ],
+          [ 0.0, 0.4 ]
+        ]
+      },
+
+      "effects": [
+        [ "", "EngineSmoking" ],
+        [ "machineSounds", "alarmSound" ],
+        [ "blinkingLight", "lightsSuperBright" ],
+        [ "showWarningTriangle", "" ]
+      ],
+
+      "displayName": "Heating malfunction",
+      "negatives": {
+        "maxSpeedModifier": 1.0,
+        "accelerationModifier": 1.0,
+        "maxTurnSpeedModifier": 1.0,
+        "turnAccelerationModifier": 1.0,
+        "invertedYControls": 1.0,
+        "hazyGlass": 1.0,
+        "fullSpeed": 0.0,
+        "alwaysTurning": 0.0
+      }
+    }
+  ]
+}

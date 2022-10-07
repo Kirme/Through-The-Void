@@ -21,16 +21,40 @@ public class FaultHandler : MonoBehaviour {
     }
 
     // Function called by Client when receiving information from other player
-    public void ReceiveMessage(string id) {
-        Debug.Log("Got message" + id);
+    public void ReceiveMessage(string id, string variation) {
+        Debug.Log("Got message " + id);
         Fault fault = jsonHandler.GetFault(id);
 
         if (fault != null) {
-            interactionHandler.AddFault(fault);
-            
+            ParseFault(fault, variation);
+
             if (!faultDictionary.ContainsKey(fault.id))
                 faultDictionary.Add(fault.id, fault);
         }
+    }
+
+    private void ParseFault(Fault fault, string variation) {
+        GameObject ship = GameObject.FindGameObjectWithTag("Spawnable");
+
+        interactionHandler.SetBroken(fault.faultLocation);
+        PartReparation[] parts = ship.GetComponentsInChildren<PartReparation>();
+
+        int var = int.Parse(variation);
+        string[] fix = fault.fixLocations[var].Split('_');
+        string fixPart = fix[0];
+        string fixPanel = fix[1];
+
+        foreach (PartReparation part in parts) {
+            string partName = part.GetPartName();
+            string panelName = part.GetName();
+
+            if (string.Compare(partName, fixPart) == 0 && string.Compare(panelName, fixPanel) == 0) {
+                part.SetCanRepair(true);
+                break;
+            }
+        }
+
+        interactionHandler.AddFault(fault, var);
     }
 
     public void SendMessage(string msg) {

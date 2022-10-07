@@ -29,6 +29,8 @@ public class Client : MonoBehaviour {
 	void Start () {
 		ConnectToHost();
 		faultHandler = GetComponent<FaultHandler>();
+
+		faultHandler.ReceiveMessage("0", "0");
 	}
 
 	public void Reconnect() {
@@ -67,8 +69,11 @@ public class Client : MonoBehaviour {
 
 						byte[] incommingData = new byte[length]; 						
 						Array.Copy(bytes, 0, incommingData, 0, length); 						 						
-						string serverMessage = Encoding.ASCII.GetString(incommingData); 											
-						faultHandler.ReceiveMessage(serverMessage);
+						string serverMessage = Encoding.ASCII.GetString(incommingData);
+
+						// Message: "id variation"
+						string[] vals = serverMessage.Split(' ');
+						faultHandler.ReceiveMessage(vals[0], vals[1]);
 					} 				
 				} 			
 			}              

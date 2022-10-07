@@ -8,8 +8,11 @@ using UnityEngine.UI;
 public class InteractionHandler : MonoBehaviour {
     [SerializeField] Camera _mainCamera;
     [SerializeField] GameObject _ship;
-    [SerializeField] Slider _timeSlider;
     private AudioManager _audioManager;
+    [SerializeField] Slider _timeSlider;
+
+    private float timeHeld = 0f;
+    private float timeToHold = 3.0f;
 
     [SerializeField] Color selectedColor = Color.cyan;
     [SerializeField] Color brokenColor = Color.red;
@@ -22,13 +25,7 @@ public class InteractionHandler : MonoBehaviour {
     private Transform previousPart;
 
     private Dictionary<string, Fault> fixesToFaults = new Dictionary<string, Fault>();
-    private Dictionary<string, Fault> faultsToFix = new Dictionary<string, Fault>();
-
-    private bool updateFaultColors = false;
-
-    // Time tracking
-    private float timeHeld = 0f;
-    private float timeToHold = 3.0f;
+    private List<string> faultLocations = new List<string>();
 
     private void Start() {
         partColor = defaultColor;
@@ -39,21 +36,10 @@ public class InteractionHandler : MonoBehaviour {
     private void Update() {
         RegisterTouch();
         UpdateSlider();
-
-        if (updateFaultColors)
-            UpdateFaultColors();
     }
 
     private void OnDisable() {
         Reset();
-    }
-
-    private void UpdateFaultColors() {
-        foreach (string fault in faultsToFix.Keys) {
-            SetPartColor(fault, brokenColor);
-        }
-
-        updateFaultColors = false;
     }
 
     private void RegisterTouch() {
@@ -69,46 +55,43 @@ public class InteractionHandler : MonoBehaviour {
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit)) { // Check if ray hits object
             Transform part = GetPart(hit);
+
+            // Component in parts used to fix other parts
+            PartReparation partRepair = part.GetComponent<PartReparation>();
+
+            // Is part broken, used to fix something, etc.?
             int partStatus = GetPartStatus(part.name);
+            UpdateInformation(part); // Update UI
 
-            switch (partStatus) {
-                case 0: // Part is broken
-                    UpdateInformation(GetPart(hit));
-                    timeHeld = 0f;
-                    break;
-                default:
-                    if (FixedPart(part)) {
-                        if (partStatus == 1) // Part can fix other part
-                            FixPart(part.name);
-                    }
-
-                    UpdateInformation(GetPart(hit));
-                    UpdateColorOnTouch(hit, touch);
-                    break;
+            if (partStatus != 0) { // Not broken
+                UpdateColorOnTouch(hit, touch);
             }
+            
+            if (partRepair != null) { // Part has ability to repair
+                if (TimeExceededMax(part, partRepair)) { // Have fixed part
+                    FixPart(part.name);
+                }
+            }
+
+            previousPart = part; // Update previous part
+            
         } else {
             Reset();
         }
     }
 
     private void Reset() {
-        SetPartColor(previousPart, defaultColor);
-        timeHeld = 0f;
+        if (GetPartStatus(previousPart.name) != 0)
+            SetPartColor(previousPart, defaultColor);
+        ResetTime();
     }
 
-    private bool FixedPart(Transform part) {
+    private bool TimeExceededMax(Transform part, PartReparation partRepair) {
         if (previousPart == part) {
-            timeHeld += Time.deltaTime;
-
-            if (timeHeld > timeToHold) {
-                timeHeld = 0f;
-                return true;
-            }
-        } else {
-            timeHeld = 0f;
+            return AddTime();
         }
-
-        return false;
+        
+        return ResetTime();
     }
 
     private void FixPart(string partName) {
@@ -123,27 +106,31 @@ public class InteractionHandler : MonoBehaviour {
 
     // Based on current ship model, change based on where collider is
     private Transform GetPart(RaycastHit hit) {
-        return hit.collider.transform.parent;
+        return hit.collider.transform;
     }
 
     private void UpdateColorOnTouch(RaycastHit hit, Touch touch) {
         // Change color of part
-        Transform part = GetPart(hit); 
+        Transform part = GetPart(hit);
         SetPartColor(part, partColor);
 
         if (HasMovedToNewPart(touch, part)) { // We moved between two different parts
             SetPartColor(previousPart, defaultColor); // Reset color of previously selected part
         }
-
-        previousPart = part; // Update previous part
     }
 
     private void UpdateInformation(Transform part) {
         if (previousPart != null && previousPart != part) {
-            previousPart.Find("Text").gameObject.SetActive(false);
+            Transform prevTxt = previousPart.Find("Text");
+            if (prevTxt != null)
+                prevTxt.gameObject.SetActive(false);
         }
-        if (previousPart != part || !part.Find("Text").gameObject.activeInHierarchy) {
-            part.Find("Text").gameObject.SetActive(true);
+        Transform txt = part.Find("Text");
+        if (txt == null)
+            return;
+
+        if (previousPart != part || !txt.gameObject.activeInHierarchy) {
+            txt.gameObject.SetActive(true);
         }
     }
 
@@ -154,7 +141,7 @@ public class InteractionHandler : MonoBehaviour {
         -1 - if part has default status
      */
     private int GetPartStatus(string partName) {
-        if (faultsToFix.ContainsKey(partName))
+        if (faultLocations.Contains(partName))
             return 0;
         if (fixesToFaults.ContainsKey(partName))
             return 1;
@@ -165,6 +152,10 @@ public class InteractionHandler : MonoBehaviour {
     // Has the player moved their finger between two parts of the ship
     private bool HasMovedToNewPart(Touch touch, Transform part) {
         return touch.phase == TouchPhase.Moved && previousPart && previousPart != part;
+    }
+
+    public void SetBroken(string name) {
+        SetPartColor(name, brokenColor);
     }
 
     private void SetPartColor(string name, Color color) {
@@ -194,23 +185,40 @@ public class InteractionHandler : MonoBehaviour {
         return partColor;
     }
 
-    public void AddFault(Fault fault) {
-        if (!faultsToFix.ContainsKey(fault.faultLocation)) {
-            faultsToFix.Add(fault.faultLocation, fault);
-            updateFaultColors = true;
+    public void AddFault(Fault fault, int variation) {
+        if (!faultLocations.Contains(fault.faultLocation)) {
+            Debug.Log("Fault: " + fault.faultLocation);
+            faultLocations.Add(fault.faultLocation);
         }
-            
-        if (!fixesToFaults.ContainsKey(fault.fixLocation)) {
-            fixesToFaults.Add(fault.fixLocation, fault);
-            updateFaultColors = true;
+        string fixLocation = fault.fixLocations[variation].Split('_')[1];
+
+        if (!fixesToFaults.ContainsKey(fixLocation)) {
+            fixesToFaults.Add(fixLocation, fault);
         }
     }
 
     private void RemoveFault(string fault, string fix) {
-        faultsToFix.Remove(fault);
+        faultLocations.Remove(fault);
         fixesToFaults.Remove(fix);
 
         _audioManager.Play("Heal");
+    }
+
+    private bool AddTime() {
+        timeHeld += Time.deltaTime;
+
+        if (timeHeld >= timeToHold) {
+            timeHeld = 0f;
+            return true;
+        }
+
+        return false;
+    }
+
+    private bool ResetTime() {
+        timeHeld = 0f;
+
+        return false;
     }
 
     private void UpdateSlider() {
@@ -218,9 +226,11 @@ public class InteractionHandler : MonoBehaviour {
 
         if (timeHeld < margin) {
             _timeSlider.gameObject.SetActive(false);
-        } else if (!_timeSlider.IsActive()) {
+        }
+        else if (!_timeSlider.IsActive()) {
             _timeSlider.gameObject.SetActive(true);
-        } else {
+        }
+        else {
             _timeSlider.value = (timeHeld - margin) / (timeToHold - margin);
         }
     }
