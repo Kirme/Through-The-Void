@@ -60,6 +60,17 @@ public class PlayerController : MonoBehaviour
         faultDisplay.GetComponent<FaultDisplay>().SetNumFaults(remainingFaults);
     }
 
+    public void FixAll()
+    {
+        maxSpeedModifier = 1.0f;
+        acceleration = 1.0f;
+        maxTurnSpeedModifier = 1.0f;
+        turnAcceleration = 1.0f;
+
+        warningLight.SetActive(false);
+        faultDisplay.GetComponent<FaultDisplay>().SetNumFaults(0);
+    }
+
     // Start is called before the first frame update
     void Start()
     {
