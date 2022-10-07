@@ -46,9 +46,9 @@ public class AstroData : MonoBehaviour
 
     //Egen
     private Transform playerTransform;
-    private int distanceCap = 475;
+    private int distanceCap = 500;
     //Leniency was required to some extent to prevent flickering, but might not longer be (or perhaps only needed to a very small degree)
-    private float distanceLeniency = 1.05f;
+    private float distanceLeniency = 1f;
     private float speed = 2f;
     //As the update runs even when the application is not running and persists between sessions, creating new variables on update can presumably create a memory leak
     //that will not fix itself until the entire asteroid field is recreated.
@@ -66,7 +66,7 @@ public class AstroData : MonoBehaviour
         }
         if(currentShowColliders != ShowColliders)
         {
-            ToggleColliders(ShowColliders);
+            ToggleColliders(ShowColliders); 
         }
 
         //Egen

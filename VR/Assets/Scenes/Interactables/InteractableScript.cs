@@ -11,11 +11,17 @@ public class InteractableScript : MonoBehaviour
     public float idleLightRange = 0.04f, hoverLightRange = 0.07f;
     public UnityEvent onInteracted;
     public UnityEvent<float> onValueChange;
+    public UnityEvent<InteractableScript> onEndInteract;
     public bool interacting = false;
 
     protected Quaternion initialRotation = Quaternion.identity, initialControllerRotation;
 
-    public void Start()
+    public virtual void Reset()
+    {
+
+    }
+
+    public virtual void Start()
     {
         GetComponent<Light>().range = idleLightRange;
         GetComponent<Light>().intensity = 7f;
@@ -34,6 +40,7 @@ public class InteractableScript : MonoBehaviour
     {
         initialRotation = transform.rotation;
         interacting = false;
+        onEndInteract.Invoke(this);
     }
 
     public virtual void Hover()

@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.InputSystem;
 
 public class FaultHandler : MonoBehaviour {
@@ -8,14 +9,24 @@ public class FaultHandler : MonoBehaviour {
     private JSONHandler jsonHandler;
     public GameObject frontText;
     private TextMesh frontTextComponent;
-    public GameObject sideText;
+    public GameObject sideText, connectedLabel;
     private TextMesh sideTextComponent;
-    
-
 
     private Dictionary<string, Fault> faults = new Dictionary<string, Fault>();
     public GameObject player;
     private List<string> queuedFixes = new List<string>();
+    public UnityEvent<Fault, int> onBreak;
+
+    private bool tutorialMode = true;
+
+    public void SetTutorialMode(bool val)
+    {
+        tutorialMode = val;
+        if (client.CheckConnection())
+        {
+            Break();
+        }
+    }
 
     void Awake() {
         client = GetComponent<SocketServer>();
@@ -46,6 +57,11 @@ public class FaultHandler : MonoBehaviour {
 
     private void Update()
     {
+        if(connectedLabel != null)
+        {
+            connectedLabel.SetActive(!client.CheckConnection());
+        }
+
         if(queuedFixes.Count > 0)
         {
             Fix(queuedFixes[0]);
@@ -63,6 +79,11 @@ public class FaultHandler : MonoBehaviour {
     public void QueueFix(string id)
     {
         queuedFixes.Add(id);
+    }
+    public void FixAll()
+    {
+        faults.Clear();
+        player.GetComponent<PlayerController>().FixAll();
     }
     public void Fix(string id)
     {
@@ -123,7 +144,8 @@ public class FaultHandler : MonoBehaviour {
 
         faults.Add(faultID, fault);
 
-        player.GetComponent<PlayerController>().Break(fault);
+        onBreak.Invoke(fault, faults.Count);
+        player.GetComponent<PlayerController>().Break(fault, faults.Count);
         client.SendData(faultID);
         frontTextComponent.text = CreateFrontText();
         Debug.Log("Broken:");
@@ -160,12 +182,16 @@ public class FaultHandler : MonoBehaviour {
         {
             if (client.CheckConnection())
             {
-                yield return new WaitForSeconds(5);
+                yield return new WaitForSeconds(30);
+                if (!tutorialMode)
+                {
+                    Break();
+                } 
 
-                Break();
             }
             else {
                 yield return new WaitForSeconds(4);
+                Debug.Log("Not Connected");
                 //Break();
             }      
         }
