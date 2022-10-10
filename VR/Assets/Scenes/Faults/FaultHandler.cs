@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.InputSystem;
@@ -121,7 +122,7 @@ public class FaultHandler : MonoBehaviour {
         //TODO: Put non-active faults in a seperate list, and randomize from there
         for(int i=0; i<30; i++)
         {
-            int rnd = Random.Range(0, jsonHandler.CountFaults());
+            int rnd = Random.Range(0, jsonHandler.faultsInJson.faults.Length);
             faultID = rnd.ToString();
             if (!faults.ContainsKey(faultID))
             {
@@ -136,7 +137,8 @@ public class FaultHandler : MonoBehaviour {
         Debug.Log(faultID);
 
 
-            Fault fault = jsonHandler.GetFault(faultID);
+        Fault fault = jsonHandler.GetFault(faultID);
+        fault.variation = RandomNumberGenerator.GetInt32(fault.numVariations);
         /*if (faults.ContainsKey(faultID))
         {
             return; //TODO, make sure same fault is not generated twice
@@ -146,12 +148,12 @@ public class FaultHandler : MonoBehaviour {
 
         onBreak.Invoke(fault, faults.Count);
         player.GetComponent<PlayerController>().Break(fault, faults.Count);
-        client.SendData(faultID);
+        client.SendData(faultID + " " + fault.variation);
         frontTextComponent.text = CreateFrontText();
         Debug.Log("Broken:");
         foreach (string key in faults.Keys)
         {
-            Debug.Log(key);
+            Debug.Log(key + " variation: " + fault.variation);
         }
 
     }

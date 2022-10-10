@@ -3,32 +3,42 @@
   [
     {
       "id": "0",
+      "severity": 0,
       "faultLocation": "Engine",
-      "fixLocation" : "Core",
+      "numVariations": 2,
+      "fixLocations" : ["Core_Panel6", "Core_Panel3"],
+      "fixActions": ["pressA", "pressB"],
+
+      "ar_description": "Go to panel A 5",
+      "other_ar_descriptions": {
+        "Core_PanelA5": ["If oxygen balbal go to panel3 otherwise go to panel R6", "If oxygen balbal go to panel6 otherwise go to panel 3"],
+        "Core_Panel3": ["If pressure > 50% pressA otherwise blabla", "If pressure < 50% pressA otherwise blabla"],
+      },
+      "metrics": {
+        "core_pressure": [[0.0, 0.4], [0.6 , 1.0]],
+        "lwing_oxygen": [[0.0, 0.4], [0.6 , 1.0]],
+        "rwing_fuelCirculation": [[0.1, 0.3], [0.7, 1.0]],
+        "engine_electricity" : [[0.0, 0.4], [0.6 , 1.0]],
+      },
+
+      "effects": [
+        ["EngineBurning", "EngineSmoking"],
+        ["machineSounds", ""],
+        ["lightsOut", "LightsSuperBright"],
+        ["showWarningTriangle", ""],
+      ],
+
       "display_name": "Engine Malfunction",
-      "ar_description": "Turn Knob AS1140 to 50%",
-      "maxSpeedModifier" : 0.3,
-      "accelerationModifier" : 1.0, 
-      "maxTurnSpeedModifier" : 1.0,
-      "turnAccelerationModifier" : 1.0
+      "negatives": {
+        "maxSpeedModifier" : 0.3,
+        "accelerationModifier" : 1.0,
+        "maxTurnSpeedModifier" : 1.0,
+        "turnAccelerationModifier" : 1.0,
+        "invertedYControls": 0.0,
+        "hazyGlass": 0.0,
+        "fullSpeed": 0.0,
+        "alwaysTurning": 0.0,
+      },
     },
-    {
-      "id": "1",
-      "faultLocation": "Core",
-      "fixLocation" : "Left Wing",
-      "maxSpeedModifier" : 1.0,
-      "accelerationModifier" : 0.3, 
-      "maxTurnSpeedModifier" : 1.0,
-      "turnAccelerationModifier" : 1.0
-    },
-    {
-      "id": "2",
-      "faultLocation": "Thruster",
-      "fixLocation" : "Right Wing",
-      "maxSpeedModifier" : 1.0,
-      "accelerationModifier" : 1.0, 
-      "maxTurnSpeedModifier" : 0.3,
-      "turnAccelerationModifier" : 1.0
-    }
   ]
 }

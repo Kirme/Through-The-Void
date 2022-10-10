@@ -1,10 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Newtonsoft.Json;
 
 public class JSONHandler : MonoBehaviour
 {
-
     public TextAsset jsonFile;
     public Faults faultsInJson;
 
@@ -12,48 +12,67 @@ public class JSONHandler : MonoBehaviour
     {
         GetData();
     }
-   
 
     private void GetData()
     {
-        faultsInJson = JsonUtility.FromJson<Faults>(jsonFile.text); // Get faults from JSON
+        //faultsInJson = JsonUtility.FromJson<Faults>(jsonFile.text); // Old, here for documentation
+        faultsInJson = JsonConvert.DeserializeObject<Faults>(jsonFile.text); // Get faults from JSON
 
         // Debug
-        foreach (Fault fault in faultsInJson.faults) {
-            Debug.Log(fault.id + " " + fault.faultLocation + " " + fault.fixLocation);
+        foreach (Fault fault in faultsInJson.faults)
+        {
+            Debug.Log(fault.id + " " + fault.faultLocation);
         }
     }
 
-    public Fault GetFault(string id) {
-        foreach (Fault fault in faultsInJson.faults) {
-            if (fault.id == id)
+    public Dictionary<string, Fault> GetFaultDictionary()
+    {
+        Dictionary<string, Fault> dict = new Dictionary<string, Fault>();
+
+        foreach (Fault fault in faultsInJson.faults)
+        {
+            if (!dict.ContainsKey(fault.id))
+                dict.Add(fault.id, fault);
+        }
+
+        return dict;
+    }
+
+    public Fault GetFault(string id)
+    {
+        foreach (Fault fault in faultsInJson.faults)
+        {
+            if (string.Compare(fault.id, id) == 0)
                 return fault;
         }
 
         return null;
     }
-
-    public int CountFaults()
-    {
-        return faultsInJson.faults.Length;
-    }
 }
 
 [System.Serializable]
-public class Fault {
+public class Fault
+{
     public string id;
-    //public float maxSpeed = 1.0f;
-    //public float maxTurnSpeed = 0.5f;
-    public string faultLocation;
-    public string fixLocation;
-    public float maxSpeedModifier;
-    public float accelerationModifier;
-    public float maxTurnSpeedModifier;
-    public float turnAccelerationModifier;
 
+    public int severity;
+    public string faultLocation;
+    public int numVariations;
+    public int variation;
+    public string fixLocation; // Remove later, exists to avoid errors with references
+    public string[] fixLocations;
+    public string[] fixActions;
+
+    public string arDescription;
+    public Dictionary<string, string[]> otherARDescriptions;
+    public Dictionary<string, float[][]> metrics;
+    public List<List<string>> effects;
+    public string displayName;
+    public Dictionary<string, float> negatives;
 }
 
 [System.Serializable]
-public class Faults {
+public class Faults
+{
     public Fault[] faults;
 }

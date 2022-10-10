@@ -1,0 +1,34 @@
+{
+  "faults":
+  [
+    {
+      "id": "0",
+      "faultLocation": "Engine",
+      "fixLocation" : "Core",
+      "display_name": "Engine Malfunction",
+      "ar_description": "Turn Knob AS1140 to 50%",
+      "maxSpeedModifier" : 0.3,
+      "accelerationModifier" : 1.0, 
+      "maxTurnSpeedModifier" : 1.0,
+      "turnAccelerationModifier" : 1.0
+    },
+    {
+      "id": "1",
+      "faultLocation": "Core",
+      "fixLocation" : "Left Wing",
+      "maxSpeedModifier" : 1.0,
+      "accelerationModifier" : 0.3, 
+      "maxTurnSpeedModifier" : 1.0,
+      "turnAccelerationModifier" : 1.0
+    },
+    {
+      "id": "2",
+      "faultLocation": "Thruster",
+      "fixLocation" : "Right Wing",
+      "maxSpeedModifier" : 1.0,
+      "accelerationModifier" : 1.0, 
+      "maxTurnSpeedModifier" : 0.3,
+      "turnAccelerationModifier" : 1.0
+    }
+  ]
+}

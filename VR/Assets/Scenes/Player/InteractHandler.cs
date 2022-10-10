@@ -24,6 +24,12 @@ public class InteractHandler : MonoBehaviour
     private void InteractEnded(InteractableScript interactable)
     {
         Debug.Log("Ended: " + interactable.interactableName);
+
+        //Send To AR
+
+
+        //VR Effects
+        //Change panels etc
     }
 
 }

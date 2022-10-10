@@ -8,6 +8,7 @@ using UnityEngine.InputSystem.XR;
 public class JoystickInteractable : InteractableScript
 {
     private PlayerController player;
+    public GameObject joystickMesh;
     public Vector3 attitude = Vector3.zero;
 
     public bool tiltControls = true;
@@ -69,6 +70,7 @@ public class JoystickInteractable : InteractableScript
         val.y = Mathf.Clamp((projectedWE.magnitude * Mathf.Sign(Vector3.Dot(projectedWE.normalized, Vector3.left))) / maxPull + initialPosVal.y, -1, 1);
 
         transform.localRotation = Quaternion.Euler(val.x * maxRot, 0f, val.y * maxRot);
+        joystickMesh.transform.localRotation = Quaternion.Euler(0f, -zRot, 0f);
 
         if (zRot > 180)
         {

@@ -31,12 +31,12 @@ public class PlayerController : MonoBehaviour
     private Vector3 rotationSpeed = new Vector3(0,0,0);
 
     public void Break(Fault fault, int numFaults)
-    {
+    {/*
         maxSpeedModifier *= fault.maxSpeedModifier;
         acceleration *= fault.accelerationModifier;
         maxTurnSpeedModifier *= fault.maxTurnSpeedModifier;
         turnAcceleration *= fault.turnAccelerationModifier;
-
+        */
 
         warningLight.SetActive(true);
         warningLight.GetComponent<WarningLight>().speed = 2.5f + 0.5f * numFaults;
@@ -45,10 +45,11 @@ public class PlayerController : MonoBehaviour
 
     public void Fix(Fault fault, int remainingFaults)
     {
+        /*
         maxSpeedModifier /= fault.maxSpeedModifier;
         acceleration /= fault.accelerationModifier;
         maxTurnSpeedModifier /= fault.maxTurnSpeedModifier;
-        turnAcceleration /= fault.turnAccelerationModifier;
+        turnAcceleration /= fault.turnAccelerationModifier;*/
 
         if(remainingFaults  == 0)
         {
