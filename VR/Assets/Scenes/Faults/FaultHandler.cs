@@ -158,7 +158,7 @@ public class FaultHandler : MonoBehaviour {
 
     }
 
-    private string CreateFrontText()
+    public string CreateFrontText()
     {
         string returnvalue = "Components currently broken: \n";
         foreach (var value in faults.Values)
@@ -169,13 +169,20 @@ public class FaultHandler : MonoBehaviour {
     }
     private string CreateSideText()
     {
-        string returnvalue = "Reparation manual: \n";
+        Debug.Log("Making side text");
+        float player_hitpoints = player.GetComponent<PlayerController>().GetHitpoints();
+        string returnvalue = "Estimated hull integrity: " + Mathf.RoundToInt(player.GetComponent<PlayerController>().GetHitpoints()).ToString() + "%\n" + "Reparation manual: \n";
+        //string returnvalue = "Reparation manual: \n";
         foreach (Fault value in jsonHandler.faultsInJson.faults)
         {
             returnvalue += value.faultLocation + ", " + "can be fixed in: " + value.fixLocation + "\n";
         }
 
         return returnvalue;
+    }
+
+    public void UpdateSideText(){
+        sideTextComponent.text = CreateSideText();
     }
 
     private IEnumerator ContinuousBreak()

@@ -1,5 +1,6 @@
 ﻿#if UNITY_EDITOR
 using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 
 //-----------------------------------------------------
@@ -13,7 +14,7 @@ using UnityEngine;
 // INSTRUCTIONS:
 //-----------------------------------------------------
 // 1. See the comments in AsteroidFieldCreator.cs or
-// the PDF included with this package.
+// the PDF included with this package.-
 //-----------------------------------------------------
 
 [ExecuteInEditMode]
@@ -22,6 +23,7 @@ public class AstroData : MonoBehaviour
     public float BufferZoneDiameter = 2f;
     public Rigidbody RigidbodyToScale = null;
     public bool ShowBufferGizmo = true;
+    //private bool HitboxEnabled = true;
 
     [SerializeField]
     private Color BufferZoneColor = Color.magenta;
@@ -69,7 +71,6 @@ public class AstroData : MonoBehaviour
             ToggleColliders(ShowColliders); 
         }
 
-        //Egen
         
         if(playerTransform == null){
             playerTransform = GameObject.Find("Player").transform;
@@ -89,7 +90,7 @@ public class AstroData : MonoBehaviour
                 startUp = false;
             }
             //Move the asteroid - TODO: How does this interact with movement from bumping into them?
-            transform.position += transform.forward * speed * Time.deltaTime;
+            //transform.position += transform.forward * speed * Time.deltaTime;
             //Check distance, if it's 5% over cap then move
             distanceFactor = GetDistance(this.transform.position, playerTransform.position) / distanceCap;
             if (distanceFactor >= distanceLeniency)
@@ -99,6 +100,11 @@ public class AstroData : MonoBehaviour
                 //Should always occur and move it a distance of 2x distance cap towards the player UNLESS the created asteroid field is enormous.
                 if(GetDistance(newpos, playerTransform.position) / distanceCap <= 1){
                     this.transform.position = newpos;
+                    xRot = Random.Range(0, 360);
+                    yRot = Random.Range(0, 360);
+                    zRot = Random.Range(0, 360);
+                    transform.Rotate(xRot, yRot, zRot, Space.Self);
+                    speed = 2f;
                 }
                 //In which case, it will simply destroy it.
                 else{
@@ -114,6 +120,26 @@ public class AstroData : MonoBehaviour
     
 
     //Egen
+    /*
+    public void OnCollisionEnter(Collision col){
+        if(HitboxEnabled){
+            if(col.gameObject.tag == "PlayerCollider"){
+                //TODO: Adjust e.g. movement on collision with player.
+                HitboxEnabled = false;
+                StartCoroutine(EnableHitbox()); //Reactivates hitbox after 3 seconds currently
+            }
+        }
+    }
+
+    IEnumerator EnableHitbox()
+    {
+        yield return new WaitForSeconds(3f);
+        HitboxEnabled = true;
+        yield break;
+    }
+    */
+
+
     private float GetDistance(Vector3 a, Vector3 b){
         return Mathf.Sqrt(
             Mathf.Pow((a.x - b.x), 2) + 
