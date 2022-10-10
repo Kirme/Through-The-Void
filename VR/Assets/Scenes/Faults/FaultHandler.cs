@@ -138,7 +138,7 @@ public class FaultHandler : MonoBehaviour {
 
 
         Fault fault = jsonHandler.GetFault(faultID);
-        fault.variation = RandomNumberGenerator.GetInt32(fault.numVariations);
+        fault.SetVariation();
         /*if (faults.ContainsKey(faultID))
         {
             return; //TODO, make sure same fault is not generated twice
@@ -148,12 +148,12 @@ public class FaultHandler : MonoBehaviour {
 
         onBreak.Invoke(fault, faults.Count);
         player.GetComponent<PlayerController>().Break(fault, faults.Count);
-        client.SendData(faultID + " " + fault.variation);
+        client.SendData(faultID + " " + fault.GetVariation());
         frontTextComponent.text = CreateFrontText();
         Debug.Log("Broken:");
         foreach (string key in faults.Keys)
         {
-            Debug.Log(key + " variation: " + fault.variation);
+            Debug.Log(key + " variation: " + fault.GetVariation());
         }
 
     }

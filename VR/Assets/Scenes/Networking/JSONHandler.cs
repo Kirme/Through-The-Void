@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json;
+using System.Security.Cryptography;
 
 public class JSONHandler : MonoBehaviour
 {
@@ -58,17 +59,75 @@ public class Fault
     public int severity;
     public string faultLocation;
     public int numVariations;
-    public int variation;
+    private int variation;
     public string fixLocation; // Remove later, exists to avoid errors with references
-    public string[] fixLocations;
-    public string[] fixActions;
+    private string[] fixLocations;
+    private string[] fixActions;
 
     public string arDescription;
-    public Dictionary<string, string[]> otherARDescriptions;
-    public Dictionary<string, float[][]> metrics;
-    public List<List<string>> effects;
+    private Dictionary<string, string[]> otherARDescriptions;
+    private Dictionary<string, float[][]> metrics;
+    private List<string[]> effects;
     public string displayName;
     public Dictionary<string, float> negatives;
+
+    public void SetVariation()
+    {
+        this.variation = RandomNumberGenerator.GetInt32(numVariations);
+    }
+
+    public int GetVariation()
+    {
+        return variation;
+    }
+
+    public string GetFixLocation()
+    {
+        return fixLocations[variation];
+    }
+
+    public string GetFixAction()
+    {
+        return fixActions[variation];
+    }
+
+    public Dictionary<string, float[]> GetMetrics()
+    {
+
+        Dictionary<string, float[]> newMetrics = new Dictionary<string, float[]>();
+
+        foreach (string key in metrics.Keys)
+        {
+            newMetrics[key] = metrics[key][variation];
+        }
+
+        return newMetrics;
+    }
+
+    public Dictionary<string, string> GetOtherARDescriptions()
+    {
+
+        Dictionary<string, string> descriptions = new Dictionary<string, string>();
+
+        foreach (string key in metrics.Keys)
+        {
+            descriptions[key] = otherARDescriptions[key][variation];
+        }
+
+        return descriptions;
+    }
+
+    public List<string> GetEffects()
+    {
+        List<string> newEffects = new List<string>();
+
+        foreach(string[] dat in effects){
+            newEffects.Add(dat[variation]);
+        }
+
+        return newEffects;
+    }
+
 }
 
 [System.Serializable]
