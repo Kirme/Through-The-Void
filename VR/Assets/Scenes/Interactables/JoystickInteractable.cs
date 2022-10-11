@@ -22,6 +22,11 @@ public class JoystickInteractable : InteractableScript
         transform.localRotation = Quaternion.identity;
         base.Reset();
     }
+
+    public void SetTiltControls(bool val)
+    {
+        this.tiltControls = val;
+    }
     public void SetPlayer(PlayerController player)
     {
         this.player = player;
@@ -40,6 +45,7 @@ public class JoystickInteractable : InteractableScript
     public override void EndInteract()
     {
         transform.localRotation = Quaternion.identity;
+        joystickMesh.transform.localRotation = Quaternion.identity;
         base.EndInteract();
     }
 
@@ -66,10 +72,12 @@ public class JoystickInteractable : InteractableScript
         Vector3 relativePosition = controller.transform.localPosition - initialControllerPosition;
         Vector3 projectedNS = Vector3.Project(relativePosition, Vector3.forward);
         Vector3 projectedWE = Vector3.Project(relativePosition, Vector3.left);
-        val.x = Mathf.Clamp((projectedNS.magnitude * Mathf.Sign(Vector3.Dot(projectedNS.normalized, Vector3.forward))) / maxPull + initialPosVal.x, -1, 1);
-        val.y = Mathf.Clamp((projectedWE.magnitude * Mathf.Sign(Vector3.Dot(projectedWE.normalized, Vector3.left))) / maxPull + initialPosVal.y, -1, 1);
+        val.x = (projectedNS.magnitude * Mathf.Sign(Vector3.Dot(projectedNS.normalized, Vector3.forward))) / maxPull + initialPosVal.x;
+        val.y = (projectedWE.magnitude * Mathf.Sign(Vector3.Dot(projectedWE.normalized, Vector3.left))) / maxPull + initialPosVal.y;
 
-        transform.localRotation = Quaternion.Euler(val.x * maxRot, 0f, val.y * maxRot);
+        float xRot = 2 / (1 + Mathf.Exp(-2.2f * val.x)) - 1;
+        float yRot = 2 / (1 + Mathf.Exp(-2.2f * val.y)) - 1;
+        transform.localRotation = Quaternion.Euler(xRot * maxRot, 0f, yRot * maxRot);
         joystickMesh.transform.localRotation = Quaternion.Euler(0f, -zRot, 0f);
 
         if (zRot > 180)
@@ -78,8 +86,11 @@ public class JoystickInteractable : InteractableScript
         }
         zRot /= 180.0f;
 
+        val.x = Mathf.Clamp(val.x, -1, 1);
+        val.y = Mathf.Clamp(val.y, -1, 1);
 
-        attitude = new Vector3(-val.x, -zRot, val.y);
+
+        attitude = new Vector3(-val.x, Mathf.Clamp(-zRot *2, -1, 1), val.y);
     }
 
     private void TiltControls(GameObject controller)
