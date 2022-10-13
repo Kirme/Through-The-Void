@@ -17,6 +17,16 @@ public class InteractionHandler : MonoBehaviour {
     private Color defaultColor = Color.white;
     private Color partColor;
 
+    //Variables for Panel Handler 
+    private string activePanel;
+    private int CountForPanel;
+    private float distX, distZ;
+    private bool dragging = false;
+    private float offset;
+    private Vector3 v3;
+    private Vector3 initPosition;
+    private Vector3 finalPosition;
+
     private FaultHandler faultHandler;
 
     private Transform previousPart;
@@ -38,7 +48,6 @@ public class InteractionHandler : MonoBehaviour {
 
     private void Update() {
         RegisterTouch();
-        UpdateSlider();
 
         if (updateFaultColors)
             UpdateFaultColors();
@@ -69,11 +78,15 @@ public class InteractionHandler : MonoBehaviour {
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit)) { // Check if ray hits object
             Transform part = GetPart(hit);
+            if (dragging && part != previousPart)
+            {
+                part = previousPart;
+            }
             int partStatus = GetPartStatus(part.name);
 
             switch (partStatus) {
                 case 0: // Part is broken
-                    UpdateInformation(GetPart(hit));
+                    UpdateInformation(part);
                     timeHeld = 0f;
                     break;
                 default:
@@ -82,18 +95,34 @@ public class InteractionHandler : MonoBehaviour {
                             FixPart(part.name);
                     }
 
-                    UpdateInformation(GetPart(hit));
-                    UpdateColorOnTouch(hit, touch);
+                    UpdateInformation(part);
+                    UpdatePanel(part);
+                    MissionHandler(activePanel, part, touch);
+                    UpdateSlider(part);
+                    UpdateColorOnTouch(part, touch);
+                    previousPart = part;
                     break;
             }
-        } else {
-            Reset();
+        }
+        else {
+            if(!dragging)
+            {
+                Reset();
+            }
         }
     }
 
     private void Reset() {
-        SetPartColor(previousPart, defaultColor);
+        if(previousPart.tag == "struct")
+        {
+            SetPartColor(previousPart, defaultColor);
+        }
         timeHeld = 0f;
+        if(previousPart.parent.name == "Panel2" && dragging)
+        {
+            previousPart.position = finalPosition;
+            dragging = false;
+        }
     }
 
     private bool FixedPart(Transform part) {
@@ -123,31 +152,175 @@ public class InteractionHandler : MonoBehaviour {
 
     // Based on current ship model, change based on where collider is
     private Transform GetPart(RaycastHit hit) {
-        return hit.collider.transform.parent;
-    }
-
-    private void UpdateColorOnTouch(RaycastHit hit, Touch touch) {
-        // Change color of part
-        Transform part = GetPart(hit); 
-        SetPartColor(part, partColor);
-
-        if (HasMovedToNewPart(touch, part)) { // We moved between two different parts
-            SetPartColor(previousPart, defaultColor); // Reset color of previously selected part
+        string tag = hit.collider.tag;
+        if(tag == "struct")
+        {
+            return hit.collider.transform.parent;
         }
-
-        previousPart = part; // Update previous part
+        else
+        {
+            return hit.collider.transform;
+        }
     }
+
+    private void UpdateColorOnTouch(Transform part, Touch touch) {
+        // Change color of part
+        if(part.tag == "struct")
+        {
+            SetPartColor(part, partColor);
+
+            if (HasMovedToNewPart(touch, part))
+            { // We moved between two different parts
+                if (previousPart.tag == "struct")
+                {
+                    SetPartColor(previousPart, defaultColor); // Reset color of previously selected part
+                }
+            }
+        }
+     }
 
     private void UpdateInformation(Transform part) {
-        if (previousPart != null && previousPart != part) {
+        if (previousPart != null && previousPart.tag == "struct" && previousPart != part) {
             previousPart.Find("Text").gameObject.SetActive(false);
         }
-        if (previousPart != part || !part.Find("Text").gameObject.activeInHierarchy) {
+        if (part.tag == "struct" && (previousPart != part || !part.Find("Text").gameObject.activeInHierarchy)) {
             part.Find("Text").gameObject.SetActive(true);
         }
     }
 
-    /*
+    private void UpdatePanel(Transform part)
+    {
+        if(activePanel != "" && part.tag != "Panel" && previousPart != part)
+        {
+            GameObject panel = GameObject.Find(activePanel);
+            if(panel != null)
+            {
+                panel.SetActive(false); 
+                activePanel = "";
+                resetPanel(panel);
+            }
+        }
+        if (part.tag == "Button")
+        {
+            GameObject panel = part.GetChild(0).gameObject;
+            panel.SetActive(true);
+            activePanel = panel.name;
+        }
+    }
+
+    private void MissionHandler(string name, Transform touchedPart, Touch touch)
+    {
+        switch (name)
+        {
+            case "Panel1":
+
+                if (touchedPart != previousPart && touchedPart.tag == "Panel" && touchedPart.name != "Panel1")
+                {
+                    CountForPanel++;
+                    if(CountForPanel == 2)
+                    {
+                        Color color1 = touchedPart.gameObject.GetComponent<Renderer>().material.color;
+                        Color color2 = previousPart.gameObject.GetComponent<Renderer>().material.color;
+
+                        if (color1 == Color.red && color2 == Color.red)
+                        {
+                            touchedPart.parent.GetChild(8).gameObject.SetActive(true);
+                        }
+                        else if (color1 == Color.green && color2 == Color.green)
+                        {
+                            touchedPart.parent.GetChild(7).gameObject.SetActive(true);
+                        }
+                        else if (color1 == Color.blue && color2 == Color.blue)
+                        {
+                            touchedPart.parent.GetChild(6).gameObject.SetActive(true);
+                        }
+                        else
+                        {
+                            touchedPart.parent.GetChild(6).gameObject.SetActive(false);
+                            touchedPart.parent.GetChild(7).gameObject.SetActive(false);
+                            touchedPart.parent.GetChild(8).gameObject.SetActive(false);
+                        }
+                        CountForPanel = 0;
+                    }
+
+                }
+                else if(touchedPart !=previousPart)
+                {
+                    CountForPanel = 0;
+                }
+                break;
+
+            case "Panel2":
+                if(touchedPart.parent.name == "Panel2")
+                {
+                    if(touch.phase == TouchPhase.Began)
+                    {
+                        initPosition = touchedPart.position;
+                        finalPosition = initPosition;
+                        distX = touchedPart.position.x - _mainCamera.transform.position.x;
+                        distZ = touchedPart.position.z - _mainCamera.transform.position.z;
+                        v3 = new Vector3(touch.position.x, touch.position.y, distZ);
+                        v3 = _mainCamera.ScreenToWorldPoint(v3);
+                        offset = touchedPart.position.x - v3.x;
+                        dragging = true;
+                    }
+                    if(dragging && touch.phase == TouchPhase.Moved)
+                    {
+                        v3 = new Vector3(Input.mousePosition.x, Input.mousePosition.y, distZ);
+                        v3 = _mainCamera.ScreenToWorldPoint(v3);
+                        double newPosX = v3.x + offset;
+                        if(newPosX < initPosition.x - 0.24)
+                        {
+                            newPosX = initPosition.x - 0.24;
+                            finalPosition = new Vector3((float)newPosX, initPosition.y, initPosition.z);
+                            touchedPart.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+                        }
+                        if(newPosX > finalPosition.x)
+                        {
+                            newPosX = finalPosition.x;
+                        }
+                        touchedPart.position = new Vector3((float)newPosX, touchedPart.position.y, touchedPart.position.z);
+                    }
+                }
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    private void resetPanel(GameObject panel)
+    {
+        string name = panel.name;
+        switch (name)
+        {
+            case "Panel1":
+                panel.transform.GetChild(6).gameObject.SetActive(false);
+                panel.transform.GetChild(7).gameObject.SetActive(false);
+                panel.transform.GetChild(8).gameObject.SetActive(false);
+                break;
+
+            case "Panel2":
+                Vector3 pos;
+                panel.transform.GetChild(0).gameObject.layer = LayerMask.NameToLayer("Default");
+                pos = panel.transform.GetChild(0).position;
+                panel.transform.GetChild(0).position = new Vector3(initPosition.x, pos.y, pos.z);
+
+                panel.transform.GetChild(1).gameObject.layer = LayerMask.NameToLayer("Default");
+                pos = panel.transform.GetChild(1).position;
+                panel.transform.GetChild(1).position = new Vector3(initPosition.x, pos.y, pos.z);
+
+                panel.transform.GetChild(2).gameObject.layer = LayerMask.NameToLayer("Default");
+                pos = panel.transform.GetChild(2).position;
+                panel.transform.GetChild(2).position = new Vector3(initPosition.x, pos.y, pos.z);
+                break;
+
+            default:
+                break;
+        }
+    }
+
+    /* 
      Returns:
         0 - if part is broken
         1 - if part can fix broken part
@@ -213,12 +386,12 @@ public class InteractionHandler : MonoBehaviour {
         _audioManager.Play("Heal");
     }
 
-    private void UpdateSlider() {
+    private void UpdateSlider(Transform part) {
         float margin = 0.2f;
 
         if (timeHeld < margin) {
             _timeSlider.gameObject.SetActive(false);
-        } else if (!_timeSlider.IsActive()) {
+        } else if (part.tag== "Button" && !_timeSlider.IsActive()) {
             _timeSlider.gameObject.SetActive(true);
         } else {
             _timeSlider.value = (timeHeld - margin) / (timeToHold - margin);
