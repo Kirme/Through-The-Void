@@ -3,61 +3,56 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class textHandler : MonoBehaviour
+public class TextHandler : MonoBehaviour
 {
-    // Start is called before the first frame update
-    public class Fault
-    {
-        public string id;
-        public string faultLocation;
-        public string faultName;
-        public string fixLocation;
+    private TextMeshPro _text;
+    private Information _info;
+
+    struct Information {
+        public bool showDesc;
+        public string partName;
+        public string desc;
+
+        public string GetText() {
+            List<string> strList = new List<string>();
+            strList.Add(partName);
+
+            if (showDesc) {
+                strList.Add("\n\n");
+                strList.Add(desc);
+            }
+
+            return string.Concat(strList);
+        }
     }
 
-    public class Faults
-    {
-        public Fault[] faults;
+    void Awake() {
+        _info.partName = gameObject.transform.name;
+        _info.showDesc = false;
+
+        _text = GetComponentInChildren<TextMeshPro>();
+
+        _text.text = _info.GetText();
+        _text.gameObject.SetActive(false);
     }
 
-    public TextMeshPro Text;
-    public TextAsset json;
-    private Faults faultsInJson;
+    public void SetDescription(string txt) {
+        _info.desc = txt;
 
-    void Start()
-    {
-        Text = GetComponent<TextMeshPro>();
-        Text.text = gameObject.transform.parent.name;
-        Text.gameObject.SetActive(false);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
+    public void ShowDescription(bool setTo) {
+        _info.showDesc = setTo;
+        _text.text = _info.GetText();
     }
 
     public void Show()
     {
-        Text.gameObject.SetActive(true);
+        _text.gameObject.SetActive(true);
     }
 
     public void Hide()
     {
-        Text.gameObject.SetActive(false);
-    }
-
-    public string ReadJSON()
-    {
-        string result = "Wing";
-        faultsInJson = JsonUtility.FromJson<Faults>(json.text);
-
-        foreach (Fault fault in faultsInJson.faults)
-        {
-            if(fault.faultLocation == "text")
-            {
-                result += "\n fault : " + fault.faultName;
-                result += "\n To do : " + fault.fixLocation;
-            }
-        }
-        return result;
+        _text.gameObject.SetActive(false);
     }
 }

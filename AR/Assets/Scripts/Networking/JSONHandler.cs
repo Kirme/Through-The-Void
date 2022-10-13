@@ -50,7 +50,7 @@ public class Fault {
 
     public int severity;
     public string faultLocation;
-    public string numVariations;
+    public int numVariations;
     public string fixLocation; // Remove later, exists to avoid errors with references
     public string[] fixLocations;
     public string[] fixActions;

@@ -81,7 +81,7 @@ public class InteractionHandler : MonoBehaviour {
     }
 
     private void Reset() {
-        if (GetPartStatus(previousPart.name) != 0)
+        if (previousPart != null && GetPartStatus(previousPart.name) != 0)
             SetPartColor(previousPart, defaultColor);
         ResetTime();
     }
@@ -115,17 +115,19 @@ public class InteractionHandler : MonoBehaviour {
         SetPartColor(part, partColor);
 
         if (HasMovedToNewPart(touch, part)) { // We moved between two different parts
-            SetPartColor(previousPart, defaultColor); // Reset color of previously selected part
+            Reset();
         }
     }
 
     private void UpdateInformation(Transform part) {
+        string txtName = "Text"; // Name of object containing UI text
+
         if (previousPart != null && previousPart != part) {
-            Transform prevTxt = previousPart.Find("Text");
+            Transform prevTxt = previousPart.Find(txtName);
             if (prevTxt != null)
                 prevTxt.gameObject.SetActive(false);
         }
-        Transform txt = part.Find("Text");
+        Transform txt = part.Find(txtName);
         if (txt == null)
             return;
 
@@ -187,7 +189,6 @@ public class InteractionHandler : MonoBehaviour {
 
     public void AddFault(Fault fault, int variation) {
         if (!faultLocations.Contains(fault.faultLocation)) {
-            Debug.Log("Fault: " + fault.faultLocation);
             faultLocations.Add(fault.faultLocation);
         }
         string fixLocation = fault.fixLocations[variation].Split('_')[1];
@@ -197,9 +198,20 @@ public class InteractionHandler : MonoBehaviour {
         }
     }
 
-    private void RemoveFault(string fault, string fix) {
+    private void RemoveFaultLocation(string fault, Transform faultLocation) {
         faultLocations.Remove(fault);
-        fixesToFaults.Remove(fix);
+        faultLocation.GetComponent<TextHandler>().ShowDescription(false);
+    }
+
+    private void RemoveFixLocation(string fix, Transform faultLocation) {
+        faultLocations.Remove(fix);
+        faultLocation.Find(fix).GetComponent<TextHandler>().ShowDescription(false);
+    }
+
+    private void RemoveFault(string fault, string fix) {
+        Transform faultLocation = _ship.transform.Find(fault);
+        RemoveFaultLocation(fault, faultLocation);
+        RemoveFixLocation(fix, faultLocation);
 
         _audioManager.Play("Heal");
     }

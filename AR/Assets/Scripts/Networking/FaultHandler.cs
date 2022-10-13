@@ -9,6 +9,8 @@ public class FaultHandler : MonoBehaviour {
 
     public Dictionary<string, Fault> faultDictionary = new Dictionary<string, Fault>();
 
+    private GameObject ship;
+
     void Awake() {
         client = GetComponent<Client>();
     }
@@ -18,6 +20,8 @@ public class FaultHandler : MonoBehaviour {
         interactionHandler = GetComponent<InteractionHandler>();
 
         faultDictionary = jsonHandler.GetFaultDictionary();
+
+        ship = GameObject.FindGameObjectWithTag("Spawnable");
     }
 
     // Function called by Client when receiving information from other player
@@ -34,8 +38,6 @@ public class FaultHandler : MonoBehaviour {
     }
 
     private void ParseFault(Fault fault, string variation) {
-        GameObject ship = GameObject.FindGameObjectWithTag("Spawnable");
-
         interactionHandler.SetBroken(fault.faultLocation);
         PartReparation[] parts = ship.GetComponentsInChildren<PartReparation>();
 
@@ -44,17 +46,41 @@ public class FaultHandler : MonoBehaviour {
         string fixPart = fix[0];
         string fixPanel = fix[1];
 
+        // Set text of fault location
+        TextHandler th = ship.transform.Find(fault.faultLocation).GetComponent<TextHandler>();
+
+        // Construct description of fix location, seen at fault location
+        List<string> description = new List<string>();
+        description.Add("Find ");
+        description.Add(fixPanel);
+        description.Add(" at the ");
+        description.Add(fixPart);
+
+        HandleDescription(th, string.Concat(description));
+
+        string fixDesc = fault.otherARDescriptions[fault.fixLocations[var]][var];
+        // Find fix location and set text
         foreach (PartReparation part in parts) {
             string partName = part.GetPartName();
             string panelName = part.GetName();
-
+            
+            //HandleDescription(th, panelName + ": " + partName + " = " + fixPart);
             if (string.Compare(partName, fixPart) == 0 && string.Compare(panelName, fixPanel) == 0) {
-                part.SetCanRepair(true);
+               part.SetRepaired(false);
+                
+                HandleDescription(part.GetComponent<TextHandler>(), fixDesc);
                 break;
             }
         }
 
         interactionHandler.AddFault(fault, var);
+    }
+
+    private void HandleDescription(TextHandler th, string desc) {
+        if (th != null) {
+            th.SetDescription(desc);
+            th.ShowDescription(true);
+        }
     }
 
     public void SendMessage(string msg) {

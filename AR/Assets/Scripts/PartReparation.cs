@@ -5,26 +5,25 @@ using UnityEngine.UI;
 
 public class PartReparation : MonoBehaviour
 {
-    private bool canRepair = false;
+    private bool repaired = false;
     private string shipPart;
 
     private void Start() {
-        shipPart = transform.parent.name;
     }
 
     public string GetPartName() {
-        return shipPart;
+        return transform.parent.name;
     }
 
     public string GetName() {
         return transform.name;
     }
 
-    public void SetCanRepair(bool setTo) {
-        canRepair = setTo;
+    public void SetRepaired(bool setTo) {
+        repaired = setTo;
     }
 
-    public bool GetCanRepair() {
-        return canRepair;
+    public bool GetRepaired() {
+        return repaired;
     }
 }

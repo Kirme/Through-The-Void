@@ -6,14 +6,13 @@
       "severity": 0,
       "faultLocation": "Engine",
       "numVariations": 2,
-      "fixLocation": "Engine",
-      "fixLocations": [ "Core_Panel6", "Core_Panel3" ],
+      "fixLocations": [ "Core_Panel6", "Core_Panel7" ],
       "fixActions": [ "pressA", "pressB" ],
 
-      "arDescription": "Go to panel A5",
+      "arDescription": "Go to panel 6",
       "otherARDescriptions": {
-        "Core_PanelA5": [ "If oxygen balbal go to panel3 otherwise go to panel R6", "If oxygen balbal go to panel6 otherwise go to panel 3" ],
-        "Core_Panel3": [ "If pressure > 50% pressA otherwise blabla", "If pressure < 50% pressA otherwise blabla" ]
+        "Core_Panel6": [ "If oxygen > 50% press 1, otherwise press 2", "If oxygen > 50% press 3, otherwise press 4" ],
+        "Core_Panel7": [ "If pressure > 50% pressA otherwise blabla", "If pressure < 50% pressA otherwise blabla" ]
       },
       "metrics": {
         "pressure": [
@@ -50,7 +49,6 @@
       "severity": 3,
       "faultLocation": "Core",
       "numVariations": 2,
-      "fixLocation": "Engine",
       "fixLocations": [ "Engine_Panel6", "Engine_Panel3" ],
       "fixActions": [ "pressA", "pressB" ],
 
