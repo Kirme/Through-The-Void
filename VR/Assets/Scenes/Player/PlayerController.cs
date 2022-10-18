@@ -14,9 +14,11 @@ public class PlayerController : MonoBehaviour
     public SteamVR_Action_Single squeezeAction;
     public SteamVR_Action_Boolean grabAction;
     public SteamVR_Action_Pose poseAction;
-    public GameObject rightController, leftController, joystick, warningLight, faultDisplay;
+    public GameObject rightController, leftController, joystick, warningLight, faultDisplay, networker;
 
     public float maxSpeed = 25f, acceleration = 2.5f, maxTurnSpeed = 12.5f, turnAcceleration = 2.5f;
+
+    private float hitpoints = 100f;
 
 
     audioManager sn;
@@ -141,6 +143,24 @@ public class PlayerController : MonoBehaviour
 
     }
 
+    public void OnCollisionEnter(Collision col){
+        if(col.gameObject.tag == "Asteroid"){
+            TakeDamage(col.relativeVelocity.magnitude);
+            Debug.Log(hitpoints);
+
+            col.gameObject.GetComponent<Rigidbody>().AddForce(speed*transform.forward.x, speed*transform.forward.y, speed*transform.forward.z);
+        }
+    }
+
+    public float GetHitpoints()
+    {
+        return this.hitpoints;
+    }
+
+    public void TakeDamage(float damage){
+        this.hitpoints -= damage;
+        networker.GetComponent<FaultHandler>().UpdateSideText();
+    }
 
     public bool GetRightGrab()
     {

@@ -6,6 +6,8 @@ TagManager:
   tags:
   - AudioManager
   - Interactable
+  - PlayerCollider
+  - Asteroid
   layers:
   - Default
   - TransparentFX
