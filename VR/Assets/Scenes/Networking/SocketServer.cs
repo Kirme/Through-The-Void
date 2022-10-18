@@ -86,7 +86,7 @@ public class SocketServer : MonoBehaviour {
  	
 	public void SendData(string msg) { 		
 		if (client == null) {             
-			Debug.Log("No connected clients to send to");
+			//Debug.Log("No connected clients to send to");
 			return;         
 		}  		
 		
