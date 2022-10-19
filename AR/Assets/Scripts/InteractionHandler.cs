@@ -20,12 +20,17 @@ public class InteractionHandler : MonoBehaviour {
     //Variables for Panel Handler 
     private string activePanel;
     private int CountForPanel;
-    private float distX, distZ;
+
+    private float distZ;
     private bool dragging = false;
+    private bool holding = false;
     private float offset;
     private Vector3 v3;
     private Vector3 initPosition;
     private Vector3 finalPosition;
+    private float currentRotation = 0;
+    //End variables for Panel Handler 
+
 
     private FaultHandler faultHandler;
 
@@ -122,6 +127,16 @@ public class InteractionHandler : MonoBehaviour {
         {
             previousPart.position = finalPosition;
             dragging = false;
+        }
+        if (previousPart.name == "sink" && dragging)
+        {
+            previousPart.parent.localEulerAngles = finalPosition;
+            dragging = false;
+        }
+        if(previousPart.name == "redButton" && holding)
+        {
+            previousPart.localPosition = new Vector3(previousPart.localPosition.x, previousPart.localPosition.y, previousPart.localPosition.z + 0.3f);
+            holding = false;
         }
     }
 
@@ -257,7 +272,6 @@ public class InteractionHandler : MonoBehaviour {
                     {
                         initPosition = touchedPart.position;
                         finalPosition = initPosition;
-                        distX = touchedPart.position.x - _mainCamera.transform.position.x;
                         distZ = touchedPart.position.z - _mainCamera.transform.position.z;
                         v3 = new Vector3(touch.position.x, touch.position.y, distZ);
                         v3 = _mainCamera.ScreenToWorldPoint(v3);
@@ -281,6 +295,54 @@ public class InteractionHandler : MonoBehaviour {
                         }
                         touchedPart.position = new Vector3((float)newPosX, touchedPart.position.y, touchedPart.position.z);
                     }
+                }
+                break;
+
+            case "Panel3":
+                if(touchedPart.name == "sink")
+                {
+                    if(touch.phase == TouchPhase.Began)
+                    {
+                        initPosition = touchedPart.parent.localRotation.eulerAngles;
+                        distZ = touchedPart.position.z - _mainCamera.transform.position.z;
+                        finalPosition = initPosition;
+
+                        v3 = new Vector3(touch.position.x, touch.position.y, distZ);
+                        v3 = _mainCamera.ScreenToWorldPoint(v3);
+                        offset = v3.x;
+                        dragging = true;
+                    }
+                    if(dragging && touch.phase == TouchPhase.Moved)                    
+                    {
+                        v3 = new Vector3(Input.mousePosition.x, Input.mousePosition.y, distZ);
+                        v3 = _mainCamera.ScreenToWorldPoint(v3);
+                        float newRot = - (v3.x - offset) * 1000;
+                        offset = v3.x;
+                        currentRotation += newRot;
+                        if (currentRotation >= 130) { 
+                            newRot = 0;
+                            finalPosition = touchedPart.parent.localRotation.eulerAngles;
+                            touchedPart.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
+                        }
+                        if(currentRotation <= 0)
+                        {
+                            newRot = 0;
+                        }
+                        touchedPart.parent.localEulerAngles = new Vector3(touchedPart.parent.localEulerAngles.x, touchedPart.parent.localEulerAngles.y, newRot);
+                    }
+                }
+                break;
+
+            case "Panel4":
+                if(!holding && touchedPart.name == "redButton")
+                {
+                    touchedPart.localPosition = new Vector3(touchedPart.localPosition.x, touchedPart.localPosition.y, touchedPart.localPosition.z - 0.3f);
+                    holding = true;
+                }
+                else if(holding && touchedPart.name != "redButton")
+                {
+                    previousPart.localPosition = new Vector3(previousPart.localPosition.x, previousPart.localPosition.y, previousPart.localPosition.z + 0.3f);
+                    holding = false;
                 }
                 break;
 
@@ -313,6 +375,13 @@ public class InteractionHandler : MonoBehaviour {
                 panel.transform.GetChild(2).gameObject.layer = LayerMask.NameToLayer("Default");
                 pos = panel.transform.GetChild(2).position;
                 panel.transform.GetChild(2).position = new Vector3(initPosition.x, pos.y, pos.z);
+                break;
+
+            case "Panel3":
+                Transform child = panel.transform.GetChild(1);
+                child.localEulerAngles = initPosition;
+                child.GetChild(0).gameObject.layer = LayerMask.NameToLayer("Default");
+                currentRotation = 0;
                 break;
 
             default:
@@ -391,7 +460,7 @@ public class InteractionHandler : MonoBehaviour {
 
         if (timeHeld < margin) {
             _timeSlider.gameObject.SetActive(false);
-        } else if (part.tag== "Button" && !_timeSlider.IsActive()) {
+        } else if (part.name== "redButton" && !_timeSlider.IsActive()) {
             _timeSlider.gameObject.SetActive(true);
         } else {
             _timeSlider.value = (timeHeld - margin) / (timeToHold - margin);
