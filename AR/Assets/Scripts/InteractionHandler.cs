@@ -4,21 +4,21 @@ using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.XR.ARSubsystems;
 using UnityEngine.UI;
+using TMPro;
 
 public class InteractionHandler : MonoBehaviour {
     [SerializeField] Camera _mainCamera;
     [SerializeField] GameObject _ship;
     private AudioManager _audioManager;
     [SerializeField] Slider _timeSlider;
+    [SerializeField] TextMeshProUGUI _textTimeHeld;
 
     private float timeHeld = 0f;
-    private float timeToHold = 3.0f;
 
     [SerializeField] Color selectedColor = Color.cyan;
     [SerializeField] Color brokenColor = Color.red;
 
     private Color defaultColor = Color.white;
-    private Color partColor;
 
     private FaultHandler faultHandler;
 
@@ -28,14 +28,14 @@ public class InteractionHandler : MonoBehaviour {
     private List<string> faultLocations = new List<string>();
 
     private void Start() {
-        partColor = defaultColor;
         faultHandler = GetComponent<FaultHandler>();
         _audioManager = FindObjectOfType<AudioManager>();
     }
 
     private void Update() {
         RegisterTouch();
-        UpdateSlider();
+        //UpdateSlider();
+        UpdateHeldText();
     }
 
     private void OnDisable() {
@@ -49,7 +49,6 @@ public class InteractionHandler : MonoBehaviour {
         }
 
         Touch touch = Input.GetTouch(0); // Only care about first finger
-        partColor = HandlePhase(touch);
         
         Ray ray = _mainCamera.ScreenPointToRay(touch.position);
         RaycastHit hit;
@@ -57,18 +56,18 @@ public class InteractionHandler : MonoBehaviour {
             Transform part = GetPart(hit);
 
             // Component in parts used to fix other parts
-            PartReparation partRepair = part.GetComponent<PartReparation>();
+            Panel panel = part.GetComponent<Panel>();
 
             // Is part broken, used to fix something, etc.?
-            int partStatus = GetPartStatus(part.name);
+            int partStatus = GetPartStatus(part);
             UpdateInformation(part); // Update UI
 
             if (partStatus != 0) { // Not broken
-                UpdateColorOnTouch(hit, touch);
+                UpdateColor(hit, touch);
             }
             
-            if (partRepair != null) { // Part has ability to repair
-                if (TimeExceededMax(part, partRepair)) { // Have fixed part
+            if (panel != null) { // Part has ability to repair
+                if (HeldCorrectTime(part, panel, touch.phase)) { // Have fixed part
                     FixPart(part.name);
                 }
             }
@@ -81,14 +80,14 @@ public class InteractionHandler : MonoBehaviour {
     }
 
     private void Reset() {
-        if (previousPart != null && GetPartStatus(previousPart.name) != 0)
+        if (previousPart != null && GetPartStatus(previousPart) != 0)
             SetPartColor(previousPart, defaultColor);
         ResetTime();
     }
 
-    private bool TimeExceededMax(Transform part, PartReparation partRepair) {
+    private bool HeldCorrectTime(Transform part, Panel panel, TouchPhase phase) {
         if (previousPart == part) {
-            return AddTime();
+            return AddTime(panel, phase);
         }
         
         return ResetTime();
@@ -109,16 +108,22 @@ public class InteractionHandler : MonoBehaviour {
         return hit.collider.transform;
     }
 
-    private void UpdateColorOnTouch(RaycastHit hit, Touch touch) {
+    private void UpdateColor(RaycastHit hit, Touch touch) {
         // Change color of part
         Transform part = GetPart(hit);
-        SetPartColor(part, partColor);
+
+        // If stopped touching, reset to default color
+        if (touch.phase == TouchPhase.Ended)
+            SetPartColor(part, defaultColor);
+        else
+            SetPartColor(part, selectedColor);
 
         if (HasMovedToNewPart(touch, part)) { // We moved between two different parts
             Reset();
         }
     }
 
+    // Update UI information
     private void UpdateInformation(Transform part) {
         string txtName = "Text"; // Name of object containing UI text
 
@@ -140,13 +145,19 @@ public class InteractionHandler : MonoBehaviour {
      Returns:
         0 - if part is broken
         1 - if part can fix broken part
+        2 - if part is panel, but cannot currently fix broken part
         -1 - if part has default status
      */
-    private int GetPartStatus(string partName) {
-        if (faultLocations.Contains(partName))
+    private int GetPartStatus(Transform part) {
+        string partName = part.transform.name;
+
+        if (faultLocations.Contains(partName)) // Fault location
             return 0;
-        if (fixesToFaults.ContainsKey(partName))
+        if (fixesToFaults.ContainsKey(partName)) // Panel that can fix fault
             return 1;
+        Panel panel = part.GetComponent<Panel>(); 
+        if (panel != null) // Panel that cannot currently fix fault
+            return 2;
 
         return -1;
     }
@@ -177,20 +188,12 @@ public class InteractionHandler : MonoBehaviour {
         part.GetComponent<Renderer>().material.color = color;
     }
 
-    // Handle player starting and stopping touching the screen
-    private Color HandlePhase(Touch touch) {
-        if (touch.phase == TouchPhase.Began)
-            return selectedColor;
-        else if (touch.phase == TouchPhase.Ended)
-            return defaultColor;
-
-        return partColor;
-    }
-
+    // Add a fault
     public void AddFault(Fault fault, int variation) {
         if (!faultLocations.Contains(fault.faultLocation)) {
             faultLocations.Add(fault.faultLocation);
         }
+        // Get fix location based on variation
         string fixLocation = fault.fixLocations[variation].Split('_')[1];
 
         if (!fixesToFaults.ContainsKey(fixLocation)) {
@@ -198,16 +201,19 @@ public class InteractionHandler : MonoBehaviour {
         }
     }
 
+    // Helper function for removing a fault
     private void RemoveFaultLocation(string fault, Transform faultLocation) {
         faultLocations.Remove(fault);
         faultLocation.GetComponent<TextHandler>().ShowDescription(false);
     }
 
+    // Helper function for removing a fix location
     private void RemoveFixLocation(string fix, Transform faultLocation) {
         faultLocations.Remove(fix);
         faultLocation.Find(fix).GetComponent<TextHandler>().ShowDescription(false);
     }
 
+    // Remove a fault
     private void RemoveFault(string fault, string fix) {
         Transform faultLocation = _ship.transform.Find(fault);
         RemoveFaultLocation(fault, faultLocation);
@@ -216,13 +222,37 @@ public class InteractionHandler : MonoBehaviour {
         _audioManager.Play("Heal");
     }
 
-    private bool AddTime() {
+    // Functions for handling UI slider
+
+    private bool AddTime(Panel panel, TouchPhase phase) {
         timeHeld += Time.deltaTime;
 
-        if (timeHeld >= timeToHold) {
+        if (phase == TouchPhase.Ended) {
+            return HandleEndTime(panel);
+        }
+
+        return false;
+    }
+
+    private bool HandleEndTime(Panel panel) {
+        float timeToHold = panel.GetTimeToHold();
+        float margin = 0.5f;
+
+        // Stopped holding at correct time
+        if (Mathf.Abs(timeToHold - timeHeld) <= 0.5f && panel.GetCanRepair()) {
             timeHeld = 0f;
+            panel.SetCanRepair(false);
             return true;
         }
+
+        // Did not stop at correct time
+
+        // Give margin for error, which doesn't punish
+        if (timeHeld < margin)
+            return false;
+
+        // Tell VR to create consequence
+
 
         return false;
     }
@@ -231,6 +261,19 @@ public class InteractionHandler : MonoBehaviour {
         timeHeld = 0f;
 
         return false;
+    }
+
+    private void UpdateHeldText() {
+        float margin = 0.2f;
+
+        if (timeHeld < margin) {
+            _textTimeHeld.gameObject.SetActive(false);
+        }
+        else if (!_textTimeHeld.IsActive()) {
+            _textTimeHeld.gameObject.SetActive(true);
+        }
+
+        _textTimeHeld.text = timeHeld.ToString("0.00");
     }
 
     private void UpdateSlider() {
@@ -243,7 +286,7 @@ public class InteractionHandler : MonoBehaviour {
             _timeSlider.gameObject.SetActive(true);
         }
         else {
-            _timeSlider.value = (timeHeld - margin) / (timeToHold - margin);
+            //_timeSlider.value = (timeHeld - margin) / (timeToHold - margin);
         }
     }
 }

@@ -53,7 +53,7 @@ public class Fault {
     public int numVariations;
     public string fixLocation; // Remove later, exists to avoid errors with references
     public string[] fixLocations;
-    public string[] fixActions;
+    public float[] fixActions;
 
     public string arDescription;
     public Dictionary<string, string[]> otherARDescriptions;

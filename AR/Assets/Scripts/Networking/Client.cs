@@ -30,6 +30,7 @@ public class Client : MonoBehaviour {
 		ConnectToHost();
 		faultHandler = GetComponent<FaultHandler>();
 
+		// Debug
 		faultHandler.ReceiveMessage("0", "0");
 	}
 
@@ -58,22 +59,22 @@ public class Client : MonoBehaviour {
 			Byte[] bytes = new Byte[256];             
 			
 			while (true) { 							
-				using (NetworkStream stream = socketConnection.GetStream()) { 					
-					int length = 1; 	
-
+				using (NetworkStream stream = socketConnection.GetStream()) {
 					// Read server's byte_stream and convert it to a string on our side: 					
 					while (true) {
-						length = stream.Read(bytes, 0, bytes.Length);
+						int length = stream.Read(bytes, 0, bytes.Length);
 						if (length == 0)
 							break;
 
-						byte[] incommingData = new byte[length]; 						
-						Array.Copy(bytes, 0, incommingData, 0, length); 						 						
-						string serverMessage = Encoding.ASCII.GetString(incommingData);
+						byte[] incomingData = new byte[length]; 						
+						Array.Copy(bytes, 0, incomingData, 0, length); 						 						
+						string serverMessage = Encoding.ASCII.GetString(incomingData);
 
 						// Message: "id variation"
 						string[] vals = serverMessage.Split(' ');
-						faultHandler.ReceiveMessage(vals[0], vals[1]);
+
+						if (vals.Length >= 2)
+							faultHandler.ReceiveMessage(vals[0], vals[1]);
 					} 				
 				} 			
 			}              
