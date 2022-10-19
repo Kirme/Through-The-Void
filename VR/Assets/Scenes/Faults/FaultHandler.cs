@@ -147,6 +147,7 @@ public class FaultHandler : MonoBehaviour {
         faults.Add(faultID, fault);
 
         onBreak.Invoke(fault, faults.Count);
+
         player.GetComponent<PlayerController>().Break(fault, faults.Count);
         client.SendData(faultID + " " + fault.GetVariation());
         frontTextComponent.text = CreateFrontText();
