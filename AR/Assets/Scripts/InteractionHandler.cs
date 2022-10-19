@@ -27,14 +27,16 @@ public class InteractionHandler : MonoBehaviour {
     private Dictionary<string, Fault> fixesToFaults = new Dictionary<string, Fault>();
     private List<string> faultLocations = new List<string>();
 
+    private void Awake() {
+        _audioManager = FindObjectOfType<AudioManager>();
+    }
+
     private void Start() {
         faultHandler = GetComponent<FaultHandler>();
-        _audioManager = FindObjectOfType<AudioManager>();
     }
 
     private void Update() {
         RegisterTouch();
-        //UpdateSlider();
         UpdateHeldText();
     }
 
@@ -68,7 +70,7 @@ public class InteractionHandler : MonoBehaviour {
             
             if (panel != null) { // Part has ability to repair
                 if (HeldCorrectTime(part, panel, touch.phase)) { // Have fixed part
-                    FixPart(part.name);
+                    FixPart(part);
                 }
             }
 
@@ -93,12 +95,14 @@ public class InteractionHandler : MonoBehaviour {
         return ResetTime();
     }
 
-    private void FixPart(string partName) {
+    private void FixPart(Transform part) {
+        string partName = part.name;
+
         if (fixesToFaults.ContainsKey(partName)) {
             Fault fault = fixesToFaults[partName];
 
             SetPartColor(fault.faultLocation, defaultColor);
-            RemoveFault(fault.faultLocation, partName);
+            RemoveFault(fault.faultLocation, part);
             faultHandler.SendMessage(fault.id);
         }
     }
@@ -169,6 +173,7 @@ public class InteractionHandler : MonoBehaviour {
 
     public void SetBroken(string name) {
         SetPartColor(name, brokenColor);
+        //_audioManager.Play("Broken");
     }
 
     private void SetPartColor(string name, Color color) {
@@ -199,6 +204,8 @@ public class InteractionHandler : MonoBehaviour {
         if (!fixesToFaults.ContainsKey(fixLocation)) {
             fixesToFaults.Add(fixLocation, fault);
         }
+
+        Transform faultLocation = _ship.transform.Find(fault.faultLocation);
     }
 
     // Helper function for removing a fault
@@ -208,16 +215,16 @@ public class InteractionHandler : MonoBehaviour {
     }
 
     // Helper function for removing a fix location
-    private void RemoveFixLocation(string fix, Transform faultLocation) {
-        faultLocations.Remove(fix);
-        faultLocation.Find(fix).GetComponent<TextHandler>().ShowDescription(false);
+    private void RemoveFixLocation(Transform fix) {
+        faultLocations.Remove(fix.name);
+        fix.GetComponent<TextHandler>().ShowDescription(false);
     }
 
     // Remove a fault
-    private void RemoveFault(string fault, string fix) {
+    private void RemoveFault(string fault, Transform fix) {
         Transform faultLocation = _ship.transform.Find(fault);
         RemoveFaultLocation(fault, faultLocation);
-        RemoveFixLocation(fix, faultLocation);
+        RemoveFixLocation(fix);
 
         _audioManager.Play("Heal");
     }
@@ -276,6 +283,8 @@ public class InteractionHandler : MonoBehaviour {
         _textTimeHeld.text = timeHeld.ToString("0.00");
     }
 
+    /*
+     * Show slider, no longer necessary
     private void UpdateSlider() {
         float margin = 0.2f;
 
@@ -286,7 +295,7 @@ public class InteractionHandler : MonoBehaviour {
             _timeSlider.gameObject.SetActive(true);
         }
         else {
-            //_timeSlider.value = (timeHeld - margin) / (timeToHold - margin);
+            _timeSlider.value = (timeHeld - margin) / (timeToHold - margin);
         }
-    }
+    */
 }

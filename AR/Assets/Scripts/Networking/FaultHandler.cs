@@ -58,6 +58,7 @@ public class FaultHandler : MonoBehaviour {
 
         HandleDescription(th, string.Concat(description));
         /*
+         * Show description for all panels
         foreach (string key in fault.otherARDescriptions.Keys) {
             string[] l = key.Split("_");
             Panel panel = ship.transform.Find(l[0]).Find(l[1]).GetComponent<Panel>();
