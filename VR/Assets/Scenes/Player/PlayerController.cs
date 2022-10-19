@@ -20,11 +20,12 @@ public class PlayerController : MonoBehaviour
 
     private float hitpoints = 100f;
 
+    private StatsHandler statsHandler;
 
     audioManager sn;
 
     // Use these to change max speed dynamically, for example if a fault causes rotation speed to decrease.
-    private float maxSpeedModifier = 1.0f, maxTurnSpeedModifier = 1.0f;
+
 
     public float xRotDeadzone = 10.0f, zRotDeadzone = 10.0f, yRotDeadzone = 10.0f;
     public float maxSteeringRot = 70.0f;
@@ -33,12 +34,8 @@ public class PlayerController : MonoBehaviour
     private Vector3 rotationSpeed = new Vector3(0,0,0);
 
     public void Break(Fault fault, int numFaults)
-    {/*
-        maxSpeedModifier *= fault.maxSpeedModifier;
-        acceleration *= fault.accelerationModifier;
-        maxTurnSpeedModifier *= fault.maxTurnSpeedModifier;
-        turnAcceleration *= fault.turnAccelerationModifier;
-        */
+    {
+        statsHandler.AddFault(fault);
 
         warningLight.SetActive(true);
         warningLight.GetComponent<WarningLight>().speed = 2.5f + 0.5f * numFaults;
@@ -47,13 +44,9 @@ public class PlayerController : MonoBehaviour
 
     public void Fix(Fault fault, int remainingFaults)
     {
-        /*
-        maxSpeedModifier /= fault.maxSpeedModifier;
-        acceleration /= fault.accelerationModifier;
-        maxTurnSpeedModifier /= fault.maxTurnSpeedModifier;
-        turnAcceleration /= fault.turnAccelerationModifier;*/
+        statsHandler.FixFault(fault);
 
-        if(remainingFaults  == 0)
+        if (remainingFaults  == 0)
         {
             warningLight.SetActive(false);
         } else
@@ -65,10 +58,7 @@ public class PlayerController : MonoBehaviour
 
     public void FixAll()
     {
-        maxSpeedModifier = 1.0f;
-        acceleration = 1.0f;
-        maxTurnSpeedModifier = 1.0f;
-        turnAcceleration = 1.0f;
+        statsHandler.ResetFaults();
 
         warningLight.SetActive(false);
         faultDisplay.GetComponent<FaultDisplay>().SetNumFaults(0);
@@ -77,6 +67,7 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        statsHandler = GetComponent<StatsHandler>();
         warningLight.SetActive(false);
         poseAction[rightHand].onTrackingChanged += OnTrackPadChanged;
 
@@ -106,17 +97,15 @@ public class PlayerController : MonoBehaviour
 
         }
 
-        rotationSpeed.x = Mathf.Lerp(rotationSpeed.x, -maxTurnSpeed * joystickRotation.x * Time.deltaTime * maxTurnSpeedModifier, turnAcceleration * Time.deltaTime * maxTurnSpeedModifier);
-        rotationSpeed.y = Mathf.Lerp(rotationSpeed.y, -maxTurnSpeed * joystickRotation.z * Time.deltaTime * maxTurnSpeedModifier, turnAcceleration * Time.deltaTime * maxTurnSpeedModifier);
-        rotationSpeed.z = Mathf.Lerp(rotationSpeed.z, maxTurnSpeed / 2 * joystickRotation.y * Time.deltaTime * maxTurnSpeedModifier, turnAcceleration * Time.deltaTime * maxTurnSpeedModifier);
+        rotationSpeed.x = Mathf.Lerp(rotationSpeed.x, (statsHandler.invertY ? 1 : -1) * maxTurnSpeed * joystickRotation.x * Time.deltaTime * statsHandler.maxTurnSpeedModifier, turnAcceleration * Time.deltaTime * statsHandler.maxTurnSpeedModifier * statsHandler.turnAccelerationModifier);
+        rotationSpeed.y = Mathf.Lerp(rotationSpeed.y, (statsHandler.invertX ? 1 : -1) * maxTurnSpeed * joystickRotation.z * Time.deltaTime * statsHandler.maxTurnSpeedModifier, turnAcceleration * Time.deltaTime * statsHandler.maxTurnSpeedModifier * statsHandler.turnAccelerationModifier);
+        rotationSpeed.z = Mathf.Lerp(rotationSpeed.z, (statsHandler.invertZ ? -1 : 1) * maxTurnSpeed/2*joystickRotation.y * Time.deltaTime * statsHandler.maxTurnSpeedModifier, turnAcceleration * Time.deltaTime * statsHandler.maxTurnSpeedModifier * statsHandler.turnAccelerationModifier);
 
-        speed = Mathf.Lerp(speed, maxSpeed * inputSpeed * maxSpeedModifier, acceleration * Time.deltaTime * maxSpeedModifier);
+        speed = Mathf.Lerp(speed, maxSpeed * (statsHandler.fullSpeed?1.0f:inputSpeed) * statsHandler.maxSpeedModifier, acceleration * Time.deltaTime * statsHandler.accelerationModifier * statsHandler.maxSpeedModifier);
         
-        transform.Rotate(rotationSpeed.x * maxTurnSpeedModifier, rotationSpeed.y * maxTurnSpeedModifier, rotationSpeed.z * maxTurnSpeedModifier, Space.Self);
+        transform.Rotate(rotationSpeed.x, rotationSpeed.y, rotationSpeed.z, Space.Self);
         transform.position += transform.forward * speed * Time.deltaTime;
     }
-
-
 
     public void SetSpeed(float speed)
     {
