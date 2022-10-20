@@ -122,7 +122,7 @@ public class meter : MonoBehaviour
     void Update()
     {   
 
-        Debug.Log(value + " " + target_value);
+        //Debug.Log(value + " " + target_value);
         // Normalize: 1. Per frame and 2. with regards to max/min value:
         float normalized_step = velocity * (max_val - min_val)/100 * Time.deltaTime;
         if(target_value < value){

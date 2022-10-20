@@ -20,6 +20,11 @@ public class PlayerController : MonoBehaviour
 
     private float hitpoints = 100f;
 
+    private bool invulnerable = false;
+    private float invulTimer = 3f;
+    private float MaxWorkingSpeed = 7f;
+    private float currentSpeedTimer = 10f;
+
     private StatsHandler statsHandler;
 
     audioManager sn;
@@ -102,7 +107,10 @@ public class PlayerController : MonoBehaviour
         rotationSpeed.z = Mathf.Lerp(rotationSpeed.z, (statsHandler.invertZ ? -1 : 1) * maxTurnSpeed/2*joystickRotation.y * Time.deltaTime * statsHandler.maxTurnSpeedModifier, turnAcceleration * Time.deltaTime * statsHandler.maxTurnSpeedModifier * statsHandler.turnAccelerationModifier);
 
         speed = Mathf.Lerp(speed, maxSpeed * (statsHandler.fullSpeed?1.0f:inputSpeed) * statsHandler.maxSpeedModifier, acceleration * Time.deltaTime * statsHandler.accelerationModifier * statsHandler.maxSpeedModifier);
-        
+        if(currentSpeedTimer < invulTimer){
+            speed = Mathf.Min(speed, MaxWorkingSpeed + ((speed - MaxWorkingSpeed) * Mathf.Min(invulTimer, currentSpeedTimer) / invulTimer));
+            currentSpeedTimer += Time.deltaTime;
+        }
         transform.Rotate(rotationSpeed.x, rotationSpeed.y, rotationSpeed.z, Space.Self);
         transform.position += transform.forward * speed * Time.deltaTime;
     }
@@ -134,11 +142,33 @@ public class PlayerController : MonoBehaviour
 
     public void OnCollisionEnter(Collision col){
         if(col.gameObject.tag == "Asteroid"){
-            TakeDamage(col.relativeVelocity.magnitude);
-            Debug.Log(hitpoints);
-
+            if(!invulnerable){
+                invulnerable = true;
+                Quaternion rel = Quaternion.Inverse(gameObject.transform.rotation) * col.gameObject.transform.rotation;
+                float xdiff = speed*transform.forward.x - 2*col.gameObject.transform.rotation.x;
+                float ydiff = speed*transform.forward.y - 2*col.gameObject.transform.rotation.y;
+                float zdiff = speed*transform.forward.z - 2*col.gameObject.transform.rotation.z;
+                float speeddiff = Mathf.Sqrt(xdiff*xdiff + ydiff*ydiff + zdiff*zdiff);
+                //Quaternion tr = col.gameObject.transform.rotation;
+                TakeDamage(speeddiff);
+                Debug.Log("DAMAGE");
+                Debug.Log(speeddiff);
+                StartCoroutine(CollisionEnumerator());
+            }
+            //Not perfect as added momentum isn't taken into account, but this 
             col.gameObject.GetComponent<Rigidbody>().AddForce(speed*transform.forward.x, speed*transform.forward.y, speed*transform.forward.z);
         }
+    }
+
+    public void OnCollisionStay(Collision col){
+        currentSpeedTimer = 0f;
+    }
+
+    IEnumerator CollisionEnumerator()
+    {
+        yield return new WaitForSeconds(invulTimer);
+        invulnerable = false;
+        yield break;
     }
 
     public float GetHitpoints()

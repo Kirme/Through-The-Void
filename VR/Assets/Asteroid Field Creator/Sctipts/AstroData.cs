@@ -59,6 +59,12 @@ public class AstroData : MonoBehaviour
     private float zRot;
     private float distanceFactor;
     private bool startUp = true;
+    private bool resettingPosition = false;
+    private Vector3 newpos;
+    private Vector3 temppos;
+    float resetTimer = 3;
+    float currTimer = 0f;
+    float asteroidSpawnDistanceFactor = 10f;
 
     public void Update()
     {
@@ -81,41 +87,58 @@ public class AstroData : MonoBehaviour
             startUp = true;
         }
         else{
-            //Done once on application start
-            if(startUp){
-                xRot = Random.Range(0, 360);
-                yRot = Random.Range(0, 360);
-                zRot = Random.Range(0, 360);
-                transform.Rotate(xRot, yRot, zRot, Space.Self);
-                startUp = false;
+            if(resettingPosition){
+                float t = Mathf.Min(1, currTimer / resetTimer);
+                this.transform.position = new Vector3(Mathf.Lerp(temppos.x, newpos.x, t), Mathf.Lerp(temppos.y, newpos.y, t), Mathf.Lerp(temppos.z, newpos.z, t));
+
+                currTimer += Time.deltaTime;
             }
-            //Move the asteroid - TODO: How does this interact with movement from bumping into them?
-            //transform.position += transform.forward * speed * Time.deltaTime;
-            //Check distance, if it's 5% over cap then move
-            distanceFactor = GetDistance(this.transform.position, playerTransform.position) / distanceCap;
-            if (distanceFactor >= distanceLeniency)
-            {
-                //Vector3 newpos = playerTransform.position - this.transform.position;
-                Vector3 newpos = this.transform.position +  ((playerTransform.position-this.transform.position) * 2 * (1/(distanceFactor)));
-                //Should always occur and move it a distance of 2x distance cap towards the player UNLESS the created asteroid field is enormous.
-                if(GetDistance(newpos, playerTransform.position) / distanceCap <= 1){
-                    this.transform.position = newpos;
+            else{
+
+            
+                //Done once on application start
+                if(startUp){
                     xRot = Random.Range(0, 360);
                     yRot = Random.Range(0, 360);
                     zRot = Random.Range(0, 360);
                     transform.Rotate(xRot, yRot, zRot, Space.Self);
+                    startUp = false;
                     speed = 2f;
                 }
-                //In which case, it will simply destroy it.
-                else{
-                    Destroy(gameObject);
+                //Move the asteroid - TODO: How does this interact with movement from bumping into them?
+                transform.position += transform.forward * speed * Time.deltaTime;
+                //Check distance, if it's 5% over cap then move
+                distanceFactor = GetDistance(this.transform.position, playerTransform.position) / distanceCap;
+                if (distanceFactor >= distanceLeniency)
+                {
+                    //Vector3 newpos = playerTransform.position - this.transform.position;
+                    newpos = this.transform.position +  ((playerTransform.position-this.transform.position) * 2 * (1/(distanceFactor)));
+                    
+
+                    //Should always occur and move it a distance of 2x distance cap towards the player UNLESS the created asteroid field is enormous.
+                    if(GetDistance(newpos, playerTransform.position) / distanceCap <= 1){ //Can probably be removed?
+                        temppos = this.transform.position +  ((playerTransform.position-this.transform.position) * 2 * asteroidSpawnDistanceFactor * (1/(distanceFactor)));
+                        this.transform.position = temppos;
+                        xRot = Random.Range(0, 360);
+                        yRot = Random.Range(0, 360);
+                        zRot = Random.Range(0, 360);
+                        transform.Rotate(xRot, yRot, zRot, Space.Self);
+                        gameObject.GetComponent<Rigidbody>().velocity = Vector3.zero;
+                        gameObject.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+                        speed = 2f;
+                        resettingPosition = true;
+                    }
                 }
-                //TODO: Due to fixes in the code, this way of doing it is presumably no longer neccessary (as it was originally done due to a bug), but I cannot test right now.
-                //This if/else clause and the content of the else clause can almost certainly just be removed (and then have the content of the if clause always occur).
+            }
+            if(currTimer >= resetTimer){
+                this.transform.position = newpos;
+                resettingPosition = false;
+                currTimer = 0f;
             }
         }
     }
         
+
 
     
 
