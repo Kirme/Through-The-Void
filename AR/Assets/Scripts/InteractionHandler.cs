@@ -33,6 +33,9 @@ public class InteractionHandler : MonoBehaviour {
 
     private void Start() {
         faultHandler = GetComponent<FaultHandler>();
+
+        faultHandler.SendMessage("mistake");
+        faultHandler.SendMessage("0");
     }
 
     private void Update() {
@@ -204,8 +207,6 @@ public class InteractionHandler : MonoBehaviour {
         if (!fixesToFaults.ContainsKey(fixLocation)) {
             fixesToFaults.Add(fixLocation, fault);
         }
-
-        Transform faultLocation = _ship.transform.Find(fault.faultLocation);
     }
 
     // Helper function for removing a fault
@@ -246,7 +247,7 @@ public class InteractionHandler : MonoBehaviour {
         float margin = 0.5f;
 
         // Stopped holding at correct time
-        if (Mathf.Abs(timeToHold - timeHeld) <= 0.5f && panel.GetCanRepair()) {
+        if (panel.GetCanRepair() && Mathf.Abs(timeToHold - timeHeld) <= 0.5f) {
             timeHeld = 0f;
             panel.SetCanRepair(false);
             return true;
@@ -259,7 +260,7 @@ public class InteractionHandler : MonoBehaviour {
             return false;
 
         // Tell VR to create consequence
-
+        faultHandler.SendMessage("mistake");
 
         return false;
     }
@@ -281,6 +282,10 @@ public class InteractionHandler : MonoBehaviour {
         }
 
         _textTimeHeld.text = timeHeld.ToString("0.00");
+    }
+
+    public void ClearFaults() {
+
     }
 
     /*

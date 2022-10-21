@@ -29,9 +29,13 @@ public class SpawnableManager : MonoBehaviour
     }
 
     private void PlaceShip() {
-        if (_RaycastManager.Raycast(Input.GetTouch(0).position, _Hits)) {
+        Vector2 touchPos = Input.GetTouch(0).position;
+        if (_RaycastManager.Raycast(touchPos, _Hits)) {
             if (Input.GetTouch(0).phase == TouchPhase.Began) {
-                spawnablePrefab.transform.position = _Hits[0].pose.position;
+                Vector3 touchWorldPos = arCam.ScreenToWorldPoint(new Vector3(touchPos.x, touchPos.y, arCam.nearClipPlane));
+                Vector3 hitPos = _Hits[0].pose.position;
+
+                spawnablePrefab.transform.position = new Vector3(hitPos.x, touchWorldPos.y, hitPos.z);
                 spawnablePrefab.SetActive(true);
                 notPlaced = false;
             }

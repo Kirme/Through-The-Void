@@ -9,7 +9,10 @@ public class FaultHandler : MonoBehaviour {
 
     public Dictionary<string, Fault> faultDictionary = new Dictionary<string, Fault>();
 
-    private GameObject ship;
+    [SerializeField] GameObject ship;
+    private Fault currentFault;
+    private string currentVar;
+    private bool addFault = false;
 
     void Awake() {
         client = GetComponent<Client>();
@@ -20,8 +23,23 @@ public class FaultHandler : MonoBehaviour {
         interactionHandler = GetComponent<InteractionHandler>();
 
         faultDictionary = jsonHandler.GetFaultDictionary();
+    }
 
-        ship = GameObject.FindGameObjectWithTag("Spawnable");
+    private void Update() {
+        if (currentFault != null && addFault) {
+            ParseFault(currentFault, currentVar);
+
+            if (!faultDictionary.ContainsKey(currentFault.id))
+                faultDictionary.Add(currentFault.id, currentFault);
+
+            addFault = false;
+        }
+    }
+
+    public void ReceiveMessage(string msg) {
+        Debug.Log("Got message " + msg);
+
+        interactionHandler.ClearFaults();
     }
 
     // Function called by Client when receiving information from other player
@@ -30,10 +48,10 @@ public class FaultHandler : MonoBehaviour {
         Fault fault = jsonHandler.GetFault(id);
 
         if (fault != null) {
-            ParseFault(fault, variation);
+            currentFault = fault;
+            currentVar = variation;
 
-            if (!faultDictionary.ContainsKey(fault.id))
-                faultDictionary.Add(fault.id, fault);
+            addFault = true;
         }
     }
 

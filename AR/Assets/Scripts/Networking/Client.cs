@@ -31,7 +31,7 @@ public class Client : MonoBehaviour {
 		faultHandler = GetComponent<FaultHandler>();
 
 		// Debug
-		faultHandler.ReceiveMessage("0", "0");
+		//faultHandler.ReceiveMessage("0", "0");
 	}
 
 	public void Reconnect() {
@@ -55,7 +55,7 @@ public class Client : MonoBehaviour {
 
 	private void ListenForData() { 				
 			// Set to IPv4 address for LAN:
-			socketConnection = new TcpClient("192.168.2.158", port);  			
+			socketConnection = new TcpClient("193.10.37.246", port);  			
 			Byte[] bytes = new Byte[256];             
 			
 			while (true) { 							
@@ -70,6 +70,10 @@ public class Client : MonoBehaviour {
 						Array.Copy(bytes, 0, incomingData, 0, length); 						 						
 						string serverMessage = Encoding.ASCII.GetString(incomingData);
 
+						// Message: "reset"
+						if (string.Compare(serverMessage, "reset") == 0)
+							faultHandler.ReceiveMessage(serverMessage);
+
 						// Message: "id variation"
 						string[] vals = serverMessage.Split(' ');
 
@@ -83,6 +87,8 @@ public class Client : MonoBehaviour {
 	// SendMessage
 	// Takes in a string and converts the string to a byte array which can be sent through the stream to the host:
 	public void SendMessage(string msg) {
+		Debug.Log(msg + " " + Encoding.ASCII.GetBytes(msg).Length);
+
 		if (socketConnection == null) {             
 			return;         
 		}

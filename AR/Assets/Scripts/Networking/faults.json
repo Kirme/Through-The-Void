@@ -12,7 +12,7 @@
       "arDescription": "Go to panel 6",
       "otherARDescriptions": {
         "Core_Panel6": [ "If oxygen > 50% hold for 7 seconds, otherwise hold for 3 seconds", "If oxygen < 50% hold for 7 seconds, otherwise hold for 3 seconds" ],
-        "Core_Panel7": [ "If pressure > 50% hold for 4 seconds, otherwise hold for 2 seconds", "If pressure < 50% hold for 4 seconds, otherwise hold for 2 seconds" ]
+        "Core_Panel7": [ "If pressure > 50% hold for 3 seconds, otherwise hold for 5 seconds", "If pressure < 50% hold for 3 seconds, otherwise hold for 5 seconds" ]
       },
       "metrics": {
         "pressure": [
