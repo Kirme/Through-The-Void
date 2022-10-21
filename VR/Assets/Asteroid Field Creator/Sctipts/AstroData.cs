@@ -60,8 +60,8 @@ public class AstroData : MonoBehaviour
     private float distanceFactor;
     private bool startUp = true;
     private bool resettingPosition = false;
-    private Vector3 newpos;
-    private Vector3 temppos;
+    private Vector3 respawnOffset;
+    private double remainingOffset = 1.0;
     float resetTimer = 3;
     float currTimer = 0f;
     float asteroidSpawnDistanceFactor = 10f;
@@ -88,8 +88,9 @@ public class AstroData : MonoBehaviour
         }
         else{
             if(resettingPosition){
-                float t = Mathf.Min(1, currTimer / resetTimer);
-                this.transform.position = new Vector3(Mathf.Lerp(temppos.x, newpos.x, t), Mathf.Lerp(temppos.y, newpos.y, t), Mathf.Lerp(temppos.z, newpos.z, t));
+                float t = Mathf.Min(1, Time.deltaTime / resetTimer);
+                this.transform.position -= Vector3.Lerp(Vector3.zero, respawnOffset, t);
+                remainingOffset -= t;
 
                 currTimer += Time.deltaTime;
             }
@@ -112,13 +113,14 @@ public class AstroData : MonoBehaviour
                 if (distanceFactor >= distanceLeniency)
                 {
                     //Vector3 newpos = playerTransform.position - this.transform.position;
-                    newpos = this.transform.position +  ((playerTransform.position-this.transform.position) * 2 * (1/(distanceFactor)));
+                    Vector3 newPos = this.transform.position + ((playerTransform.position-this.transform.position) * 2 * (1/(distanceFactor)));
                     
 
                     //Should always occur and move it a distance of 2x distance cap towards the player UNLESS the created asteroid field is enormous.
-                    if(GetDistance(newpos, playerTransform.position) / distanceCap <= 1){ //Can probably be removed?
-                        temppos = this.transform.position +  ((playerTransform.position-this.transform.position) * 2 * asteroidSpawnDistanceFactor * (1/(distanceFactor)));
-                        this.transform.position = temppos;
+                    if(GetDistance(newPos, playerTransform.position) / distanceCap <= 1){ //Can probably be removed?
+                        respawnOffset = ((playerTransform.position - this.transform.position) * 2 * asteroidSpawnDistanceFactor * (1 / (distanceFactor))) ;
+                        remainingOffset = 1.0;
+                        this.transform.position = newPos + respawnOffset;
                         xRot = Random.Range(0, 360);
                         yRot = Random.Range(0, 360);
                         zRot = Random.Range(0, 360);
@@ -131,7 +133,7 @@ public class AstroData : MonoBehaviour
                 }
             }
             if(currTimer >= resetTimer){
-                this.transform.position = newpos;
+                this.transform.position -= Vector3.Lerp(Vector3.zero, respawnOffset, ((float) remainingOffset));
                 resettingPosition = false;
                 currTimer = 0f;
             }

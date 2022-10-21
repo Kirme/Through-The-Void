@@ -6,39 +6,110 @@
       "severity": 0,
       "faultLocation": "Engine",
       "numVariations": 2,
-      "fixLocations" : ["Core_Panel6", "Core_Panel3"],
-      "fixActions": ["pressA", "pressB"],
+      "fixLocations": [ "Core_Panel1", "Core_Panel2" ],
+      "fixActions": [ 3.0, 5.0 ],
 
-      "ar_description": "Go to panel A 5",
-      "other_ar_descriptions": {
-        "Core_PanelA5": ["If oxygen balbal go to panel3 otherwise go to panel R6", "If oxygen balbal go to panel6 otherwise go to panel 3"],
-        "Core_Panel3": ["If pressure > 50% pressA otherwise blabla", "If pressure < 50% pressA otherwise blabla"],
+      "arDescription": "Go to panel 1",
+      "otherARDescriptions": {
+        "Core_Panel1": [ "If Engine Oxygen > 50% hold for 7 seconds, otherwise hold for 3 seconds", "If Engine Oxygen < 50% hold for 7 seconds, otherwise hold for 3 seconds" ],
+        "Core_Panel2": [ "If Engine Pressure > 50% hold for 3 seconds, otherwise hold for 5 seconds", "If Engine Pressure < 50% hold for 3 seconds, otherwise hold for 5 seconds" ]
       },
       "metrics": {
-        "core_pressure": [[0.0, 0.4], [0.6 , 1.0]],
-        "lwing_oxygen": [[0.0, 0.4], [0.6 , 1.0]],
-        "rwing_fuelCirculation": [[0.1, 0.3], [0.7, 1.0]],
-        "engine_electricity" : [[0.0, 0.4], [0.6 , 1.0]],
+        "engine_pressure": [
+          [ 0.0, 0.4 ],
+          [ 0.6, 1.0 ]
+        ],
+        "engine_oxygen": [
+          [ 0.0, 0.4 ],
+          [ 0.6, 1.0 ]
+        ]
       },
 
       "effects": [
-        ["EngineBurning", "EngineSmoking"],
-        ["machineSounds", ""],
-        ["lightsOut", "LightsSuperBright"],
-        ["showWarningTriangle", ""],
+        [ "EngineBurning", "EngineSmoking" ],
+        [ "machineSounds", "" ],
+        [ "lightsOut", "LightsSuperBright" ],
+        [ "showWarningTriangle", "" ]
       ],
 
-      "display_name": "Engine Malfunction",
+      "displayName": "Engine Malfunction",
       "negatives": {
-        "maxSpeedModifier" : 0.3,
-        "accelerationModifier" : 1.0,
-        "maxTurnSpeedModifier" : 1.0,
-        "turnAccelerationModifier" : 1.0,
-        "invertedYControls": 0.0,
-        "hazyGlass": 0.0,
-        "fullSpeed": 0.0,
-        "alwaysTurning": 0.0,
-      },
+        "fullSpeed": 1.0,
+        "maxSpeedModifier": 1.2,
+      }
     },
+    {
+      "id": "1",
+      "severity": 2,
+      "faultLocation": "Core",
+      "numVariations": 2,
+      "fixLocations": [ "Engine_Panel1", "Engine_Panel2" ],
+      "fixActions": [ 3.0, 5.0 ],
+
+      "arDescription": "Go to Engine_Panel2",
+      "otherARDescriptions": {
+        "Engine_Panel1": [ "If Core Fuel > 50% hold for 7 seconds, otherwise hold for 3 seconds", "If Core Fuel < 50% hold for 7 seconds, otherwise hold for 3 seconds" ],
+        "Engine_Panel2": [ "If Core Fuel > 50% hold for 3 seconds, otherwise hold for 5 seconds", "If Core Fuel < 50% hold for 3 seconds, otherwise hold for 5 seconds" ]
+      },
+      "metrics": {
+        "core_fuel": [
+          [ 0.0, 0.4 ],
+          [ 0.6, 1.0 ]
+        ],
+        "core_pressure": [
+          [ 0.6, 1.0 ],
+          [ 0.0, 0.4 ]
+        ]
+      },
+
+      "effects": [
+        [ "", "EngineSmoking" ],
+        [ "machineSounds", "alarmSound" ],
+        [ "blinkingLight", "lightsSuperBright" ],
+        [ "showWarningTriangle", "" ]
+      ],
+
+      "displayName": "Steering malfunction",
+      "negatives": {
+        "invertX": 1.0,
+        "invertY": 1.0,
+      }
+    },
+    {
+      "id": "2",
+      "severity": 2,
+      "faultLocation": "WingR",
+      "numVariations": 2,
+      "fixLocations": [ "WingL_Panel1", "WingL_Panel2" ],
+      "fixActions": [ 3.0, 5.0 ],
+
+      "arDescription": "Go to panel C3",
+      "otherARDescriptions": {
+        "WingL_Panel1": [ "If Left Wing Pressure > 50% hold for 7 seconds, otherwise hold for 3 seconds", "If Left Wing Pressure < 50% hold for 7 seconds, otherwise hold for 3 seconds" ],
+        "WingL_Panel2": [ "If Left Wing Pressure > 50% hold for 3 seconds, otherwise hold for 5 seconds", "If Left Wing Pressure < 50% hold for 3 seconds, otherwise hold for 5 seconds" ]
+      },
+      "metrics": {
+        "lwing_pressure": [
+          [ 0.0, 0.4 ],
+          [ 0.6, 1.0 ]
+        ],
+        "rwing_pressure": [
+          [ 0.6, 1.0 ],
+          [ 0.0, 0.4 ]
+        ]
+      },
+
+      "effects": [
+        [ "", "EngineSmoking" ],
+        [ "machineSounds", "alarmSound" ],
+        [ "blinkingLight", "lightsSuperBright" ],
+        [ "showWarningTriangle", "" ]
+      ],
+
+      "displayName": "Heating malfunction",
+      "negatives": {
+        "maxSpeedModifier": 0.6,
+      }
+    }
   ]
 }

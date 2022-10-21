@@ -19,7 +19,14 @@ public class server_handler
 
     public void handle_msg(string msg)
     {
-		faultHandler.QueueFix(msg);
+		if (int.TryParse(msg, out int res))
+        {
+            faultHandler.QueueFix(msg);
+        } else if (msg == "mistake")
+		{
+			faultHandler.QueueMistake();
+		}
+
 		
         Debug.Log("client sent: " + msg);
     }
@@ -28,22 +35,12 @@ public class server_handler
 
 public class SocketServer : MonoBehaviour {  	
 	// Step 2. METHODS FOR OUTGOING DATA: They corrospond to the id in the JSON parser. 
-	public void break_engine(){
-		SendData("0");
-	}
-
-	public void break_core(){
-		SendData("1");
-	}
-
-	public void break_thrusters(){
-		SendData("2");
-	}
+	
 
 	private TcpListener tcpListener; 
 	private Thread serverRecieveThread;  	
 	private TcpClient client;
-	private int port = 8053;
+	private int port = 8052;
 	private server_handler sh; 	
 	
 
@@ -63,23 +60,26 @@ public class SocketServer : MonoBehaviour {
 		tcpListener.Start();                           
 		
 		// Declare a byte array to convert into a str:
-		Byte[] recieved_bytes = new Byte[256];  			
+		Byte[] recieved_bytes = new Byte[256];
+
 		while (true) { 				
 			using (client = tcpListener.AcceptTcpClient()) { 					 					
 					using (NetworkStream in_stream = client.GetStream()) { 						
 						int length = 1;
-
+						recieved_bytes = new Byte[256];
 						// Read server's byte_stream and convert it to a string on our side: 					
-						while (true) {
+						while (true)
+						{
 							length = in_stream.Read(recieved_bytes, 0, recieved_bytes.Length);
 							if (length == 0)
 								break;
 
 							// Decode the bytestream to a string:
-							string recMsg = Encoding.ASCII.GetString(recieved_bytes); 											
+							string recMsg = Encoding.ASCII.GetString(recieved_bytes).Substring(0, length);
 							sh.handle_msg(recMsg);
-						} 					
-					} 				
+                    }
+                    
+                } 				
 				} 			
 			} 				
 	}  	
@@ -102,7 +102,7 @@ public class SocketServer : MonoBehaviour {
 	// Part 4: Testing
 	void Update(){
 		if(Input.GetKeyDown("space")){
-			break_engine();
+			//break_engine();
 			
 			//break_core();
 			//break_thrusters();
@@ -120,7 +120,7 @@ public class SocketServer : MonoBehaviour {
 
 	public bool CheckConnection()
 	{
-		if (client == null){
+		if (client == null || !client.Connected){
 			return false;
 		}
 		else

@@ -18,6 +18,7 @@ public class PlayerController : MonoBehaviour
 
     public float maxSpeed = 25f, acceleration = 2.5f, maxTurnSpeed = 12.5f, turnAcceleration = 2.5f;
 
+    public float maxHitpoints = 100f;
     private float hitpoints = 100f;
 
     private bool invulnerable = false;
@@ -29,14 +30,22 @@ public class PlayerController : MonoBehaviour
 
     audioManager sn;
 
-    // Use these to change max speed dynamically, for example if a fault causes rotation speed to decrease.
-
+    public UnityEvent<float> onDamageTaken;
+    public UnityEvent onHitpointsZero;
+    public UnityEvent<Vector3> originReset;
 
     public float xRotDeadzone = 10.0f, zRotDeadzone = 10.0f, yRotDeadzone = 10.0f;
     public float maxSteeringRot = 70.0f;
     
     private float speed = 0f, inputSpeed = 0f;
     private Vector3 rotationSpeed = new Vector3(0,0,0);
+
+    private bool tutorialMode = true;
+
+    public void SetTutorialMode(bool val)
+    {
+        tutorialMode = val;
+    }
 
     public void Break(Fault fault, int numFaults)
     {
@@ -80,6 +89,8 @@ public class PlayerController : MonoBehaviour
 
         sn = GameObject.FindGameObjectWithTag("AudioManager").GetComponent<audioManager>();
         sn.Play("NASA");
+
+        hitpoints = maxHitpoints;
     }
 
     // Update is called once per frame
@@ -113,6 +124,15 @@ public class PlayerController : MonoBehaviour
         }
         transform.Rotate(rotationSpeed.x, rotationSpeed.y, rotationSpeed.z, Space.Self);
         transform.position += transform.forward * speed * Time.deltaTime;
+
+        if(transform.position.magnitude > 1000)
+        {
+
+            Vector3 pos = transform.position;
+            transform.position = new Vector3(0, 0, 0);
+
+            originReset.Invoke(pos);
+        }
     }
 
     public void SetSpeed(float speed)
@@ -177,7 +197,19 @@ public class PlayerController : MonoBehaviour
     }
 
     public void TakeDamage(float damage){
+
+        if (tutorialMode)
+        {
+            return;
+        }
+
         this.hitpoints -= damage;
+        if(hitpoints <= 0)
+        {
+            onHitpointsZero.Invoke();
+            hitpoints = maxHitpoints;
+        }
+        onDamageTaken.Invoke(damage);
         networker.GetComponent<FaultHandler>().UpdateSideText();
     }
 

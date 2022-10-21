@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Cryptography;
 using UnityEngine;
 using UnityEngine.Events;
@@ -10,15 +11,81 @@ public class FaultHandler : MonoBehaviour {
     private JSONHandler jsonHandler;
     public GameObject frontText;
     private TextMesh frontTextComponent;
-    public GameObject sideText, connectedLabel;
+    public GameObject sideText, connectedLabel, startGameKnob;
     private TextMesh sideTextComponent;
 
     private Dictionary<string, Fault> faults = new Dictionary<string, Fault>();
     public GameObject player;
     private List<string> queuedFixes = new List<string>();
+    private int queuedMistakes = 0;
     public UnityEvent<Fault, int> onBreak;
+    public UnityEvent<Fault> onFix;
 
     private bool tutorialMode = true;
+
+    [ContextMenu("Generate Fault")]
+    public void GenerateFault()
+    {
+        Break();
+    }
+
+    [ContextMenu("Generate Fault 1")]
+    public void GenerateFault1()
+    {
+        string faultID = "0";
+        Fault fault = jsonHandler.GetFault(faultID);
+        fault.SetVariation();
+        /*if (faults.ContainsKey(faultID))
+        {
+            return; //TODO, make sure same fault is not generated twice
+        }*/
+
+        faults.Add(faultID, fault);
+
+        onBreak.Invoke(fault, faults.Count);
+
+        player.GetComponent<PlayerController>().Break(fault, faults.Count);
+        client.SendData(faultID + " " + fault.GetVariation());
+        frontTextComponent.text = CreateFrontText();
+    }
+    [ContextMenu("Generate Fault 2")]
+    public void GenerateFault2()
+    {
+        string faultID = "1";
+        Fault fault = jsonHandler.GetFault(faultID);
+        fault.SetVariation();
+        /*if (faults.ContainsKey(faultID))
+        {
+            return; //TODO, make sure same fault is not generated twice
+        }*/
+
+        faults.Add(faultID, fault);
+
+        onBreak.Invoke(fault, faults.Count);
+
+        player.GetComponent<PlayerController>().Break(fault, faults.Count);
+        client.SendData(faultID + " " + fault.GetVariation());
+        frontTextComponent.text = CreateFrontText();
+    }
+    [ContextMenu("Generate Fault 3")]
+    public void GenerateFault3()
+    {
+        string faultID = "2";
+        Fault fault = jsonHandler.GetFault(faultID);
+        fault.SetVariation();
+        /*if (faults.ContainsKey(faultID))
+        {
+            return; //TODO, make sure same fault is not generated twice
+        }*/
+
+        faults.Add(faultID, fault);
+
+        onBreak.Invoke(fault, faults.Count);
+
+        player.GetComponent<PlayerController>().Break(fault, faults.Count);
+        client.SendData(faultID + " " + fault.GetVariation());
+        frontTextComponent.text = CreateFrontText();
+    }
 
     public void SetTutorialMode(bool val)
     {
@@ -63,6 +130,18 @@ public class FaultHandler : MonoBehaviour {
             connectedLabel.SetActive(!client.CheckConnection());
         }
 
+        if(startGameKnob != null && tutorialMode)
+        {
+            startGameKnob.GetComponent<OnOffKnob>().SetDisabled(!client.CheckConnection());
+            startGameKnob.GetComponent<SphereCollider>().enabled = client.CheckConnection();
+        }
+
+        if(queuedMistakes > 0)
+        {
+            player.GetComponent<PlayerController>().TakeDamage(queuedMistakes * 25);
+            queuedMistakes = 0;
+        }
+
         if(queuedFixes.Count > 0)
         {
             Fix(queuedFixes[0]);
@@ -76,6 +155,10 @@ public class FaultHandler : MonoBehaviour {
         return faults.Count;
     }
 
+    public void QueueMistake()
+    {
+        queuedMistakes += 1;
+    }
 
     public void QueueFix(string id)
     {
@@ -106,6 +189,7 @@ public class FaultHandler : MonoBehaviour {
         }
 
         Fault fault = jsonHandler.GetFault(id);
+        onFix.Invoke(fault);
 
         faults.Remove(id);
         player.GetComponent<PlayerController>().Fix(fault, DictionaryLength());
@@ -114,8 +198,9 @@ public class FaultHandler : MonoBehaviour {
         //frontTextComponent.text = CreateFrontText(); // TODO: What to do with the front text?
     }
 
-    private void Break()
+    public void Break()
     {
+        Debug.Log("break!");
         //Random Fault
 
         string faultID = ""; //Spaghetti carbonara
@@ -200,8 +285,7 @@ public class FaultHandler : MonoBehaviour {
 
             }
             else {
-                yield return new WaitForSeconds(4);
-                Debug.Log("Not Connected");
+                yield return new WaitForSeconds(5);
                 //Break();
             }      
         }

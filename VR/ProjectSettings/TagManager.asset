@@ -8,6 +8,7 @@ TagManager:
   - Interactable
   - PlayerCollider
   - Asteroid
+  - Glass
   layers:
   - Default
   - TransparentFX

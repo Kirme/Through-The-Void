@@ -59,15 +59,15 @@ public class Fault
     public int severity;
     public string faultLocation;
     public int numVariations;
-    private int variation;
+    public int variation;
     public string fixLocation; // Remove later, exists to avoid errors with references
-    private string[] fixLocations;
-    private string[] fixActions;
+    public string[] fixLocations;
+    public string[] fixActions;
 
     public string arDescription;
-    private Dictionary<string, string[]> otherARDescriptions;
-    private Dictionary<string, float[][]> metrics;
-    private List<string[]> effects;
+    public Dictionary<string, string[]> otherARDescriptions;
+    public Dictionary<string, float[][]> metrics;
+    public List<string[]> effects;
     public string displayName;
     public Dictionary<string, float> negatives;
 
@@ -93,6 +93,12 @@ public class Fault
 
     public Dictionary<string, float[]> GetMetrics()
     {
+        Debug.Log(metrics);
+
+        if(metrics == null)
+        {
+            return new Dictionary<string, float[]>(); ;
+        }
 
         Dictionary<string, float[]> newMetrics = new Dictionary<string, float[]>();
 

@@ -49,7 +49,6 @@ public class DestinationDisplay : MonoBehaviour
                 }
 
                 float maxAngle = Mathf.Max(angles.x, angles.y);
-                Debug.Log(maxAngle / 180.0f);   
                 arrowMesh.GetComponent<MeshRenderer>().material.color = gradient.Evaluate(maxAngle / 180.0f);
                 arrowMesh.GetComponent<MeshRenderer>().material.SetColor("_EmissionColor", gradient.Evaluate(maxAngle / 180.0f));
             }

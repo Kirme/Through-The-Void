@@ -26,6 +26,11 @@ public class KnobInteractable : InteractableScript
 
     public override bool Interact(GameObject controller)
     {
+        if (disabled)
+        {
+            return false;
+        }
+
         base.Interact(controller);
         initialVal = val;
 
@@ -34,6 +39,11 @@ public class KnobInteractable : InteractableScript
 
     public override void UpdateInteractable(GameObject controller)
     {
+        if (disabled)
+        {
+            return;
+        }
+
         Quaternion relativeRotation = Quaternion.Inverse(controller.transform.localRotation) * initialControllerRotation;
 
         val = ((relativeRotation.eulerAngles.z * 2f)%360f) / 360f + initialVal;
