@@ -31,7 +31,7 @@ public class Client : MonoBehaviour {
 		faultHandler = GetComponent<FaultHandler>();
 
 		// Debug
-		StartCoroutine(Crt());
+		//StartCoroutine(Crt());
 	}
 
 	IEnumerator Crt() {
