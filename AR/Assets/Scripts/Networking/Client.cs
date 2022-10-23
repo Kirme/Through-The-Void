@@ -21,7 +21,7 @@ using UnityEngine;
 // The Main class:
 public class Client : MonoBehaviour {
     // Networking data:
-	private int port = 8053;
+	private int port = 8052;
 	private TcpClient socketConnection; 	
 	private Thread clientReceiveThread;
 	private FaultHandler faultHandler;
@@ -31,7 +31,18 @@ public class Client : MonoBehaviour {
 		faultHandler = GetComponent<FaultHandler>();
 
 		// Debug
-		//faultHandler.ReceiveMessage("0", "0");
+		StartCoroutine(Crt());
+	}
+
+	IEnumerator Crt() {
+		yield return new WaitForSeconds(1);
+		faultHandler.ReceiveMessage("0", "1");
+		
+		yield return new WaitForSeconds(1);
+		faultHandler.ReceiveMessage("2", "0");
+
+		yield return new WaitForSeconds(3);
+		faultHandler.ReceiveMessage("clear");
 	}
 
 	public void Reconnect() {

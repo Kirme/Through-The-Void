@@ -56,13 +56,17 @@ public class FaultHandler : MonoBehaviour {
     }
 
     private void ParseFault(Fault fault, string variation) {
-        interactionHandler.SetBroken(fault.faultLocation);
-        Panel[] panels = ship.GetComponentsInChildren<Panel>();
-
         int var = int.Parse(variation);
         string[] fix = fault.fixLocations[var].Split('_');
         string fixPart = fix[0];
         string fixPanel = fix[1];
+
+        // Make sure the fault was correct, and could be added
+        if (!interactionHandler.AddFault(fault, var))
+            return;
+
+        interactionHandler.SetBroken(fault.faultLocation);
+        Panel[] panels = ship.GetComponentsInChildren<Panel>();
 
         // Set text of fault location
         TextHandler th = ship.transform.Find(fault.faultLocation).GetComponent<TextHandler>();
@@ -75,31 +79,24 @@ public class FaultHandler : MonoBehaviour {
         description.Add(fixPart);
 
         HandleDescription(th, string.Concat(description));
-        /*
-         * Show description for all panels
-        foreach (string key in fault.otherARDescriptions.Keys) {
-            string[] l = key.Split("_");
-            Panel panel = ship.transform.Find(l[0]).Find(l[1]).GetComponent<Panel>();
-            HandleDescription(panel.GetComponent<TextHandler>(), fault.otherARDescriptions[key][var]);
-        }
-        */
+        
         string fixDesc = fault.otherARDescriptions[fault.fixLocations[var]][var];
         // Find fix location and set text
         foreach (Panel panel in panels) {
             string partName = panel.GetPartName();
             string panelName = panel.GetPanelName();
             
-            //HandleDescription(th, panelName + ": " + partName + " = " + fixPart);
             if (string.Compare(partName, fixPart) == 0 && string.Compare(panelName, fixPanel) == 0) {
-                panel.SetTimeToHold(fault.fixActions[var]);
-                panel.SetCanRepair(true);
+
+                panel.timeToHold = fault.fixActions[var];
+                panel.canRepair = true;
+                panel.fault = fault.faultLocation;
+
                 HandleDescription(panel.GetComponent<TextHandler>(), fixDesc);
 
                 break;
             }
         }
-
-        interactionHandler.AddFault(fault, var);
     }
 
     private void HandleDescription(TextHandler th, string desc) {

@@ -5,8 +5,24 @@ using UnityEngine.UI;
 
 public class Panel : MonoBehaviour
 {
-    private bool canRepair = false;
-    private float timeToHold = 0.0f;
+    private bool m_canRepair;
+    private float m_timeToHold;
+    private string m_fault;
+    
+    public string fault {
+        get { return m_fault; }
+        set { m_fault = value; }
+    }
+
+    public bool canRepair {
+        get { return m_canRepair; }
+        set { m_canRepair = value; }
+    }
+
+    public float timeToHold {
+        get { return m_timeToHold; }
+        set { m_timeToHold = value; }
+    }
 
     // Get name of ship part panel is attached to
     public string GetPartName() {
@@ -16,21 +32,5 @@ public class Panel : MonoBehaviour
     // Get  name of panel
     public string GetPanelName() {
         return transform.name;
-    }
-
-    public void SetTimeToHold(float setTo) {
-        timeToHold = setTo;
-    }
-
-    public float GetTimeToHold() {
-        return timeToHold;
-    }
-
-    public void SetCanRepair(bool setTo) {
-        canRepair = setTo;
-    }
-
-    public bool GetCanRepair() {
-        return canRepair;
     }
 }

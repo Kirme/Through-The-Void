@@ -6,20 +6,20 @@
       "severity": 0,
       "faultLocation": "Engine",
       "numVariations": 2,
-      "fixLocations": [ "Core_Panel6", "Core_Panel7" ],
+      "fixLocations": [ "Core_Panel1", "Core_Panel2" ],
       "fixActions": [ 3.0, 5.0 ],
 
-      "arDescription": "Go to panel 6",
+      "arDescription": "Go to panel 1",
       "otherARDescriptions": {
-        "Core_Panel6": [ "If oxygen > 50% hold for 7 seconds, otherwise hold for 3 seconds", "If oxygen < 50% hold for 7 seconds, otherwise hold for 3 seconds" ],
-        "Core_Panel7": [ "If pressure > 50% hold for 3 seconds, otherwise hold for 5 seconds", "If pressure < 50% hold for 3 seconds, otherwise hold for 5 seconds" ]
+        "Core_Panel1": [ "If Engine Oxygen > 50% hold for 7 seconds, otherwise hold for 3 seconds", "If Engine Oxygen < 50% hold for 7 seconds, otherwise hold for 3 seconds" ],
+        "Core_Panel2": [ "If Engine Pressure > 50% hold for 3 seconds, otherwise hold for 5 seconds", "If Engine Pressure < 50% hold for 3 seconds, otherwise hold for 5 seconds" ]
       },
       "metrics": {
-        "pressure": [
+        "engine_pressure": [
           [ 0.0, 0.4 ],
           [ 0.6, 1.0 ]
         ],
-        "oxygen": [
+        "engine_oxygen": [
           [ 0.0, 0.4 ],
           [ 0.6, 1.0 ]
         ]
@@ -34,35 +34,66 @@
 
       "displayName": "Engine Malfunction",
       "negatives": {
-        "maxSpeedModifier": 0.3,
-        "accelerationModifier": 1.0,
-        "maxTurnSpeedModifier": 1.0,
-        "turnAccelerationModifier": 1.0,
-        "invertedYControls": 0.0,
-        "hazyGlass": 0.0,
         "fullSpeed": 1.0,
-        "alwaysTurning": 0.0
+        "maxSpeedModifier": 1.2,
       }
     },
     {
       "id": "1",
-      "severity": 3,
+      "severity": 2,
       "faultLocation": "Core",
       "numVariations": 2,
-      "fixLocations": [ "Engine_Panel6", "Engine_Panel3" ],
-      "fixActions": [ 2.0, 1.5 ],
+      "fixLocations": [ "Engine_Panel1", "Engine_Panel2" ],
+      "fixActions": [ 3.0, 5.0 ],
+
+      "arDescription": "Go to Engine_Panel2",
+      "otherARDescriptions": {
+        "Engine_Panel1": [ "If Core Fuel > 50% hold for 7 seconds, otherwise hold for 3 seconds", "If Core Fuel < 50% hold for 7 seconds, otherwise hold for 3 seconds" ],
+        "Engine_Panel2": [ "If Core Fuel > 50% hold for 3 seconds, otherwise hold for 5 seconds", "If Core Fuel < 50% hold for 3 seconds, otherwise hold for 5 seconds" ]
+      },
+      "metrics": {
+        "core_fuel": [
+          [ 0.0, 0.4 ],
+          [ 0.6, 1.0 ]
+        ],
+        "core_pressure": [
+          [ 0.6, 1.0 ],
+          [ 0.0, 0.4 ]
+        ]
+      },
+
+      "effects": [
+        [ "", "EngineSmoking" ],
+        [ "machineSounds", "alarmSound" ],
+        [ "blinkingLight", "lightsSuperBright" ],
+        [ "showWarningTriangle", "" ]
+      ],
+
+      "displayName": "Steering malfunction",
+      "negatives": {
+        "invertX": 1.0,
+        "invertY": 1.0,
+      }
+    },
+    {
+      "id": "2",
+      "severity": 2,
+      "faultLocation": "WingR",
+      "numVariations": 2,
+      "fixLocations": [ "WingL_Panel1", "WingL_Panel2" ],
+      "fixActions": [ 3.0, 5.0 ],
 
       "arDescription": "Go to panel C3",
       "otherARDescriptions": {
-        "Core_PanelA5": [ "If pressure < 50% go to panel3 otherwise go to panel 6", "If oxygen < 50 % go to panel 6 otherwise go to panel 3" ],
-        "Core_Panel3": [ "If oxygen > 50% press A otherwise press B", "If oxygen < 50% press A otherwise press B" ]
+        "WingL_Panel1": [ "If Left Wing Pressure > 50% hold for 7 seconds, otherwise hold for 3 seconds", "If Left Wing Pressure < 50% hold for 7 seconds, otherwise hold for 3 seconds" ],
+        "WingL_Panel2": [ "If Left Wing Pressure > 50% hold for 3 seconds, otherwise hold for 5 seconds", "If Left Wing Pressure < 50% hold for 3 seconds, otherwise hold for 5 seconds" ]
       },
       "metrics": {
-        "pressure": [
-          [ 0.6, 1.0 ],
-          [ 0.0, 0.4 ]
+        "lwing_pressure": [
+          [ 0.0, 0.4 ],
+          [ 0.6, 1.0 ]
         ],
-        "oxygen": [
+        "rwing_pressure": [
           [ 0.6, 1.0 ],
           [ 0.0, 0.4 ]
         ]
@@ -77,14 +108,7 @@
 
       "displayName": "Heating malfunction",
       "negatives": {
-        "maxSpeedModifier": 1.0,
-        "accelerationModifier": 1.0,
-        "maxTurnSpeedModifier": 1.0,
-        "turnAccelerationModifier": 1.0,
-        "invertedYControls": 1.0,
-        "hazyGlass": 1.0,
-        "fullSpeed": 0.0,
-        "alwaysTurning": 0.0
+        "maxSpeedModifier": 0.6,
       }
     }
   ]

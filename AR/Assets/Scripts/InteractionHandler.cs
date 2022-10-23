@@ -1,18 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.XR.ARFoundation;
-using UnityEngine.XR.ARSubsystems;
 using UnityEngine.UI;
-using TMPro;
 
 public class InteractionHandler : MonoBehaviour {
     [SerializeField] Camera _mainCamera;
     [SerializeField] GameObject _ship;
-    private AudioManager _audioManager;
+    
     [SerializeField] Slider _timeSlider;
-    [SerializeField] TextMeshProUGUI _textTimeHeld;
+    [SerializeField] UIHandler _UIHandler;
 
+    private AudioManager _audioManager;
     private float timeHeld = 0f;
 
     [SerializeField] Color selectedColor = Color.cyan;
@@ -33,14 +31,11 @@ public class InteractionHandler : MonoBehaviour {
 
     private void Start() {
         faultHandler = GetComponent<FaultHandler>();
-
-        faultHandler.SendMessage("mistake");
-        faultHandler.SendMessage("0");
     }
 
     private void Update() {
         RegisterTouch();
-        UpdateHeldText();
+        _UIHandler.SetTimeHeld(timeHeld);
     }
 
     private void OnDisable() {
@@ -78,7 +73,6 @@ public class InteractionHandler : MonoBehaviour {
             }
 
             previousPart = part; // Update previous part
-            
         } else {
             Reset();
         }
@@ -104,7 +98,6 @@ public class InteractionHandler : MonoBehaviour {
         if (fixesToFaults.ContainsKey(partName)) {
             Fault fault = fixesToFaults[partName];
 
-            SetPartColor(fault.faultLocation, defaultColor);
             RemoveFault(fault.faultLocation, part);
             faultHandler.SendMessage(fault.id);
         }
@@ -197,27 +190,30 @@ public class InteractionHandler : MonoBehaviour {
     }
 
     // Add a fault
-    public void AddFault(Fault fault, int variation) {
-        if (!faultLocations.Contains(fault.faultLocation)) {
-            faultLocations.Add(fault.faultLocation);
-        }
+    public bool AddFault(Fault fault, int variation) {
         // Get fix location based on variation
         string fixLocation = fault.fixLocations[variation].Split('_')[1];
 
-        if (!fixesToFaults.ContainsKey(fixLocation)) {
+        if (!faultLocations.Contains(fault.faultLocation) && !fixesToFaults.ContainsKey(fixLocation)) {
+            faultLocations.Add(fault.faultLocation);
             fixesToFaults.Add(fixLocation, fault);
+
+            return true;
         }
+
+        return false;
     }
 
     // Helper function for removing a fault
     private void RemoveFaultLocation(string fault, Transform faultLocation) {
+        SetPartColor(fault, defaultColor);
         faultLocations.Remove(fault);
         faultLocation.GetComponent<TextHandler>().ShowDescription(false);
     }
 
     // Helper function for removing a fix location
     private void RemoveFixLocation(Transform fix) {
-        faultLocations.Remove(fix.name);
+        fixesToFaults.Remove(fix.name);
         fix.GetComponent<TextHandler>().ShowDescription(false);
     }
 
@@ -227,10 +223,8 @@ public class InteractionHandler : MonoBehaviour {
         RemoveFaultLocation(fault, faultLocation);
         RemoveFixLocation(fix);
 
-        _audioManager.Play("Heal");
+        //_audioManager.Play("Heal");
     }
-
-    // Functions for handling UI slider
 
     private bool AddTime(Panel panel, TouchPhase phase) {
         timeHeld += Time.deltaTime;
@@ -243,23 +237,24 @@ public class InteractionHandler : MonoBehaviour {
     }
 
     private bool HandleEndTime(Panel panel) {
-        float timeToHold = panel.GetTimeToHold();
+        float timeToHold = panel.timeToHold;
         float margin = 0.5f;
 
         // Stopped holding at correct time
-        if (panel.GetCanRepair() && Mathf.Abs(timeToHold - timeHeld) <= 0.5f) {
+        if (panel.canRepair && Mathf.Abs(timeToHold - timeHeld) <= 0.5f) {
             timeHeld = 0f;
-            panel.SetCanRepair(false);
+            panel.canRepair = false;
             return true;
         }
 
-        // Did not stop at correct time
+        // Did not stop at correct time, or not on correct panel
 
         // Give margin for error, which doesn't punish
         if (timeHeld < margin)
             return false;
 
-        // Tell VR to create consequence
+        // Tell VR to create consequence and update UI
+        _UIHandler.SetMistake(panel, timeHeld);
         faultHandler.SendMessage("mistake");
 
         return false;
@@ -271,21 +266,15 @@ public class InteractionHandler : MonoBehaviour {
         return false;
     }
 
-    private void UpdateHeldText() {
-        float margin = 0.2f;
-
-        if (timeHeld < margin) {
-            _textTimeHeld.gameObject.SetActive(false);
-        }
-        else if (!_textTimeHeld.IsActive()) {
-            _textTimeHeld.gameObject.SetActive(true);
-        }
-
-        _textTimeHeld.text = timeHeld.ToString("0.00");
-    }
-
     public void ClearFaults() {
+        Panel[] panels = _ship.transform.GetComponentsInChildren<Panel>();
 
+        foreach (Panel panel in panels) {
+            if (!panel.canRepair)
+                continue;
+
+            RemoveFault(panel.fault, panel.transform);
+        }
     }
 
     /*
