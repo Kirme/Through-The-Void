@@ -41,8 +41,8 @@ public class Client : MonoBehaviour {
 		yield return new WaitForSeconds(1);
 		faultHandler.ReceiveMessage("2", "0");
 
-		yield return new WaitForSeconds(3);
-		faultHandler.ReceiveMessage("clear");
+		//yield return new WaitForSeconds(3);
+		//faultHandler.ReceiveMessage("clear");
 	}
 
 	public void Reconnect() {

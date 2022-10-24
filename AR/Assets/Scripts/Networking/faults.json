@@ -78,15 +78,15 @@
     {
       "id": "2",
       "severity": 2,
-      "faultLocation": "WingR",
+      "faultLocation": "RightWing",
       "numVariations": 2,
-      "fixLocations": [ "WingL_Panel1", "WingL_Panel2" ],
+      "fixLocations": [ "LeftWing_Panel1", "LeftWing_Panel2" ],
       "fixActions": [ 3.0, 5.0 ],
 
       "arDescription": "Go to panel C3",
       "otherARDescriptions": {
-        "WingL_Panel1": [ "If Left Wing Pressure > 50% hold for 7 seconds, otherwise hold for 3 seconds", "If Left Wing Pressure < 50% hold for 7 seconds, otherwise hold for 3 seconds" ],
-        "WingL_Panel2": [ "If Left Wing Pressure > 50% hold for 3 seconds, otherwise hold for 5 seconds", "If Left Wing Pressure < 50% hold for 3 seconds, otherwise hold for 5 seconds" ]
+        "LeftWing_Panel1": [ "If Left Wing Pressure > 50% hold for 7 seconds, otherwise hold for 3 seconds", "If Left Wing Pressure < 50% hold for 7 seconds, otherwise hold for 3 seconds" ],
+        "LeftWing_Panel2": [ "If Left Wing Pressure > 50% hold for 3 seconds, otherwise hold for 5 seconds", "If Left Wing Pressure < 50% hold for 3 seconds, otherwise hold for 5 seconds" ]
       },
       "metrics": {
         "lwing_pressure": [

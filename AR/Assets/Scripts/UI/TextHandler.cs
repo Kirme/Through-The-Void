@@ -33,7 +33,7 @@ public class TextHandler : MonoBehaviour
         _text = GetComponentInChildren<TextMeshPro>();
 
         _text.text = _info.GetText();
-        _text.gameObject.SetActive(true); //DEBUG
+        _text.gameObject.SetActive(false);
     }
 
     public void SetDescription(string txt) {

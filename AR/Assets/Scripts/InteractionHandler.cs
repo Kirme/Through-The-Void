@@ -7,7 +7,7 @@ public class InteractionHandler : MonoBehaviour {
     [SerializeField] Camera _mainCamera;
     [SerializeField] GameObject _ship;
     
-    [SerializeField] Slider _timeSlider;
+    //[SerializeField] Slider _timeSlider;
     [SerializeField] UIHandler _UIHandler;
 
     private AudioManager _audioManager;
