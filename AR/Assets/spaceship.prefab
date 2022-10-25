@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 4921126949796560282}
   m_Layer: 0
   m_Name: SmallWingLeft
-  m_TagString: Untagged
+  m_TagString: struct
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -100,7 +100,7 @@ GameObject:
   - component: {fileID: 816737512721203260}
   m_Layer: 0
   m_Name: Core
-  m_TagString: Untagged
+  m_TagString: struct
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -190,7 +190,7 @@ GameObject:
   - component: {fileID: 3378414691256014405}
   m_Layer: 0
   m_Name: WingTopRight
-  m_TagString: Untagged
+  m_TagString: struct
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -284,7 +284,7 @@ GameObject:
   - component: {fileID: 5420914231497700248}
   m_Layer: 0
   m_Name: WingBotLeft
-  m_TagString: Untagged
+  m_TagString: struct
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -418,7 +418,7 @@ GameObject:
   - component: {fileID: 213716441067533383}
   m_Layer: 0
   m_Name: SmallWingRight
-  m_TagString: Untagged
+  m_TagString: struct
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -505,7 +505,7 @@ GameObject:
   - component: {fileID: 8718186724873290051}
   m_Layer: 0
   m_Name: WingTopLeft
-  m_TagString: Untagged
+  m_TagString: struct
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -599,7 +599,7 @@ GameObject:
   - component: {fileID: 3375736830637090644}
   m_Layer: 0
   m_Name: Engine
-  m_TagString: Untagged
+  m_TagString: struct
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -686,7 +686,7 @@ GameObject:
   - component: {fileID: 6833174109092089391}
   m_Layer: 0
   m_Name: Collider
-  m_TagString: Untagged
+  m_TagString: struct
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -731,7 +731,7 @@ GameObject:
   - component: {fileID: 6833174109170117567}
   m_Layer: 0
   m_Name: Collider
-  m_TagString: Untagged
+  m_TagString: struct
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -776,7 +776,7 @@ GameObject:
   - component: {fileID: 6833174109240393962}
   m_Layer: 0
   m_Name: Collider
-  m_TagString: Untagged
+  m_TagString: struct
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -821,7 +821,7 @@ GameObject:
   - component: {fileID: 6833174109315797599}
   m_Layer: 0
   m_Name: Collider
-  m_TagString: Untagged
+  m_TagString: struct
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -866,7 +866,7 @@ GameObject:
   - component: {fileID: 6833174109363996655}
   m_Layer: 0
   m_Name: Collider
-  m_TagString: Untagged
+  m_TagString: struct
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -911,7 +911,7 @@ GameObject:
   - component: {fileID: 6833174109370435476}
   m_Layer: 0
   m_Name: Collider
-  m_TagString: Untagged
+  m_TagString: struct
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -962,7 +962,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &6833174109449658550
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1156,7 +1156,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &6833174109630153396
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1344,7 +1344,7 @@ GameObject:
   - component: {fileID: 6833174109704854606}
   m_Layer: 0
   m_Name: Collider
-  m_TagString: Untagged
+  m_TagString: struct
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1389,7 +1389,7 @@ GameObject:
   - component: {fileID: 6833174109712747509}
   m_Layer: 0
   m_Name: Collider
-  m_TagString: Untagged
+  m_TagString: struct
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1440,7 +1440,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &6833174109732731328
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1628,7 +1628,7 @@ GameObject:
   - component: {fileID: 6833174109762237378}
   m_Layer: 0
   m_Name: Collider
-  m_TagString: Untagged
+  m_TagString: struct
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1673,7 +1673,7 @@ GameObject:
   - component: {fileID: 6833174109847987243}
   m_Layer: 0
   m_Name: Collider
-  m_TagString: Untagged
+  m_TagString: struct
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1718,7 +1718,7 @@ GameObject:
   - component: {fileID: 6833174109952556344}
   m_Layer: 0
   m_Name: Collider
-  m_TagString: Untagged
+  m_TagString: struct
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1763,7 +1763,7 @@ GameObject:
   - component: {fileID: 6833174110086402484}
   m_Layer: 0
   m_Name: Collider
-  m_TagString: Untagged
+  m_TagString: struct
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1814,7 +1814,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &6833174110089532577
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2002,7 +2002,7 @@ GameObject:
   - component: {fileID: 6833174110133527720}
   m_Layer: 0
   m_Name: Collider
-  m_TagString: Untagged
+  m_TagString: struct
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2047,7 +2047,7 @@ GameObject:
   - component: {fileID: 6833174110167582771}
   m_Layer: 0
   m_Name: Collider
-  m_TagString: Untagged
+  m_TagString: struct
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2092,7 +2092,7 @@ GameObject:
   - component: {fileID: 6833174110197274308}
   m_Layer: 0
   m_Name: Collider
-  m_TagString: Untagged
+  m_TagString: struct
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2137,7 +2137,7 @@ GameObject:
   - component: {fileID: 6833174110204988981}
   m_Layer: 0
   m_Name: Collider
-  m_TagString: Untagged
+  m_TagString: struct
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2188,7 +2188,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &6833174110221242988
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2376,7 +2376,7 @@ GameObject:
   - component: {fileID: 6833174110243189501}
   m_Layer: 0
   m_Name: Collider
-  m_TagString: Untagged
+  m_TagString: struct
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2427,7 +2427,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &6833174110295321875
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2615,7 +2615,7 @@ GameObject:
   - component: {fileID: 6833174110331118365}
   m_Layer: 0
   m_Name: Collider
-  m_TagString: Untagged
+  m_TagString: struct
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2660,7 +2660,7 @@ GameObject:
   - component: {fileID: 6833174110399036633}
   m_Layer: 0
   m_Name: Collider
-  m_TagString: Untagged
+  m_TagString: struct
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2711,7 +2711,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &6833174110418068049
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2899,7 +2899,7 @@ GameObject:
   - component: {fileID: 6833174110650133917}
   m_Layer: 0
   m_Name: Collider
-  m_TagString: Untagged
+  m_TagString: struct
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2944,7 +2944,7 @@ GameObject:
   - component: {fileID: 6833174110734022583}
   m_Layer: 0
   m_Name: Collider
-  m_TagString: Untagged
+  m_TagString: struct
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2989,7 +2989,7 @@ GameObject:
   - component: {fileID: 6833174110845111335}
   m_Layer: 0
   m_Name: Collider
-  m_TagString: Untagged
+  m_TagString: struct
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3034,7 +3034,7 @@ GameObject:
   - component: {fileID: 6833174110895519374}
   m_Layer: 0
   m_Name: Collider
-  m_TagString: Untagged
+  m_TagString: struct
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3085,7 +3085,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &6833174110917922853
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3273,7 +3273,7 @@ GameObject:
   - component: {fileID: 6833174110933879592}
   m_Layer: 0
   m_Name: Collider
-  m_TagString: Untagged
+  m_TagString: struct
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3318,7 +3318,7 @@ GameObject:
   - component: {fileID: 6833174110936283177}
   m_Layer: 0
   m_Name: Collider
-  m_TagString: Untagged
+  m_TagString: struct
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3363,7 +3363,7 @@ GameObject:
   - component: {fileID: 6833174110947211865}
   m_Layer: 0
   m_Name: Collider
-  m_TagString: Untagged
+  m_TagString: struct
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3408,7 +3408,7 @@ GameObject:
   - component: {fileID: 6833174110979402825}
   m_Layer: 0
   m_Name: Collider
-  m_TagString: Untagged
+  m_TagString: struct
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3453,7 +3453,7 @@ GameObject:
   - component: {fileID: 6833174110984973389}
   m_Layer: 0
   m_Name: Collider
-  m_TagString: Untagged
+  m_TagString: struct
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3498,7 +3498,7 @@ GameObject:
   - component: {fileID: 6833174111000896016}
   m_Layer: 0
   m_Name: Collider
-  m_TagString: Untagged
+  m_TagString: struct
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3543,7 +3543,7 @@ GameObject:
   - component: {fileID: 6833174111121112443}
   m_Layer: 0
   m_Name: Collider
-  m_TagString: Untagged
+  m_TagString: struct
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3594,7 +3594,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &6833174111132201224
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3783,7 +3783,7 @@ GameObject:
   - component: {fileID: 8107144876265152250}
   m_Layer: 0
   m_Name: WingBotRight
-  m_TagString: Untagged
+  m_TagString: struct
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3876,7 +3876,7 @@ GameObject:
   - component: {fileID: 2073220854109446784}
   m_Layer: 0
   m_Name: Reactor
-  m_TagString: Untagged
+  m_TagString: struct
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
