@@ -19,7 +19,9 @@ public class meterHandler : MonoBehaviour
         NONE,
     }
 
+    public GameObject player;
     public GameObject meterTopLabel;
+    public GameObject speedometer;
     public GameObject air_pressure;
     public GameObject fuel;
     public GameObject oxygen_level;
@@ -32,6 +34,11 @@ public class meterHandler : MonoBehaviour
     private List<Fault> faults = new List<Fault>();
 
     private float timer = 1.0f;
+
+    private void handle_speedometer(){
+        float speed = player.GetComponent<PlayerController>().get_speed();
+        speedometer.GetComponent<TextMeshPro>().text = "Speed: \n" + (int)speed + " m/s";
+    }
 
     private string GetShipPartName(SHIP_PART part)
     {
@@ -216,15 +223,9 @@ public class meterHandler : MonoBehaviour
 
     void Update()
     {
-        if(timer > 0.0f)
-        {
-            timer -= Time.deltaTime;
-
-            if(timer <= 0.0f)
-            {
-                SetMeters();
-            }
-        }
+        SetMeters();
+        handle_speedometer();
+    
     }
 
     // Interpolate & Setters for the meters:
@@ -280,7 +281,7 @@ public class meterHandler : MonoBehaviour
         start_pendle_fuel(Random.Range(0.1f, 1.0f), 1.0f, pendle_speed);
         start_pendle_electricity(Random.Range(0.1f, 1.0f), 1.0f, pendle_speed);
         
-        start_pendle_air_pressure(0.0f, 1.0f, 1f);
+        //start_pendle_air_pressure(0.0f, 1.0f, 1f);
 
         SetKnobValue(0.0f);
         // TESTING:

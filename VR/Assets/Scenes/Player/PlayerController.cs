@@ -42,6 +42,10 @@ public class PlayerController : MonoBehaviour
 
     private bool tutorialMode = true;
 
+    public float get_speed(){
+        return speed;
+    }
+
     public void SetTutorialMode(bool val)
     {
         tutorialMode = val;
