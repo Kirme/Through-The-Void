@@ -82,6 +82,7 @@ public class FaultHandler : MonoBehaviour {
         
         string fixDesc = fault.otherARDescriptions[fault.fixLocations[var]][var];
         // Find fix location and set text
+        /*
         foreach (Panel panel in panels) {
             string partName = panel.GetPartName();
             string panelName = panel.GetPanelName();
@@ -97,6 +98,7 @@ public class FaultHandler : MonoBehaviour {
                 break;
             }
         }
+        */
     }
 
     private void HandleDescription(TextHandler th, string desc) {
