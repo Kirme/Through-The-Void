@@ -85,20 +85,31 @@ public class meter : MonoBehaviour
     
 
     // Set a new target value and walk towards it:
-    public void interpolate_value(float percent, float speed){
+    private void interpolate_value(float percent, float speed){
         target_value = (max_val - min_val) * percent;
         velocity = speed;
         pendling = false;
     }
 
-    // Start pendle sets a new interval for pendling and sets a new speed (preferably slow):
-    public void start_pendle(float min, float max, float speed){
+    private IEnumerator pendle_helper (float min, float max, float speed){
+        float mid_point = (max + min)/2;
+        interpolate_value(mid_point, 100f);
+
+        yield return new WaitForSeconds(1);
+        
         velocity = speed;
         pendle_velocity = speed;
         max_pendle = (max_val-min_val) * max;
         min_pendle = (max_val-min_val) * min;
         target_value = max_pendle;
         pendling = true;
+        
+
+    }
+
+    // Start pendle sets a new interval for pendling and sets a new speed (preferably slow):
+    public void start_pendle(float min, float max, float speed){
+        StartCoroutine(pendle_helper(min, max, speed));
     }
 
     // Pendle performs a pendle movement by setting the target value, depending on the value, so that

@@ -141,23 +141,23 @@ public class meterHandler : MonoBehaviour
 
                 if (meter == "pressure")
                 {
-                    float val = air_pressure.GetComponent<meter>().get_value();
+                    /*float val = air_pressure.GetComponent<meter>().get_value();
                     if (false)//val < value[0] || val > value[1])
                     {
                         float targetVal = value[0] + (value[1] - value[0]) / 2;
 
                         interpolate_air_pressure(targetVal, 50f);
                         fastInterp = true;
-                    } else {
+                    } else {*/
                         start_pendle_air_pressure(value[0], value[1], pendle_speed);
-                    }
+                    //}
 
                 }
 
 
                 else if (meter == "fuel")
                 {
-                    float val = fuel.GetComponent<meter>().get_value();
+                    /*float val = fuel.GetComponent<meter>().get_value();
                     if (false)//val < value[0] || val > value[1])
                     {
                         float targetVal = value[0] + (value[1] - value[0]) / 2;
@@ -166,16 +166,16 @@ public class meterHandler : MonoBehaviour
                         fastInterp = true;
                     }
                     else
-                    {
+                    {*/
                         start_pendle_fuel(value[0], value[1], pendle_speed);
-                    }
+                    //}
                 }
 
 
                 else if (meter == "oxygen")
                 {
 
-                    float val = oxygen_level.GetComponent<meter>().get_value();
+                    /*float val = oxygen_level.GetComponent<meter>().get_value();
                     if (false)//val < value[0] || val > value[1])
                     {
                         float targetVal = value[0] + (value[1] - value[0]) / 2;
@@ -184,16 +184,16 @@ public class meterHandler : MonoBehaviour
                         fastInterp = true;
                     }
                     else
-                    {
+                    {*/
                         start_pendle_oxygen(value[0], value[1], pendle_speed);
-                    }
+                    //}
                 }
 
 
                 else if (meter == "electricity")
                 {
 
-                    float val = electricity.GetComponent<meter>().get_value();
+                    /*float val = electricity.GetComponent<meter>().get_value();
                     if (false)//val < value[0] || val > value[1])
                     {
                         float targetVal = value[0] + (value[1] - value[0]) / 2;
@@ -202,9 +202,9 @@ public class meterHandler : MonoBehaviour
                         fastInterp = true;
                     }
                     else
-                    {
+                    {*/
                         start_pendle_electricity(value[0], value[1], pendle_speed);
-                    }
+                    //}
                 }
             }
         }
@@ -228,20 +228,12 @@ public class meterHandler : MonoBehaviour
     }
 
     // Interpolate & Setters for the meters:
-    public void interpolate_air_pressure(float percentage, float speed){
-        air_pressure.GetComponent<meter>().interpolate_value(percentage, speed);
-    }
-
     public void set_air_pressure(float percentage){
         air_pressure.GetComponent<meter>().set_value(percentage);
     }
 
     public void start_pendle_air_pressure(float min, float max, float speed){
         air_pressure.GetComponent<meter>().start_pendle(min, max, speed);
-    }
-
-    public void interpolate_fuel(float percentage, float speed){
-        fuel.GetComponent<meter>().interpolate_value(percentage, speed);
     }
     
     public void set_fuel(float percentage){
@@ -252,20 +244,12 @@ public class meterHandler : MonoBehaviour
         fuel.GetComponent<meter>().start_pendle(min, max, speed);
     }
 
-    public void interpolate_oxygen(float percentage, float speed){
-        oxygen_level.GetComponent<meter>().interpolate_value(percentage, speed);
-    }
-
     public void set_oxygen(float percentage){
         oxygen_level.GetComponent<meter>().set_value(percentage);
     }
 
     public void start_pendle_oxygen(float min, float max, float speed){
         oxygen_level.GetComponent<meter>().start_pendle(min, max, speed);
-    }
-
-    public void interpolate_electricity(float percentage, float speed){
-        electricity.GetComponent<meter>().interpolate_value(percentage, speed);
     }
 
     public void set_electricity(float percentage){
@@ -279,11 +263,11 @@ public class meterHandler : MonoBehaviour
     // Restore all the meters to 100%, to be called when all is fixed:
     public void restore_all_to_max()
     {
-        air_pressure.GetComponent<meter>().interpolate_value(1.0f, restore_speed);
+        /*air_pressure.GetComponent<meter>().interpolate_value(1.0f, restore_speed);
         electricity.GetComponent<meter>().interpolate_value(1.0f, restore_speed);
         fuel.GetComponent<meter>().interpolate_value(1.0f, restore_speed);
         oxygen_level.GetComponent<meter>().interpolate_value(1.0f, restore_speed);
-
+        */
     }
 
     // Start is called before the first frame update
@@ -295,6 +279,8 @@ public class meterHandler : MonoBehaviour
         start_pendle_oxygen(Random.Range(0.1f, 1.0f), 1.0f, pendle_speed);
         start_pendle_fuel(Random.Range(0.1f, 1.0f), 1.0f, pendle_speed);
         start_pendle_electricity(Random.Range(0.1f, 1.0f), 1.0f, pendle_speed);
+        
+        start_pendle_air_pressure(0.0f, 1.0f, 1f);
 
         SetKnobValue(0.0f);
         // TESTING:
