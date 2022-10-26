@@ -782,8 +782,9 @@ GameObject:
   - component: {fileID: 5478324319172355783}
   - component: {fileID: 7609974827417937279}
   - component: {fileID: 4198233164621301632}
+  - component: {fileID: 1201873871567632343}
   m_Layer: 0
-  m_Name: Panel4
+  m_Name: Button
   m_TagString: Panel
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -868,6 +869,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &1201873871567632343
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1379362748873400751}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 666b573d646ea29408f61beefe9f1488, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &1525408028360604736
 GameObject:
   m_ObjectHideFlags: 0
@@ -1075,8 +1088,9 @@ GameObject:
   - component: {fileID: 5827315769849763988}
   - component: {fileID: 5560282061525999795}
   - component: {fileID: 7963825552999181721}
+  - component: {fileID: 3020533465797992341}
   m_Layer: 0
-  m_Name: Panel1
+  m_Name: Wires
   m_TagString: Panel
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1169,6 +1183,21 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &3020533465797992341
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1630292016697318976}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33b0a8171dfd20b448b99d17a2d885c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  red: {fileID: 3283426660872283534}
+  green: {fileID: 1525408028360604736}
+  blue: {fileID: 3256078068606458713}
 --- !u!1 &1774162998443643691
 GameObject:
   m_ObjectHideFlags: 0
@@ -1276,7 +1305,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5297799905809245708}
   m_Layer: 0
-  m_Name: Panel3
+  m_Name: Lever
   m_TagString: Panel
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2276,7 +2305,7 @@ GameObject:
   - component: {fileID: 4999476209986233301}
   - component: {fileID: 8322522875683210254}
   m_Layer: 0
-  m_Name: Panel2
+  m_Name: Slider
   m_TagString: Panel
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2766,8 +2795,9 @@ GameObject:
   - component: {fileID: 6122656465238718261}
   - component: {fileID: 6492580402468757083}
   - component: {fileID: 63151271885103177}
+  - component: {fileID: 6617507881249317868}
   m_Layer: 0
-  m_Name: Panel4
+  m_Name: Button
   m_TagString: Panel
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2852,6 +2882,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &6617507881249317868
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3859740471527299852}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 666b573d646ea29408f61beefe9f1488, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4118942089558794774
 GameObject:
   m_ObjectHideFlags: 0
@@ -4322,8 +4364,9 @@ GameObject:
   - component: {fileID: 6898516051750647923}
   - component: {fileID: 962955297082425145}
   - component: {fileID: 2104195614897293302}
+  - component: {fileID: 7356526786282563693}
   m_Layer: 0
-  m_Name: Panel1
+  m_Name: Wires
   m_TagString: Panel
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4416,6 +4459,21 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &7356526786282563693
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6402895597694686019}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33b0a8171dfd20b448b99d17a2d885c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  red: {fileID: 7769246841093445580}
+  green: {fileID: 174867446641923404}
+  blue: {fileID: 9149235164022777348}
 --- !u!1 &6480609373377882489
 GameObject:
   m_ObjectHideFlags: 0
@@ -4612,7 +4670,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2013570132235357835}
   m_Layer: 0
-  m_Name: Panel3
+  m_Name: Lever
   m_TagString: Panel
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4647,8 +4705,9 @@ GameObject:
   - component: {fileID: 8665604684396457998}
   - component: {fileID: 1735756205740370676}
   - component: {fileID: 8120199086533200147}
+  - component: {fileID: 5544975172028777463}
   m_Layer: 0
-  m_Name: Panel1
+  m_Name: Wires
   m_TagString: Panel
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4741,6 +4800,21 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &5544975172028777463
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6716490697171985566}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33b0a8171dfd20b448b99d17a2d885c6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  red: {fileID: 794533613761245919}
+  green: {fileID: 3525454279622488875}
+  blue: {fileID: 5798955061812960581}
 --- !u!1 &6833174109092089389
 GameObject:
   m_ObjectHideFlags: 0
@@ -5203,8 +5277,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 858d563584432c5439b94208017dd159, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Text: {fileID: 0}
-  json: {fileID: 0}
 --- !u!1 &6833174109630153403
 GameObject:
   m_ObjectHideFlags: 0
@@ -5397,8 +5469,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 858d563584432c5439b94208017dd159, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Text: {fileID: 0}
-  json: {fileID: 0}
 --- !u!1 &6833174109704854604
 GameObject:
   m_ObjectHideFlags: 0
@@ -5681,8 +5751,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 858d563584432c5439b94208017dd159, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Text: {fileID: 0}
-  json: {fileID: 0}
 --- !u!1 &6833174109762237376
 GameObject:
   m_ObjectHideFlags: 0
@@ -6055,8 +6123,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 858d563584432c5439b94208017dd159, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Text: {fileID: 0}
-  json: {fileID: 0}
 --- !u!1 &6833174110133527726
 GameObject:
   m_ObjectHideFlags: 0
@@ -6429,8 +6495,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 858d563584432c5439b94208017dd159, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Text: {fileID: 0}
-  json: {fileID: 0}
 --- !u!1 &6833174110243189475
 GameObject:
   m_ObjectHideFlags: 0
@@ -6668,8 +6732,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 858d563584432c5439b94208017dd159, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Text: {fileID: 0}
-  json: {fileID: 0}
 --- !u!1 &6833174110331118339
 GameObject:
   m_ObjectHideFlags: 0
@@ -6952,8 +7014,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 858d563584432c5439b94208017dd159, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Text: {fileID: 0}
-  json: {fileID: 0}
 --- !u!1 &6833174110650133891
 GameObject:
   m_ObjectHideFlags: 0
@@ -7326,8 +7386,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 858d563584432c5439b94208017dd159, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Text: {fileID: 0}
-  json: {fileID: 0}
 --- !u!1 &6833174110933879598
 GameObject:
   m_ObjectHideFlags: 0
@@ -7835,8 +7893,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 858d563584432c5439b94208017dd159, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Text: {fileID: 0}
-  json: {fileID: 0}
 --- !u!1 &6956654722128001088
 GameObject:
   m_ObjectHideFlags: 0
@@ -7944,12 +8000,12 @@ GameObject:
   - component: {fileID: 2433250093098669395}
   - component: {fileID: 843333529506448019}
   m_Layer: 0
-  m_Name: Panel2
+  m_Name: Slider
   m_TagString: Panel
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &2280707022188049719
 Transform:
   m_ObjectHideFlags: 0

@@ -21,7 +21,7 @@ using UnityEngine;
 // The Main class:
 public class Client : MonoBehaviour {
     // Networking data:
-	private int port = 8053;
+	private int port = 8052;
 	private TcpClient socketConnection; 	
 	private Thread clientReceiveThread;
 	private FaultHandler faultHandler;
@@ -29,6 +29,21 @@ public class Client : MonoBehaviour {
 	void Start () {
 		ConnectToHost();
 		faultHandler = GetComponent<FaultHandler>();
+
+		// Debug
+		//StartCoroutine(Crt());
+		//faultHandler.ReceiveMessage("0", "0");
+	}
+
+	IEnumerator Crt() {
+		yield return new WaitForSeconds(1);
+		faultHandler.ReceiveMessage("0", "1");
+		
+		yield return new WaitForSeconds(1);
+		faultHandler.ReceiveMessage("2", "0");
+
+		//yield return new WaitForSeconds(3);
+		//faultHandler.ReceiveMessage("clear");
 	}
 
 	public void Reconnect() {
@@ -52,23 +67,30 @@ public class Client : MonoBehaviour {
 
 	private void ListenForData() { 				
 			// Set to IPv4 address for LAN:
-			socketConnection = new TcpClient("192.168.2.158", port);  			
+			socketConnection = new TcpClient("193.10.37.246", port);  			
 			Byte[] bytes = new Byte[256];             
 			
 			while (true) { 							
-				using (NetworkStream stream = socketConnection.GetStream()) { 					
-					int length = 1; 	
-
+				using (NetworkStream stream = socketConnection.GetStream()) {
 					// Read server's byte_stream and convert it to a string on our side: 					
 					while (true) {
-						length = stream.Read(bytes, 0, bytes.Length);
+						int length = stream.Read(bytes, 0, bytes.Length);
 						if (length == 0)
 							break;
 
-						byte[] incommingData = new byte[length]; 						
-						Array.Copy(bytes, 0, incommingData, 0, length); 						 						
-						string serverMessage = Encoding.ASCII.GetString(incommingData); 											
-						faultHandler.ReceiveMessage(serverMessage);
+						byte[] incomingData = new byte[length]; 						
+						Array.Copy(bytes, 0, incomingData, 0, length); 						 						
+						string serverMessage = Encoding.ASCII.GetString(incomingData);
+
+						// Message: "reset"
+						if (string.Compare(serverMessage, "reset") == 0)
+							faultHandler.ReceiveMessage(serverMessage);
+
+						// Message: "id variation"
+						string[] vals = serverMessage.Split(' ');
+
+						if (vals.Length >= 2)
+							faultHandler.ReceiveMessage(vals[0], vals[1]);
 					} 				
 				} 			
 			}              
@@ -77,6 +99,8 @@ public class Client : MonoBehaviour {
 	// SendMessage
 	// Takes in a string and converts the string to a byte array which can be sent through the stream to the host:
 	public void SendMessage(string msg) {
+		Debug.Log(msg + " " + Encoding.ASCII.GetBytes(msg).Length);
+
 		if (socketConnection == null) {             
 			return;         
 		}

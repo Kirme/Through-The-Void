@@ -1,23 +1,25 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Newtonsoft.Json;
 
 public class JSONHandler : MonoBehaviour
 {
     public TextAsset jsonFile;
     private Faults faultsInJson;
 
-    private void Start() {
+    private void Awake() {
         GetData();
     }
 
     private void GetData()
     {
-        faultsInJson = JsonUtility.FromJson<Faults>(jsonFile.text); // Get faults from JSON
+        //faultsInJson = JsonUtility.FromJson<Faults>(jsonFile.text); // Old, here for documentation
+        faultsInJson = JsonConvert.DeserializeObject<Faults>(jsonFile.text); // Get faults from JSON
 
         // Debug
         foreach (Fault fault in faultsInJson.faults) {
-            Debug.Log(fault.id + " " + fault.faultLocation + " " + fault.fixLocation);
+            Debug.Log(fault.id + " " + fault.faultLocation);
         }
     }
 
@@ -45,8 +47,20 @@ public class JSONHandler : MonoBehaviour
 [System.Serializable]
 public class Fault {
     public string id;
+
+    public int severity;
     public string faultLocation;
-    public string fixLocation;
+    public int numVariations;
+    public string fixLocation; // Remove later, exists to avoid errors with references
+    public string[] fixLocations;
+    public float[] fixActions;
+
+    public string arDescription;
+    public Dictionary<string, string[]> otherARDescriptions;
+    public Dictionary<string, float[][]> metrics;
+    public List<List<string>> effects;
+    public string displayName;
+    public Dictionary<string, float> negatives;
 }
 
 [System.Serializable]
