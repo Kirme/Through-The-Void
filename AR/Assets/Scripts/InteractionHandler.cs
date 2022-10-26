@@ -30,7 +30,6 @@ public class InteractionHandler : MonoBehaviour {
     private string activePanel;
     private float distZ;
     private bool dragging = false;
-    private bool holding = false;
     private float offset;
     private Vector3 initPosition;
     private Vector3 finalPosition;
@@ -356,7 +355,6 @@ public class InteractionHandler : MonoBehaviour {
                     if (touch.phase == TouchPhase.Began) {
                         initPosition = touchedPart.parent.localRotation.eulerAngles;
                         distZ = touchedPart.position.z - _mainCamera.transform.position.z;
-                        finalPosition = initPosition;
 
                         v3 = new Vector3(touch.position.x, touch.position.y, distZ);
                         v3 = _mainCamera.ScreenToWorldPoint(v3);
@@ -372,7 +370,6 @@ public class InteractionHandler : MonoBehaviour {
                         if (currentRotation >= 130) {
                             
                             newRot = 0;
-                            finalPosition = touchedPart.parent.localRotation.eulerAngles;
                             touchedPart.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
                         }
                         if (currentRotation <= 0) {
@@ -384,14 +381,14 @@ public class InteractionHandler : MonoBehaviour {
                 break;
 
             case "Button":
-                if (!holding && touchedPart.name == "redButton") {
-                    touchedPart.localPosition = new Vector3(touchedPart.localPosition.x, touchedPart.localPosition.y, touchedPart.localPosition.z - 0.3f);
-                    holding = true;
+                if (touchedPart.name == "redButton") {
+                    ButtonPanel buttonPanel = touchedPart.GetComponentInParent<ButtonPanel>();
+
+                    if (buttonPanel.IsSolved(touchedPart, touch)) {
+                        FixPart(touchedPart.parent.parent); // Button
+                    }
                 }
-                else if (holding && touchedPart.name != "redButton" || touch.phase == TouchPhase.Ended) {
-                    previousPart.localPosition = new Vector3(previousPart.localPosition.x, previousPart.localPosition.y, previousPart.localPosition.z + 0.3f);
-                    holding = false;
-                }
+
                 break;
         }
     }

@@ -32,7 +32,7 @@ public class Client : MonoBehaviour {
 
 		// Debug
 		//StartCoroutine(Crt());
-		faultHandler.ReceiveMessage("0", "0");
+		//faultHandler.ReceiveMessage("0", "0");
 	}
 
 	IEnumerator Crt() {

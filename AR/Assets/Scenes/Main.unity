@@ -233,7 +233,7 @@ PrefabInstance:
     - target: {fileID: 8613360924931720378, guid: e31581ce798e5db4c95ae0c37eec47dc,
         type: 3}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e31581ce798e5db4c95ae0c37eec47dc, type: 3}
@@ -2908,6 +2908,7 @@ GameObject:
   - component: {fileID: 4883511689789929080}
   - component: {fileID: 3137094583812912811}
   - component: {fileID: 5472999391664392990}
+  - component: {fileID: 5472999391664392991}
   m_Layer: 0
   m_Name: Button
   m_TagString: Panel
@@ -4163,6 +4164,18 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &5472999391664392991
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 522270001370264030}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 666b573d646ea29408f61beefe9f1488, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &5521620477835490366
 GameObject:
   m_ObjectHideFlags: 0

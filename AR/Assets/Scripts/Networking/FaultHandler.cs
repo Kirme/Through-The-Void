@@ -80,7 +80,7 @@ public class FaultHandler : MonoBehaviour {
 
         HandleDescription(th, string.Concat(description));
         
-        string fixDesc = fault.otherARDescriptions[fault.fixLocations[var]][var];
+        //string fixDesc = fault.otherARDescriptions[fault.fixLocations[var]][var];
         // Find fix location and set text
         /*
         foreach (Panel panel in panels) {
