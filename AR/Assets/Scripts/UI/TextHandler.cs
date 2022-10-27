@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 
-public class TextHandler : MonoBehaviour
-{
+public class TextHandler : MonoBehaviour {
     private TextMeshPro _text;
     private Information _info;
 
@@ -27,7 +26,7 @@ public class TextHandler : MonoBehaviour
     }
 
     void Awake() {
-        _info.partName = gameObject.transform.parent.name;
+        _info.partName = gameObject.transform.name;
         _info.showDesc = false;
 
         _text = GetComponentInChildren<TextMeshPro>();
@@ -45,13 +44,11 @@ public class TextHandler : MonoBehaviour
         _text.text = _info.GetText();
     }
 
-    public void Show()
-    {
+    public void Show() {
         _text.gameObject.SetActive(true);
     }
 
-    public void Hide()
-    {
+    public void Hide() {
         _text.gameObject.SetActive(false);
     }
 }

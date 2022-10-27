@@ -6,14 +6,12 @@
       "severity": 0,
       "faultLocation": "Engine",
       "numVariations": 2,
-      "fixLocations": [ "Core_Panel1", "Core_Panel2" ],
-      "fixActions": [ 3.0, 5.0 ],
+      "fixLocations": [ "Core_PanelButton", "Core_PanelWires" ],
 
-      "arDescription": "Go to panel 1",
-      "otherARDescriptions": {
-        "Core_Panel1": [ "If Engine Oxygen > 50% hold for 7 seconds, otherwise hold for 3 seconds", "If Engine Oxygen < 50% hold for 7 seconds, otherwise hold for 3 seconds" ],
-        "Core_Panel2": [ "If Engine Pressure > 50% hold for 3 seconds, otherwise hold for 5 seconds", "If Engine Pressure < 50% hold for 3 seconds, otherwise hold for 5 seconds" ]
-      },
+      "descriptions": [
+        "If Engine Oxygen > 50% use panel with wires, otherwise use panel with a button",
+        "If Engine Oxygen > 50% use panel with wires, otherwise use panel with a button"
+      ],
       "metrics": {
         "engine_pressure": [
           [ 0.0, 0.4 ],
@@ -43,14 +41,12 @@
       "severity": 2,
       "faultLocation": "Core",
       "numVariations": 2,
-      "fixLocations": [ "Engine_Panel1", "Engine_Panel2" ],
-      "fixActions": [ 3.0, 5.0 ],
+      "fixLocations": [ "Engine_PanelButton", "Engine_PanelWires" ],
 
-      "arDescription": "Go to Engine_Panel2",
-      "otherARDescriptions": {
-        "Engine_Panel1": [ "If Core Fuel > 50% hold for 7 seconds, otherwise hold for 3 seconds", "If Core Fuel < 50% hold for 7 seconds, otherwise hold for 3 seconds" ],
-        "Engine_Panel2": [ "If Core Fuel > 50% hold for 3 seconds, otherwise hold for 5 seconds", "If Core Fuel < 50% hold for 3 seconds, otherwise hold for 5 seconds" ]
-      },
+      "descriptions": [
+        "If Core Fuel > 50% use panel with wires, otherwise use panel with a button",
+        "If Core Fuel > 50% use panel with wires, otherwise use panel with a button"
+      ],
       "metrics": {
         "core_fuel": [
           [ 0.0, 0.4 ],
@@ -72,7 +68,7 @@
       "displayName": "Steering malfunction",
       "negatives": {
         "invertX": 1.0,
-        "invertY": 1.0,
+        "invertY": 1.0
       }
     },
     {
@@ -80,14 +76,13 @@
       "severity": 2,
       "faultLocation": "RightWing",
       "numVariations": 2,
-      "fixLocations": [ "LeftWing_Panel1", "LeftWing_Panel2" ],
+      "fixLocations": [ "LeftWing_PanelButton", "LeftWing_PanelWires" ],
       "fixActions": [ 3.0, 5.0 ],
 
-      "arDescription": "Go to panel C3",
-      "otherARDescriptions": {
-        "LeftWing_Panel1": [ "If Left Wing Pressure > 50% hold for 7 seconds, otherwise hold for 3 seconds", "If Left Wing Pressure < 50% hold for 7 seconds, otherwise hold for 3 seconds" ],
-        "LeftWing_Panel2": [ "If Left Wing Pressure > 50% hold for 3 seconds, otherwise hold for 5 seconds", "If Left Wing Pressure < 50% hold for 3 seconds, otherwise hold for 5 seconds" ]
-      },
+      "descriptions": [
+        "If Left Wing Pressure > 50% use panel with wires, otherwise use panel with a button",
+        "If Left Wing Pressure > 50% use panel with wires, otherwise use panel with a button"
+      ],
       "metrics": {
         "lwing_pressure": [
           [ 0.0, 0.4 ],
@@ -108,7 +103,7 @@
 
       "displayName": "Heating malfunction",
       "negatives": {
-        "maxSpeedModifier": 0.6,
+        "maxSpeedModifier": 0.6
       }
     }
   ]

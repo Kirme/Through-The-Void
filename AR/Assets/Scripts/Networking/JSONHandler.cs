@@ -51,12 +51,10 @@ public class Fault {
     public int severity;
     public string faultLocation;
     public int numVariations;
-    public string fixLocation; // Remove later, exists to avoid errors with references
     public string[] fixLocations;
-    public float[] fixActions;
 
-    public string arDescription;
-    public Dictionary<string, string[]> otherARDescriptions;
+    public string[] descriptions;
+
     public Dictionary<string, float[][]> metrics;
     public List<List<string>> effects;
     public string displayName;

@@ -28,13 +28,7 @@ public class InteractionHandler : MonoBehaviour {
     // Mini games
     private int countForPanel;
     private string activePanel = "";
-    private float distZ;
-    private bool dragging = false;
-    private bool moved = false;
-    private float offset;
-    private Vector3 initPosition;
-    private Vector3 finalPosition;
-    private float currentRotation = 0;
+    private bool holding = false;
 
     private void Awake() {
         _audioManager = FindObjectOfType<AudioManager>();
@@ -64,11 +58,8 @@ public class InteractionHandler : MonoBehaviour {
         Ray ray = _mainCamera.ScreenPointToRay(touch.position);
         RaycastHit hit;
         if (Physics.Raycast(ray, out hit)) { // Check if ray hits object
-            Transform part = GetPart(hit);
-            if (dragging && part != previousPart)
-            {
-                part = previousPart;
-            }
+            Transform part = hit.collider.transform;
+
             // Handle panel
             UpdatePanel(part);
             if (part.CompareTag("Panel")) {
@@ -99,26 +90,17 @@ public class InteractionHandler : MonoBehaviour {
 
             previousPart = part; // Update previous part
         } else {
-            if (!dragging)
-            {
-                Reset();
-            }
+            Reset();
         }
     }
 
     private void Reset() {
-        if (previousPart != null && GetPartStatus(previousPart) != 0 && !previousPart.CompareTag("Panel"))
-            SetPartColor(previousPart, defaultColor);
         ResetTime();
-        if (previousPart.parent.name == "Slider" && dragging)
-        {
-            previousPart.position = finalPosition;
-            dragging = false; 
-        }
-        if (previousPart.name == "sink" && dragging)
-        {
-            previousPart.parent.localEulerAngles = finalPosition;
-            dragging = false;
+        if (previousPart == null)
+            return;
+
+        if (GetPartStatus(previousPart) != 0 && !previousPart.CompareTag("Panel")) {
+            ResetColor(previousPart);
         }
     }
 
@@ -131,37 +113,27 @@ public class InteractionHandler : MonoBehaviour {
     }
 
     private void FixPart(Transform part) {
-        string partName = part.name;
+        string key = GetFixKey(part);
 
-        if (fixesToFaults.ContainsKey(partName)) {
-            Fault fault = fixesToFaults[partName];
+        if (fixesToFaults.ContainsKey(key)) {
+            Fault fault = fixesToFaults[key];
 
             RemoveFault(fault.faultLocation, part);
             faultHandler.SendMessage(fault.id);
-        }
-    }
-
-    // Based on current ship model, change based on where collider is
-    private Transform GetPart(RaycastHit hit) {
-        string tag = hit.collider.tag;
-        if (tag == "struct")
-        {
-            return hit.collider.transform.parent;
-        }
-        else
-        {
-            return hit.collider.transform;
+        } else {
+            _UIHandler.SetMistake();
+            faultHandler.SendMessage("mistake");
         }
     }
 
     private void UpdateColor(RaycastHit hit, Touch touch) {
         // Change color of part
-        Transform part = GetPart(hit);
+        Transform part = hit.collider.transform;
 
         // If stopped touching, reset to default color
-        if (touch.phase == TouchPhase.Ended)
-            SetPartColor(part, defaultColor);
-        else
+        if (touch.phase == TouchPhase.Ended) {
+            ResetColor(part);
+        } else
             SetPartColor(part, selectedColor);
 
         if (HasMovedToNewPart(touch, part)) { // We moved between two different parts
@@ -199,7 +171,7 @@ public class InteractionHandler : MonoBehaviour {
 
         if (faultLocations.Contains(partName)) // Fault location
             return 0;
-        if (fixesToFaults.ContainsKey(partName)) // Panel that can fix fault
+        if (fixesToFaults.ContainsKey(GetFixKey(part))) // Panel that can fix fault
             return 1;
         Panel panel = part.GetComponent<Panel>(); 
         if (panel != null) // Panel that cannot currently fix fault
@@ -231,13 +203,28 @@ public class InteractionHandler : MonoBehaviour {
         if (part == null)
             return;
 
-        part.GetComponent<Renderer>().material.color = color;
+        ColorTracker ct = part.GetComponent<ColorTracker>();
+        ct.SetColor(color);
+    }
+
+    private void ResetColor(string name) {
+        foreach (Renderer partRenderer in _ship.GetComponentsInChildren<Renderer>()) {
+            if (string.Compare(partRenderer.gameObject.name, name, System.StringComparison.OrdinalIgnoreCase) == 0) {
+                ResetColor(partRenderer.gameObject.transform);
+                return;
+            }
+        }
+    }
+
+    private void ResetColor(Transform part) {
+        ColorTracker ct = part.GetComponent<ColorTracker>();
+        ct.ResetColors();
     }
 
     // Add a fault
     public bool AddFault(Fault fault, int variation) {
         // Get fix location based on variation
-        string fixLocation = fault.fixLocations[variation].Split('_')[1];
+        string fixLocation = fault.fixLocations[variation];
 
         if (!faultLocations.Contains(fault.faultLocation) && !fixesToFaults.ContainsKey(fixLocation)) {
             faultLocations.Add(fault.faultLocation);
@@ -251,14 +238,14 @@ public class InteractionHandler : MonoBehaviour {
 
     // Helper function for removing a fault
     private void RemoveFaultLocation(string fault, Transform faultLocation) {
-        SetPartColor(fault, defaultColor);
+        ResetColor(fault);
         faultLocations.Remove(fault);
         faultLocation.GetComponent<TextHandler>().ShowDescription(false);
     }
 
     // Helper function for removing a fix location
     private void RemoveFixLocation(Transform fix) {
-        fixesToFaults.Remove(fix.name);
+        fixesToFaults.Remove(GetFixKey(fix));
         fix.GetComponent<TextHandler>().ShowDescription(false);
     }
 
@@ -325,8 +312,6 @@ public class InteractionHandler : MonoBehaviour {
     // Mini games
 
     private void MissionHandler(string name, Transform touchedPart, Touch touch) {
-        Vector3 v3;
-
         switch (name) {
             case "Wires":
                 if (touchedPart != previousPart && touchedPart.CompareTag("Panel") && touchedPart.name != "Wires") {
@@ -346,115 +331,20 @@ public class InteractionHandler : MonoBehaviour {
                     countForPanel = 0;
                 }
                 break;
-            case "Slider":
-                if (touchedPart.parent.name == "Slider") {
-                    if (touch.phase == TouchPhase.Began) {
-                        initPosition = touchedPart.position;
-                        finalPosition = initPosition;
-                        distZ = touchedPart.position.z - _mainCamera.transform.position.z;
-                        v3 = new Vector3(touch.position.x, touch.position.y, distZ);
-                        v3 = _mainCamera.ScreenToWorldPoint(v3);
-                        offset = touchedPart.position.x - v3.x;
-                        dragging = true;
-                        moved = true;
-                    }
-                    if (dragging && touch.phase == TouchPhase.Moved) {
-                        v3 = new Vector3(touch.position.x, touch.position.y, distZ);
-                        v3 = _mainCamera.ScreenToWorldPoint(v3);
-                        double newPosX = v3.x + offset;
-                        if (newPosX < initPosition.x - 0.24) {
-                            newPosX = initPosition.x - 0.24;
-                            finalPosition = new Vector3((float) newPosX, initPosition.y, initPosition.z);
-                            touchedPart.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
-                        }
-                        if (newPosX > finalPosition.x) {
-                            // We're done with one
-                            newPosX = finalPosition.x;
-                        }
-                        touchedPart.position = new Vector3((float) newPosX, touchedPart.position.y, touchedPart.position.z);
-                    }
-                }
-                break;
-
-            case "Lever":
-                if (touchedPart.name == "sink") {
-                    if (touch.phase == TouchPhase.Began) {
-                        initPosition = touchedPart.parent.localEulerAngles;
-                        finalPosition = initPosition;
-                        distZ = touchedPart.position.z - _mainCamera.transform.position.z;
-                        v3 = new Vector3(touch.position.x, touch.position.y, distZ);
-                        v3 = _mainCamera.ScreenToWorldPoint(v3);
-                        offset = v3.x;
-                        dragging = true;
-                        moved = true;
-                    }
-                    if (dragging && touch.phase == TouchPhase.Moved) {
-                        v3 = new Vector3(touch.position.x, touch.position.y, distZ);
-                        v3 = _mainCamera.ScreenToWorldPoint(v3);
-                        float newRot = -(v3.x - offset) * 1000;
-                        offset = v3.x;
-                        currentRotation += newRot;
-                        if (currentRotation >= 130) {
-                            finalPosition = touchedPart.parent.localEulerAngles;
-                            newRot = 0;
-                            touchedPart.gameObject.layer = LayerMask.NameToLayer("Ignore Raycast");
-                        }
-                        if (currentRotation <= 0) {
-                            finalPosition = initPosition;
-                            newRot = 0;
-                        }
-                        touchedPart.parent.localEulerAngles = new Vector3(touchedPart.parent.localEulerAngles.x, touchedPart.parent.localEulerAngles.y, newRot);
-                    }
-                }
-                break;
-
             case "Button":
-                if (touchedPart.name == "redButton") {
+                if (string.Compare(touchedPart.name, "redButton") == 0) {
                     ButtonPanel buttonPanel = touchedPart.GetComponentInParent<ButtonPanel>();
 
                     if (buttonPanel.IsSolved(touchedPart, touch)) {
                         FixPart(touchedPart.parent.parent); // Button
                     }
+
+                    holding = true;
+                } else if (string.Compare(previousPart.name, "redButton") == 0) {
+                    ButtonPanel buttonPanel = previousPart.GetComponentInParent<ButtonPanel>();
+                    buttonPanel.ResetPanel(previousPart);
                 }
 
-                break;
-        }
-    }
-
-    private void ResetPanel(GameObject panel) {
-        string name = panel.name;
-        switch (name) {
-            case "Wires":
-                panel.GetComponent<WirePanel>().ResetPanel();
-                break;
-            case "Slider":
-                if (moved)
-                {
-                    Vector3 pos;
-                    panel.transform.GetChild(0).gameObject.layer = LayerMask.NameToLayer("Default");
-                    pos = panel.transform.GetChild(0).position;
-                    panel.transform.GetChild(0).position = new Vector3(initPosition.x, pos.y, pos.z);
-
-                    panel.transform.GetChild(1).gameObject.layer = LayerMask.NameToLayer("Default");
-                    pos = panel.transform.GetChild(1).position;
-                    panel.transform.GetChild(1).position = new Vector3(initPosition.x, pos.y, pos.z);
-
-                    panel.transform.GetChild(2).gameObject.layer = LayerMask.NameToLayer("Default");
-                    pos = panel.transform.GetChild(2).position;
-                    panel.transform.GetChild(2).position = new Vector3(initPosition.x, pos.y, pos.z);
-                    moved = false;
-                }
-                break;
-
-            case "Lever":
-                if (moved)
-                {
-                    Transform child = panel.transform.GetChild(1);
-                    child.localEulerAngles = initPosition;
-                    child.GetChild(0).gameObject.layer = LayerMask.NameToLayer("Default");
-                    currentRotation = 0;
-                    moved = false;
-                }
                 break;
         }
     }
@@ -465,7 +355,11 @@ public class InteractionHandler : MonoBehaviour {
             if (panel != null) {
                 panel.SetActive(false);
                 activePanel = "";
-                ResetPanel(panel);
+
+                // Reset wires
+                if (string.Compare(panel.name, "Wires") == 0) {
+                    panel.GetComponent<WirePanel>().ResetPanel();
+                }
             }
         }
         if (part.tag == "Button") {
@@ -473,5 +367,14 @@ public class InteractionHandler : MonoBehaviour {
             panel.SetActive(true);
             activePanel = panel.name;
         }
+    }
+
+    // Gets "parent_child" from transform
+    private string GetFixKey(Transform fix) {
+        string val = fix.parent.name;
+        val = string.Concat(val, "_");
+        val = string.Concat(val, fix.name);
+
+        return val;
     }
 }

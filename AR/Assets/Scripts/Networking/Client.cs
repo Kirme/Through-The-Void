@@ -31,16 +31,16 @@ public class Client : MonoBehaviour {
 		faultHandler = GetComponent<FaultHandler>();
 
 		// Debug
-		//StartCoroutine(Crt());
+		StartCoroutine(Crt());
 		//faultHandler.ReceiveMessage("0", "0");
 	}
 
 	IEnumerator Crt() {
 		yield return new WaitForSeconds(1);
-		faultHandler.ReceiveMessage("0", "1");
+		faultHandler.ReceiveMessage("0", "0");
 		
-		yield return new WaitForSeconds(1);
-		faultHandler.ReceiveMessage("2", "0");
+		//yield return new WaitForSeconds(1);
+		//faultHandler.ReceiveMessage("2", "0");
 
 		//yield return new WaitForSeconds(3);
 		//faultHandler.ReceiveMessage("clear");

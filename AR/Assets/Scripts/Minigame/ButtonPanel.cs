@@ -11,17 +11,20 @@ public class ButtonPanel : MonoBehaviour
             part.localPosition = new Vector3(part.localPosition.x, part.localPosition.y, part.localPosition.z - 0.3f);
             holding = true;
         }
-        else if (holding && part.name != "redButton" || touch.phase == TouchPhase.Ended) {
-            ResetPanel();
+        
+        if (touch.phase == TouchPhase.Ended) {
+            ResetPanel(part);
 
-            return touch.phase == TouchPhase.Ended;
+            return true;
         }
 
         return false;
     }
 
-    public void ResetPanel() {
-        transform.localPosition = new Vector3(transform.localPosition.x, transform.localPosition.y, transform.localPosition.z + 0.3f);
-        holding = false;
+    public void ResetPanel(Transform part) {
+        if (holding) {
+            part.localPosition = new Vector3(part.localPosition.x, part.localPosition.y, part.localPosition.z + 0.3f);
+            holding = false;
+        }
     }
 }

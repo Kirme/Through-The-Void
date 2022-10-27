@@ -57,48 +57,17 @@ public class FaultHandler : MonoBehaviour {
 
     private void ParseFault(Fault fault, string variation) {
         int var = int.Parse(variation);
-        string[] fix = fault.fixLocations[var].Split('_');
-        string fixPart = fix[0];
-        string fixPanel = fix[1];
 
         // Make sure the fault was correct, and could be added
         if (!interactionHandler.AddFault(fault, var))
             return;
 
         interactionHandler.SetBroken(fault.faultLocation);
-        Panel[] panels = ship.GetComponentsInChildren<Panel>();
 
         // Set text of fault location
         TextHandler th = ship.transform.Find(fault.faultLocation).GetComponent<TextHandler>();
 
-        // Construct description of fix location, seen at fault location
-        List<string> description = new List<string>();
-        description.Add("Find ");
-        description.Add(fixPanel);
-        description.Add(" at the ");
-        description.Add(fixPart);
-
-        HandleDescription(th, string.Concat(description));
-        
-        //string fixDesc = fault.otherARDescriptions[fault.fixLocations[var]][var];
-        // Find fix location and set text
-        /*
-        foreach (Panel panel in panels) {
-            string partName = panel.GetPartName();
-            string panelName = panel.GetPanelName();
-            
-            if (string.Compare(partName, fixPart) == 0 && string.Compare(panelName, fixPanel) == 0) {
-
-                panel.timeToHold = fault.fixActions[var];
-                panel.canRepair = true;
-                panel.fault = fault.faultLocation;
-
-                HandleDescription(panel.GetComponent<TextHandler>(), fixDesc);
-
-                break;
-            }
-        }
-        */
+        HandleDescription(th, fault.descriptions[var]);
     }
 
     private void HandleDescription(TextHandler th, string desc) {

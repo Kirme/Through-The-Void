@@ -32,6 +32,12 @@ public class UIHandler : MonoBehaviour {
         _textTimeHeld.text = timeHeld.ToString("0.00");
     }
 
+    public void SetMistake() {
+        string txt = "You used the wrong panel,\nthe ship took damage...";
+        _textInfo.text = txt;
+        StartCoroutine(ShowText(3));
+    }
+
     public void SetMistake(Panel panel, float timeHeld) {
         int type = GetMistakeType(panel, timeHeld);
         string txt;
