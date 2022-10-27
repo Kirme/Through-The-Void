@@ -30,6 +30,7 @@ public class InteractionHandler : MonoBehaviour {
     private string activePanel = "";
     private float distZ;
     private bool dragging = false;
+    private bool holding = false;
     private bool moved = false;
     private float offset;
     private Vector3 initPosition;
@@ -120,6 +121,7 @@ public class InteractionHandler : MonoBehaviour {
             previousPart.parent.localEulerAngles = finalPosition;
             dragging = false;
         }
+        holding = false;
     }
 
     private bool HeldCorrectTime(Transform part, Panel panel, TouchPhase phase) {
@@ -415,6 +417,13 @@ public class InteractionHandler : MonoBehaviour {
                     if (buttonPanel.IsSolved(touchedPart, touch)) {
                         FixPart(touchedPart.parent.parent); // Button
                     }
+                    holding = true;
+                }
+                else if(holding && previousPart.name == "redButton" && touchedPart.name != "redButton")
+                {
+                    ButtonPanel buttonPanel = previousPart.GetComponentInParent<ButtonPanel>();
+                    buttonPanel.ResetPanel(previousPart);
+                    holding = false;
                 }
 
                 break;
