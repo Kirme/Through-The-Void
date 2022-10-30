@@ -48,12 +48,16 @@ public class meterHandler : MonoBehaviour
     // Signals the health meter to change its hull health, should be invoked when the player takes damage:
     public void setHullHealth(float damage){
         float remainingHealth = health - damage;
-        if(remainingHealth <= 0){
-            remainingHealth = 100f;
+        if (remainingHealth <= 0)
+        {
+            health = 100f;
         }
-
+        else
+        {
+            health -= damage;
+        }
         // Set hullbar wants a 
-        healthMeter.GetComponent<healthBar>().setHullBar(remainingHealth/100);
+        healthMeter.GetComponent<healthBar>().setHullBar(health/100);
     }
 
     private void set_fault_health(){
@@ -243,7 +247,7 @@ public class meterHandler : MonoBehaviour
 
     void Update()
     {
-        SetMeters();
+        //SetMeters();
         handle_speedometer();
         set_fault_health();
     }

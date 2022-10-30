@@ -277,7 +277,7 @@ public class FaultHandler : MonoBehaviour {
         {
             if (client.CheckConnection())
             {
-                yield return new WaitForSeconds(30);
+                yield return new WaitForSeconds(60);
                 if (!tutorialMode)
                 {
                     Break();

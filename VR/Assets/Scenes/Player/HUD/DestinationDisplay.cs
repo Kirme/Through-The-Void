@@ -5,10 +5,13 @@ using UnityEngine.Events;
 
 public class DestinationDisplay : MonoBehaviour
 {
-    public GameObject destination, arrow, arrowMesh, text;
+    public GameObject destination, arrow, arrowMesh, text, waypointText;
     public UnityEvent onDestinationReached;
     public List<Color> colors = new List<Color>();
     private Gradient gradient;
+
+    private int numWaypointsReached = 0;
+    public UnityEvent<int> onWaypointReached;
 
     private void Start()
     {
@@ -21,6 +24,8 @@ public class DestinationDisplay : MonoBehaviour
             key[i].time = ((float)i)/(colors.Count - 1.0f);
             i++;
         }
+        int numWaypoints = destination.GetComponent<DestinationPoint>().numWaypoints;
+        waypointText.GetComponent<TextMesh>().text = "Waypoint " + (numWaypointsReached + 1) + "/" + numWaypoints;
         gradient.SetKeys(key, new GradientAlphaKey[colors.Count]);
     }
 
@@ -31,7 +36,22 @@ public class DestinationDisplay : MonoBehaviour
             float distance = (destination.transform.position - transform.position).magnitude;
             if (distance < 100)
             {
-                onDestinationReached.Invoke();
+                numWaypointsReached += 1;
+                int numWaypoints = destination.GetComponent<DestinationPoint>().numWaypoints;
+                if (numWaypointsReached < numWaypoints)
+                {
+                    onWaypointReached.Invoke(numWaypointsReached);
+                } else
+                {
+                    onWaypointReached.Invoke(numWaypointsReached);
+                    onDestinationReached.Invoke();
+                    numWaypointsReached = 0;
+                }
+
+                if(waypointText != null)
+                {
+                    waypointText.GetComponent<TextMesh>().text = "Waypoint " + (numWaypointsReached + 1) + "/" + numWaypoints;
+                }
             }
 
             if(arrow != null)

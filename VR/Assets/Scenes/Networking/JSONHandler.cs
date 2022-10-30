@@ -93,7 +93,7 @@ public class Fault
 
     public Dictionary<string, float[]> GetMetrics()
     {
-        Debug.Log(metrics);
+        //Debug.Log(metrics);
 
         if(metrics == null)
         {

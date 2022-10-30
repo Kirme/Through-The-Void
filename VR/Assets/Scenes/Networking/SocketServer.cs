@@ -40,7 +40,7 @@ public class SocketServer : MonoBehaviour {
 	private TcpListener tcpListener; 
 	private Thread serverRecieveThread;  	
 	private TcpClient client;
-	private int port = 8052;
+	private int port = 8053;
 	private server_handler sh; 	
 	
 

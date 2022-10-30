@@ -1,7 +1,8 @@
-﻿#if UNITY_EDITOR
+﻿//#if UNITY_EDITOR
 using System.Collections.Generic;
 using System.Collections;
 using UnityEngine;
+using Unity.VisualScripting;
 
 //-----------------------------------------------------
 // ASTEROID FIELD CREATOR
@@ -62,9 +63,10 @@ public class AstroData : MonoBehaviour
     private bool resettingPosition = false;
     private Vector3 respawnOffset;
     private double remainingOffset = 1.0;
-    float resetTimer = 3;
+    private Vector3 newPos;
+    float resetTimer = 1; //3f 
     float currTimer = 0f;
-    float asteroidSpawnDistanceFactor = 10f;
+    float asteroidSpawnDistanceFactor = 3.5f;
 
     public void Update()
     {
@@ -109,16 +111,52 @@ public class AstroData : MonoBehaviour
                 //Move the asteroid - TODO: How does this interact with movement from bumping into them?
                 transform.position += transform.forward * speed * Time.deltaTime;
                 //Check distance, if it's 5% over cap then move
-                distanceFactor = GetDistance(this.transform.position, playerTransform.position) / distanceCap;
+                if (resettingPosition)
+                {
+                    distanceFactor = GetDistance(newPos, playerTransform.position) / distanceCap;
+                }
+                else
+                {
+                    distanceFactor = GetDistance(this.transform.position, playerTransform.position) / distanceCap;
+                }
+                
                 if (distanceFactor >= distanceLeniency)
                 {
+                    Vector3 originPos;
+                    if (resettingPosition)
+                    {
+                        originPos = newPos;
+                    }
+                    else
+                    {
+                        originPos = this.transform.position;
+                    }
+                    
+                   
+                     
+
                     //Vector3 newpos = playerTransform.position - this.transform.position;
-                    Vector3 newPos = this.transform.position + ((playerTransform.position-this.transform.position) * 2 * (1/(distanceFactor)));
+                    newPos = this.transform.position + ((playerTransform.position-originPos) * 2 * (1/(distanceFactor)));
+
+                    //TEST FOR RANDOMIZING IN A CONE
+                    Vector3 forwardvector = playerTransform.forward;
+                    int xRotOne = Random.Range(-90, 90);
+                    int yRotOne = Random.Range(-90, 90);
+                    //int zRotOne = Random.Range(-90, 90);
+                    Vector3 rotated = Quaternion.AngleAxis(xRotOne, playerTransform.up) * forwardvector;
+                    rotated = Quaternion.AngleAxis(yRotOne, playerTransform.right) * rotated;
+                    newPos = playerTransform.position + distanceCap* 0.9f * rotated;
+
+                    originPos = playerTransform.position - distanceCap * rotated;
+                   
+
+                    //END OF TEST
                     
 
                     //Should always occur and move it a distance of 2x distance cap towards the player UNLESS the created asteroid field is enormous.
-                    if(GetDistance(newPos, playerTransform.position) / distanceCap <= 1){ //Can probably be removed?
-                        respawnOffset = ((playerTransform.position - this.transform.position) * 2 * asteroidSpawnDistanceFactor * (1 / (distanceFactor))) ;
+                    if(GetDistance(newPos, playerTransform.position) / distanceCap <= 1){ 
+                        respawnOffset = ((playerTransform.position - originPos) * 2 * asteroidSpawnDistanceFactor * (1 / (distanceFactor))) ;
+                        currTimer = 0;
                         remainingOffset = 1.0;
                         this.transform.position = newPos + respawnOffset;
                         xRot = Random.Range(0, 360);
@@ -143,26 +181,6 @@ public class AstroData : MonoBehaviour
 
 
     
-
-    //Egen
-    /*
-    public void OnCollisionEnter(Collision col){
-        if(HitboxEnabled){
-            if(col.gameObject.tag == "PlayerCollider"){
-                //TODO: Adjust e.g. movement on collision with player.
-                HitboxEnabled = false;
-                StartCoroutine(EnableHitbox()); //Reactivates hitbox after 3 seconds currently
-            }
-        }
-    }
-
-    IEnumerator EnableHitbox()
-    {
-        yield return new WaitForSeconds(3f);
-        HitboxEnabled = true;
-        yield break;
-    }
-    */
 
 
     private float GetDistance(Vector3 a, Vector3 b){
@@ -288,4 +306,4 @@ public class AstroData : MonoBehaviour
         }
     }
 }
-#endif
+//#endif
