@@ -46,6 +46,10 @@ public class PlayerController : MonoBehaviour
         return speed;
     }
 
+    public float get_hitpoints(){
+        return hitpoints;
+    }
+
     public void SetTutorialMode(bool val)
     {
         tutorialMode = val;

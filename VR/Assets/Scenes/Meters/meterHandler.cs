@@ -22,6 +22,7 @@ public class meterHandler : MonoBehaviour
     public GameObject player;
     public GameObject meterTopLabel;
     public GameObject speedometer;
+    public GameObject healthMeter;
     public GameObject air_pressure;
     public GameObject fuel;
     public GameObject oxygen_level;
@@ -35,9 +36,28 @@ public class meterHandler : MonoBehaviour
 
     private float timer = 1.0f;
 
+
+    private float health = 100f;
+
+    // handle_speedometer extracts the speed from the player object and displays it. 
     private void handle_speedometer(){
         float speed = player.GetComponent<PlayerController>().get_speed();
         speedometer.GetComponent<TextMeshPro>().text = "Speed: \n" + (int)speed + " m/s";
+    }
+
+    // Signals the health meter to change its hull health, should be invoked when the player takes damage:
+    public void setHullHealth(float damage){
+        float remainingHealth = health - damage;
+        if(remainingHealth <= 0){
+            remainingHealth = 100f;
+        }
+
+        // Set hullbar wants a 
+        healthMeter.GetComponent<healthBar>().setHullBar(remainingHealth/100);
+    }
+
+    private void set_fault_health(){
+        healthMeter.GetComponent<healthBar>().setFaultBar(faults.Count);
     }
 
     private string GetShipPartName(SHIP_PART part)
@@ -225,7 +245,7 @@ public class meterHandler : MonoBehaviour
     {
         SetMeters();
         handle_speedometer();
-    
+        set_fault_health();
     }
 
     // Interpolate & Setters for the meters:
