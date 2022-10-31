@@ -19,6 +19,7 @@ public class InteractionHandler : MonoBehaviour {
     private Color defaultColor = Color.white;
 
     private FaultHandler faultHandler;
+    private ColorTracker colorTracker;
 
     private Transform previousPart;
 
@@ -32,6 +33,7 @@ public class InteractionHandler : MonoBehaviour {
 
     private void Awake() {
         _audioManager = FindObjectOfType<AudioManager>();
+        colorTracker = GetComponent<ColorTracker>();
     }
 
     private void Start() {
@@ -203,8 +205,7 @@ public class InteractionHandler : MonoBehaviour {
         if (part == null)
             return;
 
-        ColorTracker ct = part.GetComponent<ColorTracker>();
-        ct.SetColor(color);
+        colorTracker.SetColor(color, part);
     }
 
     private void ResetColor(string name) {
@@ -217,12 +218,13 @@ public class InteractionHandler : MonoBehaviour {
     }
 
     private void ResetColor(Transform part) {
-        ColorTracker ct = part.GetComponent<ColorTracker>();
-        ct.ResetColors();
+        colorTracker.ResetColors(part);
     }
 
     // Add a fault
     public bool AddFault(Fault fault, int variation) {
+        _UIHandler.Show("New Fault Detected");
+
         // Get fix location based on variation
         string fixLocation = fault.fixLocations[variation];
 
@@ -246,7 +248,7 @@ public class InteractionHandler : MonoBehaviour {
     // Helper function for removing a fix location
     private void RemoveFixLocation(Transform fix) {
         fixesToFaults.Remove(GetFixKey(fix));
-        fix.GetComponent<TextHandler>().ShowDescription(false);
+        //fix.GetComponent<TextHandler>().ShowDescription(false);
     }
 
     // Remove a fault

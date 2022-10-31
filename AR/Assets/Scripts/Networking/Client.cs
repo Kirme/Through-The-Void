@@ -20,8 +20,9 @@ using UnityEngine;
 
 // The Main class:
 public class Client : MonoBehaviour {
-    // Networking data:
-	private int port = 8052;
+	// Networking data:
+	[SerializeField] string IP;
+	[SerializeField] int port;
 	private TcpClient socketConnection; 	
 	private Thread clientReceiveThread;
 	private FaultHandler faultHandler;
@@ -31,13 +32,13 @@ public class Client : MonoBehaviour {
 		faultHandler = GetComponent<FaultHandler>();
 
 		// Debug
-		StartCoroutine(Crt());
-		//faultHandler.ReceiveMessage("0", "0");
+		//SendMessage("test message");
+		//StartCoroutine(Crt());
 	}
 
 	IEnumerator Crt() {
 		yield return new WaitForSeconds(1);
-		faultHandler.ReceiveMessage("0", "0");
+		SendMessage("test message");
 		
 		//yield return new WaitForSeconds(1);
 		//faultHandler.ReceiveMessage("2", "0");
@@ -67,7 +68,7 @@ public class Client : MonoBehaviour {
 
 	private void ListenForData() { 				
 			// Set to IPv4 address for LAN:
-			socketConnection = new TcpClient("193.10.37.246", port);  			
+			socketConnection = new TcpClient(IP, port);  			
 			Byte[] bytes = new Byte[256];             
 			
 			while (true) { 							

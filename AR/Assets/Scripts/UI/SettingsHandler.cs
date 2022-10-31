@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class SettingsHandler : MonoBehaviour
-{
+public class SettingsHandler : MonoBehaviour {
     [SerializeField] GameObject handler;
     [SerializeField] GameObject settings;
 

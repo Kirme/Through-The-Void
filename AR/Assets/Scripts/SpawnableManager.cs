@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 
-public class SpawnableManager : MonoBehaviour
-{
+public class SpawnableManager : MonoBehaviour {
     [SerializeField] ARRaycastManager _RaycastManager;
     [SerializeField] ARPlaneManager _ARPlaneManager;
     List<ARRaycastHit> _Hits = new List<ARRaycastHit>();

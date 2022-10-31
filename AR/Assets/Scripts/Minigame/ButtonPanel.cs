@@ -2,8 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ButtonPanel : MonoBehaviour
-{
+public class ButtonPanel : MonoBehaviour {
     private bool holding = false;
 
     public bool IsSolved(Transform part, Touch touch) {

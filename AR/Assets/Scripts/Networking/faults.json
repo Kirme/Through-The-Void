@@ -9,8 +9,8 @@
       "fixLocations": [ "Core_PanelButton", "Core_PanelWires" ],
 
       "descriptions": [
-        "If Engine Oxygen > 50% use panel with wires, otherwise use panel with a button",
-        "If Engine Oxygen > 50% use panel with wires, otherwise use panel with a button"
+        "If Engine Oxygen > 50% use core panel with wires, otherwise use panel with a button",
+        "If Engine Oxygen > 50% use core panel with wires, otherwise use panel with a button"
       ],
       "metrics": {
         "engine_pressure": [
@@ -44,8 +44,8 @@
       "fixLocations": [ "Engine_PanelButton", "Engine_PanelWires" ],
 
       "descriptions": [
-        "If Core Fuel > 50% use panel with wires, otherwise use panel with a button",
-        "If Core Fuel > 50% use panel with wires, otherwise use panel with a button"
+        "If Core Fuel > 50% use engine panel with wires, otherwise use panel with a button",
+        "If Core Fuel > 50% use engine panel with wires, otherwise use panel with a button"
       ],
       "metrics": {
         "core_fuel": [
@@ -74,14 +74,14 @@
     {
       "id": "2",
       "severity": 2,
-      "faultLocation": "RightWing",
+      "faultLocation": "WingTopRight",
       "numVariations": 2,
-      "fixLocations": [ "LeftWing_PanelButton", "LeftWing_PanelWires" ],
+      "fixLocations": [ "WingTopLeft_PanelButton", "WingTopLeft_PanelWires" ],
       "fixActions": [ 3.0, 5.0 ],
 
       "descriptions": [
-        "If Left Wing Pressure > 50% use panel with wires, otherwise use panel with a button",
-        "If Left Wing Pressure > 50% use panel with wires, otherwise use panel with a button"
+        "If Left Wing Pressure > 50% use top left wing panel with wires, otherwise use panel with a button",
+        "If Left Wing Pressure > 50% use top left wing panel with wires, otherwise use panel with a button"
       ],
       "metrics": {
         "lwing_pressure": [

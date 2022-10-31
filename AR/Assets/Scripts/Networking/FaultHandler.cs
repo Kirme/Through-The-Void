@@ -9,7 +9,7 @@ public class FaultHandler : MonoBehaviour {
 
     public Dictionary<string, Fault> faultDictionary = new Dictionary<string, Fault>();
 
-    [SerializeField] GameObject ship;
+    public GameObject ship;
     private Fault currentFault;
     private string currentVar;
     private bool addFault = false;

@@ -34,8 +34,8 @@ public class UIHandler : MonoBehaviour {
 
     public void SetMistake() {
         string txt = "You used the wrong panel,\nthe ship took damage...";
-        _textInfo.text = txt;
-        StartCoroutine(ShowText(3));
+
+        Show(txt);
     }
 
     public void SetMistake(Panel panel, float timeHeld) {
@@ -56,6 +56,10 @@ public class UIHandler : MonoBehaviour {
                 break;
         }
 
+        Show(txt);
+    }
+
+    public void Show(string txt) {
         _textInfo.text = txt;
 
         StartCoroutine(ShowText(3));

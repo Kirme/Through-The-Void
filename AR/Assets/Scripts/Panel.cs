@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Panel : MonoBehaviour
-{
+public class Panel : MonoBehaviour {
     private bool m_canRepair;
     private float m_timeToHold;
     private string m_fault;
