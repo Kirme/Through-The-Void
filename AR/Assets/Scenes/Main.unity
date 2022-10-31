@@ -2934,10 +2934,35 @@ PrefabInstance:
       propertyPath: _interactionHandler
       value: 
       objectReference: {fileID: 1755262700}
+    - target: {fileID: 892019619791162206, guid: 501a4121f6f1c714e8bdec2ead5e3b4a,
+        type: 3}
+      propertyPath: m_Name
+      value: SmallLeftWing
+      objectReference: {fileID: 0}
+    - target: {fileID: 2633448141342872719, guid: 501a4121f6f1c714e8bdec2ead5e3b4a,
+        type: 3}
+      propertyPath: m_Name
+      value: TopRightWing
+      objectReference: {fileID: 0}
+    - target: {fileID: 3514271109731654269, guid: 501a4121f6f1c714e8bdec2ead5e3b4a,
+        type: 3}
+      propertyPath: m_Name
+      value: BottomLeftWing
+      objectReference: {fileID: 0}
     - target: {fileID: 5914675981782155532, guid: 501a4121f6f1c714e8bdec2ead5e3b4a,
         type: 3}
       propertyPath: m_Name
       value: Spaceship
+      objectReference: {fileID: 0}
+    - target: {fileID: 5997636365574933516, guid: 501a4121f6f1c714e8bdec2ead5e3b4a,
+        type: 3}
+      propertyPath: m_Name
+      value: SmallRightWing
+      objectReference: {fileID: 0}
+    - target: {fileID: 6101037682090486143, guid: 501a4121f6f1c714e8bdec2ead5e3b4a,
+        type: 3}
+      propertyPath: m_Name
+      value: TopLeftWing
       objectReference: {fileID: 0}
     - target: {fileID: 6294825013818185614, guid: 501a4121f6f1c714e8bdec2ead5e3b4a,
         type: 3}
@@ -3004,6 +3029,11 @@ PrefabInstance:
       propertyPath: _interactionHandler
       value: 
       objectReference: {fileID: 1755262700}
+    - target: {fileID: 6956654722128001088, guid: 501a4121f6f1c714e8bdec2ead5e3b4a,
+        type: 3}
+      propertyPath: m_Name
+      value: BottomRightWing
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 501a4121f6f1c714e8bdec2ead5e3b4a, type: 3}
 --- !u!1 &6833174110780649165 stripped

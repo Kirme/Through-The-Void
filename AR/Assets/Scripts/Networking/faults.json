@@ -1,6 +1,5 @@
 {
-  "faults":
-  [
+  "faults": [
     {
       "id": "0",
       "severity": 0,
@@ -13,10 +12,6 @@
         "If Engine Oxygen > 50% use core panel with wires, otherwise use panel with a button"
       ],
       "metrics": {
-        "engine_pressure": [
-          [ 0.0, 0.4 ],
-          [ 0.6, 1.0 ]
-        ],
         "engine_oxygen": [
           [ 0.0, 0.4 ],
           [ 0.6, 1.0 ]
@@ -33,7 +28,7 @@
       "displayName": "Engine Malfunction",
       "negatives": {
         "fullSpeed": 1.0,
-        "maxSpeedModifier": 1.2,
+        "maxSpeedModifier": 1.2
       }
     },
     {
@@ -51,10 +46,6 @@
         "core_fuel": [
           [ 0.0, 0.4 ],
           [ 0.6, 1.0 ]
-        ],
-        "core_pressure": [
-          [ 0.6, 1.0 ],
-          [ 0.0, 0.4 ]
         ]
       },
 
@@ -74,9 +65,9 @@
     {
       "id": "2",
       "severity": 2,
-      "faultLocation": "WingTopRight",
+      "faultLocation": "TopRightWing",
       "numVariations": 2,
-      "fixLocations": [ "WingTopLeft_PanelButton", "WingTopLeft_PanelWires" ],
+      "fixLocations": [ "TopLeftWing_PanelButton", "TopLeftWing_PanelWires" ],
       "fixActions": [ 3.0, 5.0 ],
 
       "descriptions": [
@@ -87,10 +78,6 @@
         "lwing_pressure": [
           [ 0.0, 0.4 ],
           [ 0.6, 1.0 ]
-        ],
-        "rwing_pressure": [
-          [ 0.6, 1.0 ],
-          [ 0.0, 0.4 ]
         ]
       },
 
@@ -104,6 +91,193 @@
       "displayName": "Heating malfunction",
       "negatives": {
         "maxSpeedModifier": 0.6
+      }
+    },
+    {
+      "id": "3",
+      "severity": 2,
+      "faultLocation": "Reactor",
+      "numVariations": 2,
+      "fixLocations": [ "Reactor_PanelButton", "Reactor_PanelWires" ],
+      "fixActions": [ 3.0, 5.0 ],
+
+      "descriptions": [
+        "If Reactor Pressure > 20% use reactor panel with wires, otherwise use panel with a button",
+        "If Reactor Pressure > 80% use reactor panel with wires, otherwise use panel with a button"
+      ],
+      "metrics": {
+        "reactor_pressure": [
+          [ 0.0, 0.1 ],
+          [ 0.9, 1.0 ]
+        ]
+      },
+
+      "effects": [
+        [ "", "EngineSmoking" ],
+        [ "machineSounds", "alarmSound" ],
+        [ "blinkingLight", "lightsSuperBright" ],
+        [ "showWarningTriangle", "" ]
+      ],
+
+      "displayName": "Reactor malfunction",
+      "negatives": {
+        "noLight": 1.0
+      }
+    },
+    {
+      "id": "4",
+      "severity": 2,
+      "faultLocation": "TopRightWing",
+      "numVariations": 2,
+      "fixLocations": [ "TopLeftWing_PanelButton", "TopLeftWing_PanelWires" ],
+      "fixActions": [ 3.0, 5.0 ],
+
+      "descriptions": [
+        "If Right Wing Electricity > 30% use top left wing panel with wires, otherwise use panel with a button",
+        "If Right Wing Electricity > 70% use top left wing panel with wires, otherwise use panel with a button"
+      ],
+      "metrics": {
+        "rwing_electricity": [
+          [ 0.0, 0.25 ],
+          [ 0.75, 1.0 ]
+        ]
+      },
+
+      "effects": [
+        [ "", "EngineSmoking" ],
+        [ "machineSounds", "alarmSound" ],
+        [ "blinkingLight", "lightsSuperBright" ],
+        [ "showWarningTriangle", "" ]
+      ],
+
+      "displayName": "Right Wing wattage malfunction",
+      "negatives": {
+        "maxSpeedModifier": 1.0
+      }
+    },
+    {
+      "id": "5",
+      "severity": 2,
+      "faultLocation": "SmallLeftWing",
+      "numVariations": 2,
+      "fixLocations": [ "SmallLeftWing_PanelButton", "SmallLeftWing_PanelWires" ],
+      "fixActions": [ 3.0, 5.0 ],
+
+      "descriptions": [
+        "If Core Pressure > 30% use small left wing panel with wires, otherwise use panel with a button",
+        "If Core Pressure > 70% use small left wing panel with wires, otherwise use panel with a button"
+      ],
+      "metrics": {
+        "core_pressure": [
+          [ 0.0, 0.25 ],
+          [ 0.75, 1.0 ]
+        ]
+      },
+
+      "effects": [
+        [ "", "EngineSmoking" ],
+        [ "machineSounds", "alarmSound" ],
+        [ "blinkingLight", "lightsSuperBright" ],
+        [ "showWarningTriangle", "" ]
+      ],
+
+      "displayName": "Core pressure malfunction",
+      "negatives": {
+        "maxSpeedModifier": 1.0
+      }
+    },
+    {
+      "id": "6",
+      "severity": 2,
+      "faultLocation": "SmallRightWing",
+      "numVariations": 2,
+      "fixLocations": [ "SmallRightWing_PanelButton", "SmallRightWing_PanelWires" ],
+      "fixActions": [ 3.0, 5.0 ],
+
+      "descriptions": [
+        "If Right Wing Fuel > 65% use small right wing panel with wires, otherwise use panel with a button",
+        "If Right Wing Fuel > 65% use small right wing panel with wires, otherwise use panel with a button"
+      ],
+      "metrics": {
+        "rwing_fuel": [
+          [ 0.0, 0.5 ],
+          [ 0.8, 1.0 ]
+        ]
+      },
+
+      "effects": [
+        [ "", "EngineSmoking" ],
+        [ "machineSounds", "alarmSound" ],
+        [ "blinkingLight", "lightsSuperBright" ],
+        [ "showWarningTriangle", "" ]
+      ],
+
+      "displayName": "Reactor malfunction",
+      "negatives": {
+        "maxSpeedModifier": 1.0
+      }
+    },
+    {
+      "id": "7",
+      "severity": 2,
+      "faultLocation": "BottomLeftWing",
+      "numVariations": 2,
+      "fixLocations": [ "BottomLeftWing_PanelButton", "BottomLeftWing_PanelWires" ],
+      "fixActions": [ 3.0, 5.0 ],
+
+      "descriptions": [
+        "If Left Wing Oxygen > 20% use bottom left wing panel with wires, otherwise use panel with a button",
+        "If Left Wing Oxygen > 40% use bottom left wing panel with wires, otherwise use panel with a button"
+      ],
+      "metrics": {
+        "lwing_oxygen": [
+          [ 0.0, 0.1 ],
+          [ 0.5, 1.0 ]
+        ]
+      },
+
+      "effects": [
+        [ "", "EngineSmoking" ],
+        [ "machineSounds", "alarmSound" ],
+        [ "blinkingLight", "lightsSuperBright" ],
+        [ "showWarningTriangle", "" ]
+      ],
+
+      "displayName": "Reactor malfunction",
+      "negatives": {
+        "invertZ": 1.0
+      }
+    },
+    {
+      "id": "8",
+      "severity": 2,
+      "faultLocation": "BottomRightWing",
+      "numVariations": 2,
+      "fixLocations": [ "BottomRightWing_PanelButton", "BottomRightWing_PanelWires" ],
+      "fixActions": [ 3.0, 5.0 ],
+
+      "descriptions": [
+        "If Reactor Electricity > 50% use reactor panel with wires, otherwise use panel with a button",
+        "If Reactor Electricity > 50% use reactor panel with wires, otherwise use panel with a button"
+      ],
+      "metrics": {
+        "reactor_electricity": [
+          [ 0.0, 0.4 ],
+          [ 0.6, 1.0 ]
+        ]
+      },
+
+      "effects": [
+        [ "", "EngineSmoking" ],
+        [ "machineSounds", "alarmSound" ],
+        [ "blinkingLight", "lightsSuperBright" ],
+        [ "showWarningTriangle", "" ]
+      ],
+
+      "displayName": "Reactor malfunction",
+      "negatives": {
+        "invertX": 0.0,
+        "invertY": 0.0
       }
     }
   ]
