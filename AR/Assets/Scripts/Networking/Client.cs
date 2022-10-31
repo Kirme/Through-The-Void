@@ -33,7 +33,7 @@ public class Client : MonoBehaviour {
 
 		// Debug
 		//SendMessage("test message");
-		StartCoroutine(Crt());
+		//StartCoroutine(Crt());
 	}
 
 	IEnumerator Crt() {
