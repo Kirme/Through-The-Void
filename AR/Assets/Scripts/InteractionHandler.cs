@@ -24,7 +24,7 @@ public class InteractionHandler : MonoBehaviour {
     private Transform previousPart;
 
     private Dictionary<string, Fault> fixesToFaults = new Dictionary<string, Fault>();
-    private List<string> faultLocations = new List<string>();
+    private Dictionary<string, int> faultVariations = new Dictionary<string, int>();
 
     // Mini games
     private int countForPanel;
@@ -171,7 +171,7 @@ public class InteractionHandler : MonoBehaviour {
     private int GetPartStatus(Transform part) {
         string partName = part.transform.name;
 
-        if (faultLocations.Contains(partName)) // Fault location
+        if (faultVariations.ContainsKey(partName)) // Fault location
             return 0;
         if (fixesToFaults.ContainsKey(GetFixKey(part))) // Panel that can fix fault
             return 1;
@@ -228,8 +228,8 @@ public class InteractionHandler : MonoBehaviour {
         // Get fix location based on variation
         string fixLocation = fault.fixLocations[variation];
 
-        if (!faultLocations.Contains(fault.faultLocation) && !fixesToFaults.ContainsKey(fixLocation)) {
-            faultLocations.Add(fault.faultLocation);
+        if (!faultVariations.ContainsKey(fault.faultLocation) && !fixesToFaults.ContainsKey(fixLocation)) {
+            faultVariations.Add(fault.faultLocation, variation);
             fixesToFaults.Add(fixLocation, fault);
 
             return true;
@@ -241,7 +241,7 @@ public class InteractionHandler : MonoBehaviour {
     // Helper function for removing a fault
     private void RemoveFaultLocation(string fault, Transform faultLocation) {
         ResetColor(fault);
-        faultLocations.Remove(fault);
+        faultVariations.Remove(fault);
         faultLocation.GetComponent<TextHandler>().ShowDescription(false);
     }
 
@@ -378,5 +378,16 @@ public class InteractionHandler : MonoBehaviour {
         val = string.Concat(val, fix.name);
 
         return val;
+    }
+
+    public string GetFaultDescription(string faultLocation) {
+        foreach (Fault fault in fixesToFaults.Values) {
+            if (string.Compare(faultLocation, fault.faultLocation) == 0) {
+                int variation = faultVariations[faultLocation];
+                return fault.descriptions[variation];
+            }
+        }
+
+        return "";
     }
 }

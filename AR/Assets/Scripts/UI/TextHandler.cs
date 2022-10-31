@@ -4,6 +4,7 @@ using UnityEngine;
 using TMPro;
 
 public class TextHandler : MonoBehaviour {
+    [SerializeField] InteractionHandler _interactionHandler;
     private TextMeshPro _text;
     private Information _info;
 
@@ -35,13 +36,26 @@ public class TextHandler : MonoBehaviour {
         _text.gameObject.SetActive(false);
     }
 
+    private void OnEnable() {
+        string desc = _interactionHandler.GetFaultDescription(gameObject.name);
+
+        if (desc != "") {
+            SetDescription(desc);
+            ShowDescription(true);
+        } else {
+            ShowDescription(false);
+        }
+    }
+
     public void SetDescription(string txt) {
         _info.desc = txt;
     }
 
     public void ShowDescription(bool setTo) {
         _info.showDesc = setTo;
-        _text.text = _info.GetText();
+
+        if (_text != null)
+            _text.text = _info.GetText();
     }
 
     public void Show() {

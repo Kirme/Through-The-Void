@@ -33,13 +33,13 @@ public class Client : MonoBehaviour {
 
 		// Debug
 		//SendMessage("test message");
-		//StartCoroutine(Crt());
+		StartCoroutine(Crt());
 	}
 
 	IEnumerator Crt() {
 		yield return new WaitForSeconds(1);
-		SendMessage("test message");
-		
+		faultHandler.ReceiveMessage("0", "0");
+
 		//yield return new WaitForSeconds(1);
 		//faultHandler.ReceiveMessage("2", "0");
 
