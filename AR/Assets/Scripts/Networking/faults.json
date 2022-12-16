@@ -39,11 +39,11 @@
       "fixLocations": [ "Engine_PanelButton", "Engine_PanelWires" ],
 
       "descriptions": [
-        "If Core Fuel > 50% use engine panel with wires, otherwise use panel with a button",
-        "If Core Fuel > 50% use engine panel with wires, otherwise use panel with a button"
+        "If Core Oxygen > 50% use engine panel with wires, otherwise use panel with a button",
+        "If Core Oxygen > 50% use engine panel with wires, otherwise use panel with a button"
       ],
       "metrics": {
-        "core_fuel": [
+        "core_oxygen": [
           [ 0.0, 0.4 ],
           [ 0.6, 1.0 ]
         ]
@@ -102,11 +102,11 @@
       "fixActions": [ 3.0, 5.0 ],
 
       "descriptions": [
-        "If Reactor Pressure > 20% use reactor panel with wires, otherwise use panel with a button",
-        "If Reactor Pressure > 80% use reactor panel with wires, otherwise use panel with a button"
+        "If Core Fuel > 20% use reactor panel with wires, otherwise use panel with a button",
+        "If Core Fuel > 80% use reactor panel with wires, otherwise use panel with a button"
       ],
       "metrics": {
-        "reactor_pressure": [
+        "core_fuel": [
           [ 0.0, 0.1 ],
           [ 0.9, 1.0 ]
         ]
@@ -257,11 +257,11 @@
       "fixActions": [ 3.0, 5.0 ],
 
       "descriptions": [
-        "If Reactor Electricity > 50% use reactor panel with wires, otherwise use panel with a button",
-        "If Reactor Electricity > 50% use reactor panel with wires, otherwise use panel with a button"
+        "If Core Electricity > 50% use bottom right wing panel with wires, otherwise use panel with a button",
+        "If Core Electricity > 50% use bottom right wing panel with wires, otherwise use panel with a button"
       ],
       "metrics": {
-        "reactor_electricity": [
+        "core_electricity": [
           [ 0.0, 0.4 ],
           [ 0.6, 1.0 ]
         ]

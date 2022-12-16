@@ -19,7 +19,7 @@ public class SpawnableManager : MonoBehaviour {
             PlaceShip();
         }
 
-        TogglePlane();
+        //TogglePlane();
     }
 
     private void TogglePlane() {
