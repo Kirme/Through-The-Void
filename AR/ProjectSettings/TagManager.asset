@@ -6,6 +6,9 @@ TagManager:
   tags:
   - Ship
   - Spawnable
+  - Panel
+  - Button
+  - struct
   layers:
   - Default
   - TransparentFX

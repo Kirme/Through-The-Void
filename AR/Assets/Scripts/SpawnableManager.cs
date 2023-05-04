@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 
-public class SpawnableManager : MonoBehaviour
-{
+public class SpawnableManager : MonoBehaviour {
     [SerializeField] ARRaycastManager _RaycastManager;
     [SerializeField] ARPlaneManager _ARPlaneManager;
     List<ARRaycastHit> _Hits = new List<ARRaycastHit>();
@@ -20,7 +19,7 @@ public class SpawnableManager : MonoBehaviour
             PlaceShip();
         }
 
-        TogglePlane();
+        //TogglePlane();
     }
 
     private void TogglePlane() {
@@ -29,9 +28,13 @@ public class SpawnableManager : MonoBehaviour
     }
 
     private void PlaceShip() {
-        if (_RaycastManager.Raycast(Input.GetTouch(0).position, _Hits)) {
+        Vector2 touchPos = Input.GetTouch(0).position;
+        if (_RaycastManager.Raycast(touchPos, _Hits)) {
             if (Input.GetTouch(0).phase == TouchPhase.Began) {
-                spawnablePrefab.transform.position = _Hits[0].pose.position;
+                Vector3 touchWorldPos = arCam.ScreenToWorldPoint(new Vector3(touchPos.x, touchPos.y, arCam.nearClipPlane));
+                Vector3 hitPos = _Hits[0].pose.position;
+
+                spawnablePrefab.transform.position = new Vector3(hitPos.x, touchWorldPos.y, hitPos.z);
                 spawnablePrefab.SetActive(true);
                 notPlaced = false;
             }
